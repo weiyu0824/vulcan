@@ -1,0 +1,19 @@
+task: 'video-anayltics'
+dataset:
+  video: ''
+  music: ''
+nodes:
+  - id: 1 
+    name: video-source
+    knobs: 
+  - id: 2
+    name: detect-vehicles
+    knobs:
+      - name: model
+        type: Category  
+        value: 
+          - YOLOv5n
+          - YOLOv5s
+edges:
+  - source: 1
+    to: 2
