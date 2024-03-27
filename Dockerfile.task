@@ -1,0 +1,25 @@
+# template
+From nvidia/cuda:12.3.2-cudnn9-devel-ubuntu22.04
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY tcp_server.py /app
+
+RUN apt update \
+    && apt -y upgrade \
+    && apt install -y python3 \
+    && apt install -y python3-pip
+
+# RUN pip install requirement.txt 
+
+# Install any needed dependencies specified in requirements.txt
+# If you have any dependencies, you can uncomment and use the following line
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 12345 available to the world outside this container
+EXPOSE 12345
+
+# Run tcp_server.py when the container launches
+CMD ["python3", "tcp_server.py"]

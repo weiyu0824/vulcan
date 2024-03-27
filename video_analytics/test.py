@@ -1,32 +1,3 @@
-from op import Op
-
-from nuimages import NuImages
-import tqdm
-import cv2
-import numpy as np
-from ultralytics import YOLO 
-import torch
-from metric import calculate_map
-
-
-
-class ObjectDetector(Op):
-    def __init__(self, args: dict):
-        model_name = args['model_name']
-        self.model = YOLO(f'{model_name}.pt') 
-    
-    def profile(self, batch_data):
-        
-        results = self.model.predict(root + filename, save=False)
-        result = results[0]
-
-
-
-        return  
-
-
-
-
 
 
 

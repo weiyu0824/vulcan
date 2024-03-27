@@ -12,8 +12,11 @@ nodes:
       - name: model
         type: Category  
         value: 
-          - YOLOv5n
-          - YOLOv5s
+          - 'yolov8n'
+          - 'yolov8s'
+          - 'yolov8m'
+          - 'yolov8l'
+          - 'yolov8x' 
 edges:
   - source: 1
     to: 2
