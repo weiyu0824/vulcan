@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 from typing import List
 
 class BayesianOptimization:
-    def __init__(self, cont_bounds: List[List[int]], cat_bounds, acquisition='ucb'):
+    def __init__(self, cont_bounds: List[List[int]], cat_bounds: List[List[int]], acquisition='ucb'):
         self.cont_bounds = np.array(cont_bounds)
         # print(self.cont_bounds)
         self.cat_bounds = cat_bounds
@@ -38,61 +38,20 @@ class BayesianOptimization:
     
     def get_random_samples(self, num_samples: int): 
         samples = self._get_random_raw_samples(num_samples)
-        readable_samples = []
-        for sample in samples:
-            cont_feats = sample[:self.num_continuous_feats]
-            cat_feats = sample[self.num_continuous_feats:] 
-            readable_samples.append(
-                {
-                    'cont_feats': cont_feats,
-                    'cat_feats': cat_feats
-                }
-            )       
-        return readable_samples 
+        # readable_samples = []
+        # for sample in samples:
+        #     cont_feats = sample[:self.num_continuous_feats]
+        #     cat_feats = sample[self.num_continuous_feats:] 
+        #     readable_samples.append(
+        #         {
+        #             'cont_feats': cont_feats,
+        #             'cat_feats': cat_feats
+        #         }
+        #     )       
+        # return readable_samples 
+        return samples
 
-    def start(self):
-        pass
-        # Initialize with random points
-        # self.X_continuous = np.random.uniform(self.bounds_continuous[:, 0], self.bounds_continuous[:, 1], size=(self.n_initial_points, self.n_continuous_dims))
-        # self.X_categorical = [[np.random.choice(bounds) for bounds in self.bounds_categorical] for _ in range(self.n_initial_points)]
-
-
-
-        # # breakpoint()
-        # self.y = np.random.randn(self.n_initial_points)
-        
-        # # Initialize Gaussian Process
-        # kernel = Matern(nu=2.5)
-        # self.gp = GaussianProcessRegressor(kernel=kernel)
-        # self.gp.fit(self.X_continuous, self.y)
-        
-        # improvement_counter = 0
-        # best_utility = np.inf
-        
-        # while improvement_counter < self.consecutive_runs:
-        #     next_continuous_point, next_categorical_point = self._get_next_query_point()
-        #     utility_value = self._acquisition_function(next_continuous_point, next_categorical_point)
-            
-        #     # Perform actual evaluation of the objective function at the query point
-        #     # Replace this line with the actual evaluation code
-            
-        #     # Example: 
-        #     # new_y = objective_function(next_continuous_point, next_categorical_point)
-        #     # self.X_continuous = np.vstack([self.X_continuous, next_continuous_point])
-        #     # self.X_categorical.append(next_categorical_point)
-        #     # self.y = np.append(self.y, new_y)
-            
-        #     if utility_value < best_utility - self.threshold:
-        #         improvement_counter += 1
-        #     else:
-        #         improvement_counter = 0
-        #         best_utility = utility_value
-            
-        #     self.iteration += 1
-            
-        # print("Bayesian Optimization stopped after {} consecutive runs without improvement.".format(self.consecutive_runs))
-
-    def fit(self, X, y):
+    def fit(self, X: np.ndarray, y: np.ndarray):
         """
         Fit samples
         """

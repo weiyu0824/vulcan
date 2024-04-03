@@ -16,7 +16,7 @@ sudo docker run -v /dev/shm/wylin/nuimages:/nuimages video-task
 sudo docker run -it -v /dev/shm/wylin/nuimages:/nuimages -e DETECTION_MODEL="yolov8n" video-task /bin/bash
 ```
 
-sudo docker run -v /dev/shm/wylin/nuimages:/nuimages -v /users/wylin2/vulcan/video_analytics:/app -it video-task /bin/bash
+sudo docker run --gpus all -v /dev/shm/wylin/nuimages:/nuimages -v /users/wylin2/vulcan/video_analytics:/app --network host  -it video-task /bin/bash
 
 priviledge: 
 bash ~/scripts/enable_rootless.sh 
