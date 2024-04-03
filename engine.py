@@ -19,6 +19,19 @@ network_coef = 1
 from typing import Tuple, Dict, List
 from pipeline import Pipeline
 
+
+video_analytics_knobs = [
+    ('models', ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']),
+    ('resize_shape', [0.9, 0.8, 0.7, 0.6, 0.5])
+]
+def sample_to_configs(sample: List[int], knob_list)-> dict: 
+    config = {}
+    assert len(sample) == len(knob_list), 'Sample and should have equal size as knob'
+
+    for knob_idx, (knob_name, knob_choices) in enumerate(knob_list): 
+        config[knob_name] = knob_choices[sample[knob_idx]]
+    return config
+
 class MachineInfo:
     address: Tuple[str, int]
     resouce: str # cpu or gpu 
@@ -49,6 +62,8 @@ class Engine:
 
         self.port = 12343
         self.host = "localhost"
+
+        self.knob_list = video_analytics_knobs
 
     # def load_data_from_cache(config) -> ExecutionStats:
     #     pass
@@ -164,64 +179,38 @@ class Engine:
         return [[0, 0], [0, 1]]
 
 
+
     def select_best_placement(self):
 
-        # Pipeline knobs 
-        # knobs = self.pipeline.get_knobs()
-        # cont_bounds, cat_bounds = [], []
-        # knob_map = {}
-        # for knob in knobs: 
-        #     value = knob['value']
-        #     if knob['type'] == 'Range':
-        #         knob_map[f'range-{len(cont_bounds)}'] = knob    
-        #         cont_bounds.append([value[0], value[1]]) 
-        #     elif knob['type'] == 'Category':
-        #         knob_map[f'category-{len(cat_bounds)}'] = knob  
-        #         cat_bounds.append([i for i in range(len(value))])
+        feat_bounds = []
+        for _, knob_choice in self.knob_list:
+            feat_bounds.append([i for i in range(len(knob_choice))])
         
-        # Hard code pipeline knobs
-        models = ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']
-        resize_shape = [(i + 1) * 32 for i in range(20)]
-        cont_bounds = []
-        cat_bounds = [
-            [i for i in range(len(models))],
-            [i for i in range(len(resize_shape))]
-        ]
 
         placements = self.generate_all_placement_choices()
         utilities = []
         for placement in placements:
             # BO
-            bo = BayesianOptimization(cont_bounds=cont_bounds, cat_bounds=cat_bounds) 
+            bo = BayesianOptimization(feat_bounds=feat_bounds) 
             init_utilities = [] # utility
 
             # init BO 
             # 1. Random sample configs
-            init_configs = bo.get_random_samples(num_samples=self.num_init_sample_configs)
-            print('init sample config', init_configs)
+            init_sampels = bo.get_random_samples(num_samples=self.num_init_sample_configs)
             # 2. Run those config to get ACC & Latency
-            for config in init_configs:
+            for sample in init_sampels:
                 
-                # Convert config back to env vars
-                env_vars = {}
-                # for i, feat in enumerate(config['cont_feats']):
-                #     env_vars[knob_map[f'range-{i}']['name']] = feat
-                # for i, feat in enumerate(config['cat_feats']):
-                #     knob = knob_map[f'category-{i}']
-                #     env_vars[knob['name']] = knob['value'][int(feat)] 
+                # Convert BO sample back to config
+                config = sample_to_configs(sample, self.knob_list)
                 
-                # Hard code
-                env_vars['model_name'] = models[int(config[0])]
-                env_vars['resize_shape'] = resize_shape[int(config[1])]
-
-                result = self.run_pipeline(config=env_vars)
+                result = self.run_pipeline(config=config)
                 utility, appox_latency = self.calculate_utility(result, placement)
                 init_utilities.append(utility)
 
-                utilities.append((utility, appox_latency, env_vars, placement, result))
+                utilities.append((utility, appox_latency, config, placement, result))
 
             # 3. Fit those samples into BO 
-            bo.fit(X=init_configs, y=init_utilities)
+            bo.fit(X=init_sampels, y=init_utilities)
 
             # BO optimization 
             prune_count = 0  
@@ -231,10 +220,8 @@ class Engine:
             while True:
                 print('Attempt: ', attempt_idx, 'stop cnt: ', stop_count, 'prune cnt: ', prune_count, 'prev_utility: ', prev_utility)
                 attempt_idx += 1
-                config = bo.get_next_sample()
-                env_vars = {}
-                env_vars['model_name'] = models[int(config[0])]
-                env_vars['resize_shape'] = resize_shape[int(config[1])] 
+                sample = bo.get_next_sample()
+                env_vars = sample_to_configs(sample, self.knob_list) 
 
                 # OPT: cache 'accuracy' result, and only meausure 'latency'  
                 result = self.run_pipeline(config=env_vars)  
@@ -260,14 +247,12 @@ class Engine:
                     break
                 prev_utility = utility
                 print()
-        utilities.sort(key=lambda x: x[0])
 
+        utilities.sort(key=lambda x: x[0])
         return utilities[len(utilities) - 1]
 
 if __name__ == "__main__":
-    # client = docker.from_env()
-    # exit()
+
     engine = Engine(min_accuracy=0.4, max_latency=3)
     placement = engine.select_best_placement()
     print(placement)
-    # engine.start_tcp_server()
