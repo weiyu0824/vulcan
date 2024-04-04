@@ -22,7 +22,7 @@ from pipeline import Pipeline
 
 video_analytics_knobs = [
     ('models', ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']),
-    ('resize_shape', [0.9, 0.8, 0.7, 0.6, 0.5])
+    ('resize_factor', [0.9, 0.8, 0.7, 0.6, 0.5])
 ]
 def sample_to_configs(sample: List[int], knob_list)-> dict: 
     config = {}

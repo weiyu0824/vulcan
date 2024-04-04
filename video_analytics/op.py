@@ -14,10 +14,14 @@ import json
 from utils import num_classes 
 from torch.utils.data import Dataset
 from torchvision.transforms import Resize
+from torchmetrics.detection.mean_ap import MeanAveragePrecision
 
 device = 'cpu'
 if torch.cuda.is_available():
     device = 'cuda:0'
+
+
+
 class Op:
     def __init__(self):
         pass
@@ -202,9 +206,12 @@ class GroundRemoval(ProcessOp):
         pass
 
 class Voxelization(ProcessOp):
-    def __init__(self, args: dict):
+    def __init__(self, org_image_shape, args: dict):
         super().__init__()
-        self.resize = Resize(size=(args['resize_shape'], args['resize_shape']))
+        w = int(args['resize_factor'] * org_image_shape[0])
+        h = int(args['resize_factor'] * org_image_shape[1])
+        print(w, h)
+        self.resize = Resize(size=(h, w))
 
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
         if self.input_size == None and profile_input_size:
@@ -226,7 +233,7 @@ class Voxelization(ProcessOp):
         
 
 class Detector(ProcessOp):
-    def __init__(self, args: dict):
+    def __init__(self, org_image_shape: tuple, args: dict):
         super().__init__()
         # Knobs
         model_name = args['model_name']
@@ -234,6 +241,15 @@ class Detector(ProcessOp):
         self.coco_category_to_id_dict = get_dict_coco_category_to_id()
         self.compute_latencies = [] 
         self.batch_accuraies = []
+        self.resize = Resize(size=(args['resize_shape'], args['resize_shape']))
+        h, w = org_image_shape[0], org_image_shape[1]
+        self.resize_matrix = torch.tensor([
+            [w, 0, 0, 0],
+            [0, h, 0, 0],
+            [0, 0, w, 0],
+            [0, 0, 0, h]
+        ], dtype=torch.float32).to(device)
+        self.metric = MeanAveragePrecision()
     
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
         if self.input_size == None and profile_input_size:
@@ -244,68 +260,96 @@ class Detector(ProcessOp):
         
         # compute
         labels = batch_data['labels']
-        org_image_shape = batch_data['org_image_shape']
+        # org_image_shape = batch_data['org_image_shape']
         # batch_tensor = torch.tensor(np.array(batch_data['images']), dtype=torch.float32)
-        batch_tensor = batch_data['images'] / 255.0
-        results = self.model.predict(batch_tensor, save=False, verbose=False)
+
+        # t = time.time()
+        batch_tensor = (batch_data['images'] / 255.0).to(device)
+        # print('/ ', time.time() - t)
+        # t = time.time()
+        batch_tensor = self.resize(batch_tensor)
+        # print('r ', time.time() - t)
+        results = self.model.predict(batch_tensor, save=False, verbose=False, classes=[0, 1, 2, 3, 5, 7])
         
         if profile_compute_latency:
             self.compute_latencies.append(time.time()-start_compute_time)
 
-        # Calculate Accuracy
-        h, w = org_image_shape[0], org_image_shape[1]
-        resize_matrix = torch.tensor([
-            [w, 0, 0, 0],
-            [0, h, 0, 0],
-            [0, 0, w, 0],
-            [0, 0, 0, h]
-        ], dtype=torch.float32).to(device)
-        mean_APs = []
+        
+
+        preds, targets = [], []
         for result, label in zip(results, labels):
-            raw_pred_clss = result.boxes.cls 
-            raw_pred_confs = result.boxes.conf
-            raw_pred_bboxes = result.boxes.xyxyn
+
+            # skip this frame if there isn't any annotation.
+            if label[0][4] == -1:
+                continue
             
+            # target
+            target_boxes, target_labels = [], []
+            for box in label:
+                true_cls = box[4]
+                if true_cls == -1:
+                    break
+                else:
+                    target_boxes.append(box[:4])
+                    target_labels.append(box[4])
+            targets.append(dict(
+                boxes=torch.stack(target_boxes),
+                labels=torch.stack(target_labels),
+            ))
 
-            raw_pred_bboxes = torch.matmul(raw_pred_bboxes, resize_matrix).round().int().cpu()
-            # print(result.boxes.xyxy)
-            # exit(0)
-
+            # pred 
+            raw_pred_clss = result.boxes.cls.cpu()  
+            raw_pred_confs = result.boxes.conf.cpu()
+            raw_pred_bboxes = result.boxes.xyxyn
+            raw_pred_bboxes = torch.matmul(raw_pred_bboxes, self.resize_matrix).round().int().cpu()
             # filter unwanted boxes
-            filtered_pred_bboxes, filtered_pred_clss, filtered_pred_confs = [], [], []
-            pred_boxes = []
+            pred_boxes, pred_scores, pred_labels = [], [], []
             for pred_cls, pred_conf, pred_bbox in zip(raw_pred_clss, raw_pred_confs, raw_pred_bboxes):
                 pred_bbox = pred_bbox.tolist()
                 pred_cls = int(pred_cls.item())
                 if pred_cls not in self.coco_category_to_id_dict:
                     continue
-                # filtered_pred_clss.append(self.coco_category_to_id_dict[pred_cls])
-                # filtered_pred_confs.append(pred_conf)
-                # filtered_pred_bboxes.append(pred_bbox)
 
-                pred_boxes.append(pred_bbox + [self.coco_category_to_id_dict[pred_cls]] + [pred_conf])
+                pred_labels.append(self.coco_category_to_id_dict[pred_cls])  
+                pred_scores.append(pred_conf)
+                pred_boxes.append(pred_bbox)
 
-            true_boxes = []
-            for true_box in label:
-                if true_box[4] == -1:
-                    break
-                else:
-                    true_boxes.append(true_box)
+            preds.append(dict(
+                boxes=torch.tensor(pred_boxes),
+                scores=torch.tensor(pred_scores),
+                labels=torch.tensor(pred_labels)
+            ))
 
-            mean_AP = calculate_map(true_boxes=true_boxes, pred_boxes=pred_boxes, iou_threshold=0.5, num_classes=num_classes)
 
-            mean_APs.append(mean_AP.item()) 
+            
+               
+        # metric = MeanAveragePrecision()
+        self.metric.update(preds, targets)
+        # map_50 = metric.compute()['map_50']
+            # mean_AP = calculate_map(true_boxes=true_boxes, pred_boxes=pred_boxes, iou_threshold=0.5, num_classes=num_classes)
+            
+            
+        # print(map_50)      
+            
+            
+        # exit()
+        # mean_APs.append(mean_AP.item()) 
 
-        self.batch_accuraies.append(sum(mean_APs)/len(mean_APs)) 
+        # self.batch_accuraies.append(sum(mean_APs)/len(mean_APs)) 
         return 
+    
+    def record_preds(self, results):
+
+        pass
 
     def get_compute_latency(self):
         return sum(self.compute_latencies)/len(self.compute_latencies)
 
     def get_endpoint_accuracy(self):
-        if len(self.batch_accuraies)  == 0:
-            return 0
-        return sum(self.batch_accuraies)/len(self.batch_accuraies)
+        # if len(self.batch_accuraies)  == 0:
+        #     return 0
+        # return sum(self.batch_accuraies)/len(self.batch_accuraies)
+        return self.metric.compute()['map_50'].item()
 
     def calculate_batch_accuracy(self):
         pass
