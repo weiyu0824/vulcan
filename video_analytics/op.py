@@ -172,7 +172,7 @@ class Loader(SourceOp):
 class NuImageDataset(Dataset):
     def __init__(self):
         self.version = 'v1.0-val'
-        self.root = '/dev/shm/wylin/nuimages/' 
+        self.root = '/proj/gaea-PG0/wylin2/' 
         with open(f'{self.version}-idx.json', 'r') as fp:
             self.index_data = json.load(fp)
         self.max_num_bbox = 0
