@@ -8,7 +8,7 @@
     ```
     sudo reboot
     ```
-    - check by nvidia-smi
+    - check if driver correctly installed by command `nvidia-smi`
 2. Python: 
     ```
     sudo bash script/install_pip.sh
