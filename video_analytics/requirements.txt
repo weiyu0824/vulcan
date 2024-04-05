@@ -1,3 +1,4 @@
 nuscenes-devkit
 ultralytics
 # opencv-python
+torchmetrics
