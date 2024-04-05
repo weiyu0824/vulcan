@@ -1,0 +1,392 @@
+[
+    {
+        "rf": 0.5,
+        "model": "yolov8n",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.002005692755821908,
+            "detector_input_size": 1080434,
+            "detector_compute_latency": 0.02682155193668781,
+            "100_sample_accuracy": 0.25100257992744446,
+            "accuracy": 0.2239280492067337,
+            "profile_latency": 208.65027856826782
+        }
+    },
+    {
+        "rf": 0.5,
+        "model": "yolov8s",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.00127489968101577,
+            "detector_input_size": 1080434,
+            "detector_compute_latency": 0.020727308669892867,
+            "100_sample_accuracy": 0.28010499477386475,
+            "accuracy": 0.27545902132987976,
+            "profile_latency": 248.7059497833252
+        }
+    },
+    {
+        "rf": 0.5,
+        "model": "yolov8m",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0014429989427623183,
+            "detector_input_size": 1080434,
+            "detector_compute_latency": 0.02802325947449939,
+            "100_sample_accuracy": 0.36457252502441406,
+            "accuracy": 0.3225829303264618,
+            "profile_latency": 340.2603123188019
+        }
+    },
+    {
+        "rf": 0.5,
+        "model": "yolov8l",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011869019801073735,
+            "detector_input_size": 1080434,
+            "detector_compute_latency": 0.04257376123182845,
+            "100_sample_accuracy": 0.371779203414917,
+            "accuracy": 0.33390888571739197,
+            "profile_latency": 471.0234134197235
+        }
+    },
+    {
+        "rf": 0.5,
+        "model": "yolov8x",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.001459716570259321,
+            "detector_input_size": 1080434,
+            "detector_compute_latency": 0.05893795088966294,
+            "100_sample_accuracy": 0.38635265827178955,
+            "accuracy": 0.34194594621658325,
+            "profile_latency": 597.5587885379791
+        }
+    },
+    {
+        "rf": 0.6,
+        "model": "yolov8n",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0014560340654731978,
+            "detector_input_size": 1555634,
+            "detector_compute_latency": 0.015895411519721004,
+            "100_sample_accuracy": 0.25975337624549866,
+            "accuracy": 0.22446784377098083,
+            "profile_latency": 202.4020290374756
+        }
+    },
+    {
+        "rf": 0.6,
+        "model": "yolov8s",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0010320314086309755,
+            "detector_input_size": 1555634,
+            "detector_compute_latency": 0.015082474982384408,
+            "100_sample_accuracy": 0.30032768845558167,
+            "accuracy": 0.27962052822113037,
+            "profile_latency": 241.79682230949402
+        }
+    },
+    {
+        "rf": 0.6,
+        "model": "yolov8m",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0009871355377801573,
+            "detector_input_size": 1555634,
+            "detector_compute_latency": 0.02600967293918723,
+            "100_sample_accuracy": 0.3795887529850006,
+            "accuracy": 0.3274335563182831,
+            "profile_latency": 343.56445050239563
+        }
+    },
+    {
+        "rf": 0.6,
+        "model": "yolov8l",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0015035832282340171,
+            "detector_input_size": 1555634,
+            "detector_compute_latency": 0.04095743434263928,
+            "100_sample_accuracy": 0.3716115951538086,
+            "accuracy": 0.34261736273765564,
+            "profile_latency": 473.5253686904907
+        }
+    },
+    {
+        "rf": 0.6,
+        "model": "yolov8x",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0015688745102079788,
+            "detector_input_size": 1555634,
+            "detector_compute_latency": 0.05769956229936959,
+            "100_sample_accuracy": 0.39159294962882996,
+            "accuracy": 0.35027989745140076,
+            "profile_latency": 599.3740093708038
+        }
+    },
+    {
+        "rf": 0.7,
+        "model": "yolov8n",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0014474014244457282,
+            "detector_input_size": 2117234,
+            "detector_compute_latency": 0.013612780240502689,
+            "100_sample_accuracy": 0.2557568848133087,
+            "accuracy": 0.22758586704730988,
+            "profile_latency": 200.5496220588684
+        }
+    },
+    {
+        "rf": 0.7,
+        "model": "yolov8s",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.001474144435164952,
+            "detector_input_size": 2117234,
+            "detector_compute_latency": 0.018549678349258875,
+            "100_sample_accuracy": 0.2996708154678345,
+            "accuracy": 0.28010138869285583,
+            "profile_latency": 254.0153980255127
+        }
+    },
+    {
+        "rf": 0.7,
+        "model": "yolov8m",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0010918555873455388,
+            "detector_input_size": 2117234,
+            "detector_compute_latency": 0.026975265823968565,
+            "100_sample_accuracy": 0.3798852562904358,
+            "accuracy": 0.33212700486183167,
+            "profile_latency": 349.68496441841125
+        }
+    },
+    {
+        "rf": 0.7,
+        "model": "yolov8l",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011536461291926923,
+            "detector_input_size": 2117234,
+            "detector_compute_latency": 0.04199077823374531,
+            "100_sample_accuracy": 0.3816803991794586,
+            "accuracy": 0.3468048572540283,
+            "profile_latency": 463.6657826900482
+        }
+    },
+    {
+        "rf": 0.7,
+        "model": "yolov8x",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011814655643878596,
+            "detector_input_size": 2117234,
+            "detector_compute_latency": 0.05744066804942518,
+            "100_sample_accuracy": 0.39730414748191833,
+            "accuracy": 0.3548405170440674,
+            "profile_latency": 602.2287566661835
+        }
+    },
+    {
+        "rf": 0.8,
+        "model": "yolov8n",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.001098814577159315,
+            "detector_input_size": 2765234,
+            "detector_compute_latency": 0.01630124007121171,
+            "100_sample_accuracy": 0.2614624500274658,
+            "accuracy": 0.22338257730007172,
+            "profile_latency": 202.49152946472168
+        }
+    },
+    {
+        "rf": 0.8,
+        "model": "yolov8s",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0014711984313360536,
+            "detector_input_size": 2765234,
+            "detector_compute_latency": 0.018359802737094387,
+            "100_sample_accuracy": 0.30079466104507446,
+            "accuracy": 0.2799771726131439,
+            "profile_latency": 254.43312096595764
+        }
+    },
+    {
+        "rf": 0.8,
+        "model": "yolov8m",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.001503330646174969,
+            "detector_input_size": 2765234,
+            "detector_compute_latency": 0.026709509367990023,
+            "100_sample_accuracy": 0.38494232296943665,
+            "accuracy": 0.33563512563705444,
+            "profile_latency": 344.6458559036255
+        }
+    },
+    {
+        "rf": 0.8,
+        "model": "yolov8l",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0014654197315178295,
+            "detector_input_size": 2765234,
+            "detector_compute_latency": 0.04093315813801076,
+            "100_sample_accuracy": 0.3763671815395355,
+            "accuracy": 0.34688514471054077,
+            "profile_latency": 478.4907433986664
+        }
+    },
+    {
+        "rf": 0.8,
+        "model": "yolov8x",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0012003690889566252,
+            "detector_input_size": 2765234,
+            "detector_compute_latency": 0.057516631513538925,
+            "100_sample_accuracy": 0.40125221014022827,
+            "accuracy": 0.35496124625205994,
+            "profile_latency": 605.3195407390594
+        }
+    },
+    {
+        "rf": 0.9,
+        "model": "yolov8n",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.001072808067397316,
+            "detector_input_size": 3499634,
+            "detector_compute_latency": 0.016447709338499768,
+            "100_sample_accuracy": 0.2534240782260895,
+            "accuracy": 0.22364439070224762,
+            "profile_latency": 204.28343749046326
+        }
+    },
+    {
+        "rf": 0.9,
+        "model": "yolov8s",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0012798262114572052,
+            "detector_input_size": 3499634,
+            "detector_compute_latency": 0.018017306186185026,
+            "100_sample_accuracy": 0.304002583026886,
+            "accuracy": 0.2802290916442871,
+            "profile_latency": 257.4936292171478
+        }
+    },
+    {
+        "rf": 0.9,
+        "model": "yolov8m",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011237871528852104,
+            "detector_input_size": 3499634,
+            "detector_compute_latency": 0.026607003542456296,
+            "100_sample_accuracy": 0.38017427921295166,
+            "accuracy": 0.3357597291469574,
+            "profile_latency": 346.43067741394043
+        }
+    },
+    {
+        "rf": 0.9,
+        "model": "yolov8l",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011828889941224957,
+            "detector_input_size": 3499634,
+            "detector_compute_latency": 0.04076242446899414,
+            "100_sample_accuracy": 0.3727014362812042,
+            "accuracy": 0.3471432328224182,
+            "profile_latency": 477.83625769615173
+        }
+    },
+    {
+        "rf": 0.9,
+        "model": "yolov8x",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0012512254242849823,
+            "detector_input_size": 3499634,
+            "detector_compute_latency": 0.0578846270495122,
+            "100_sample_accuracy": 0.39884069561958313,
+            "accuracy": 0.3587498068809509,
+            "profile_latency": 605.3286046981812
+        }
+    },
+    {
+        "rf": 1,
+        "model": "yolov8n",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.00111711851441034,
+            "detector_input_size": 4320434,
+            "detector_compute_latency": 0.016365764164688563,
+            "100_sample_accuracy": 0.2530145049095154,
+            "accuracy": 0.22350305318832397,
+            "profile_latency": 199.04255056381226
+        }
+    },
+    {
+        "rf": 1,
+        "model": "yolov8s",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011142716549410678,
+            "detector_input_size": 4320434,
+            "detector_compute_latency": 0.01742104964681191,
+            "100_sample_accuracy": 0.29999351501464844,
+            "accuracy": 0.28020015358924866,
+            "profile_latency": 256.75792264938354
+        }
+    },
+    {
+        "rf": 1,
+        "model": "yolov8m",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.001346861962044593,
+            "detector_input_size": 4320434,
+            "detector_compute_latency": 0.02657297106072454,
+            "100_sample_accuracy": 0.37449705600738525,
+            "accuracy": 0.335767537355423,
+            "profile_latency": 348.7249708175659
+        }
+    },
+    {
+        "rf": 1,
+        "model": "yolov8l",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0011898881137961208,
+            "detector_input_size": 4320434,
+            "detector_compute_latency": 0.04089977717635655,
+            "100_sample_accuracy": 0.37636464834213257,
+            "accuracy": 0.3471128046512604,
+            "profile_latency": 477.9053931236267
+        }
+    },
+    {
+        "rf": 1,
+        "model": "yolov8x",
+        "result": {
+            "voxelization_input_size": 4320431,
+            "voxelization_compute_latency": 0.0012952478805390915,
+            "detector_input_size": 4320434,
+            "detector_compute_latency": 0.0580941898988025,
+            "100_sample_accuracy": 0.3988022208213806,
+            "accuracy": 0.35870495438575745,
+            "profile_latency": 605.7828278541565
+        }
+    }
+]
