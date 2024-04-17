@@ -60,7 +60,7 @@ def profile_pipeline():
     profile_result['100_sample_accuracy'] = detector.get_endpoint_accuracy()
     
     print(profile_result)
-    return profile_result
+    # return profile_result
     # exit(0) 
 
 
@@ -69,7 +69,8 @@ def profile_pipeline():
     batch_size = 64
     num_workers = 8
     dataloader = DataLoader(nuimage_data, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-    
+
+    cum_accuracy = []  
     for data in tqdm.tqdm(dataloader):
         batch_data = {
             'images': data[0], 
@@ -79,11 +80,12 @@ def profile_pipeline():
         batch_data = voxelization.profile(batch_data)
         batch_data = detector.profile(batch_data) 
 
+        cum_accuracy.append(detector.get_endpoint_accuracy())
 
    
     profile_result['accuracy'] = detector.get_endpoint_accuracy()
     profile_result['profile_latency'] = time.time() - start_time
-    
+    profile_result['cummulative_accuracy'] = cum_accuracy 
 
     return profile_result
     
@@ -115,7 +117,7 @@ if __name__ == "__main__":
 
     records = []
 
-    resize_factors = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    resize_factors = [0.8]
     models = ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']
 
     for rf in resize_factors:

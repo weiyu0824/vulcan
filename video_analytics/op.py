@@ -54,7 +54,7 @@ class SourceOp(Op):
 class Loader(SourceOp):
     def __init__(self, args: dict):
         # self.root = '/nuimages/'
-        self.root = '/dev/shm/wylin/nuimages/'
+        self.root = '/proj/gaea-PG0/wylin2'
         self.version = 'v1.0-val'
         
         self.nuim = NuImages(dataroot=self.root, version=self.version, verbose=False, lazy=True)
