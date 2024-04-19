@@ -86,6 +86,7 @@ def profile_pipeline():
     profile_result['accuracy'] = detector.get_endpoint_accuracy()
     profile_result['profile_latency'] = time.time() - start_time
     profile_result['cummulative_accuracy'] = cum_accuracy 
+    profile_result['batch_accuracy'] = detector.get_batch_accuracy()
 
     return profile_result
     

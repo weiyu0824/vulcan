@@ -21,15 +21,7 @@ if torch.cuda.is_available():
     device = 'cuda:0'
 
 
-
-class Op:
-    def __init__(self):
-        pass
-
-    def get_result(self):
-        NotImplementedError()
-
-class ProcessOp(Op):
+class ProcessOp():
     def __init__(self):
         self.compute_latencies = [] 
         self.input_size = None
@@ -92,7 +84,7 @@ class Loader(SourceOp):
             
             img_source = cv2.resize(img_source, (self.resize_shape, self.resize_shape)) # (900, 1600)
             img_source: ndarray = img_source.astype(np.float32) / 255.0
-            
+             
             batch_imgs.append(img_source)
             # true_boxes = self.get_ground_truth_box(sample).tolist()
             true_boxes = self.index_data[cur_idx]["true_boxes"]
@@ -349,7 +341,11 @@ class Detector(ProcessOp):
         # if len(self.batch_accuraies)  == 0:
         #     return 0
         # return sum(self.batch_accuraies)/len(self.batch_accuraies)
-        return self.metric.compute()['map_50'].item()
-
-    def calculate_batch_accuracy(self):
-        pass
+        batch_accuracy = self.metric.compute()['map_50'].item()
+        self.batch_accuraies.append(batch_accuracy)
+        # clear metric tape
+        self.metric = MeanAveragePrecision()
+        return sum(self.batch_accuraies) / len(self.batch_accuraies) 
+    
+    def get_batch_accuracy(self):
+        return self.batch_accuraies
