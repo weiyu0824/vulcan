@@ -58,7 +58,7 @@ class Engine:
         # self.pipeline = Pipeline('video_analytics')
         self.machines = [{'address': 'localhost'}]
 
-        self.docker_client = docker.from_env()
+        # self.docker_client = docker.from_env()
 
         self.port = 12343
         self.host = "localhost"
