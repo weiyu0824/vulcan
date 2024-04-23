@@ -4,12 +4,14 @@ import jiwer
 import pickle
 import torchaudio
 import time
+from torchgating import TorchGating as TG
 
 from base_op import ProcessOp, SourceOp
 
 device = 'cpu'
 if torch.cuda.is_available():
     device = 'cuda:0'
+
 
 
 class GreedyCTCDecoder(torch.nn.Module):
@@ -31,19 +33,32 @@ class GreedyCTCDecoder(torch.nn.Module):
         transcript = "".join([self.labels[i] for i in indices])
         transcript = transcript.replace("|", " ")
         transcript = transcript.replace("-", "")
+        transcript = transcript.lower()
         return transcript
 
 class AudioSampler(ProcessOp):
     def __init__(self, args):
         super().__init__()
+        self.target_sr = args['audio_sample_rate']
         
 
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
         if self.input_size == None and profile_input_size:
             self.input_size = len(pickle.dumps(batch_data))
+        
+        sr = batch_data['sr']
+        audio = batch_data['audio']
 
         # compute:
         start_compute_time = time.time()
+        
+        
+
+        audio = torchaudio.functional.resample(audio, sr, self.target_sr)    
+
+        batch_data['sr'] = self.target_sr
+        batch_data['audio'] = audio
+
         if profile_compute_latency:
            self.compute_latencies.append(time.time() - start_compute_time)
         return batch_data 
@@ -51,13 +66,21 @@ class AudioSampler(ProcessOp):
 class NoiseReduction(ProcessOp):
     def __init__(self, args):
         super().__init__()
+        freq_mask = args['frequency_mask_width']
+        sr = args['audio_sample_rate']
+        self.tg = TG(sr=int(sr), nonstationary=True, freq_mask_smooth_hz=freq_mask).to(device)
         
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
         if self.input_size == None and profile_input_size:
             self.input_size = len(pickle.dumps(batch_data))
         
+        audio = batch_data['audio'] 
         # compute 
         start_compute_time = time.time()    
+
+        audio = self.tg(audio)
+        batch_data['audio'] = audio
+
         if profile_compute_latency:
            self.compute_latencies.append(time.time() - start_compute_time)
         return batch_data
@@ -68,7 +91,7 @@ class WaveToText(ProcessOp):
 
         model_name = args['model']
         if model_name == "wav2vec2-base":
-            bundle = torchaudio.pipelines.HUBERT_ASR_XLARGE
+            bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
         elif model_name == "wav2vec2-large-10m":
             bundle = torchaudio.pipelines.WAV2VEC2_ASR_LARGE_10M
         elif model_name == "wav2vec2-large-960h":
@@ -80,7 +103,7 @@ class WaveToText(ProcessOp):
         else:
             raise TypeError('model is not provided')
 
-        self.model = bundle.get_model()
+        self.model = bundle.get_model().to(device)
         self.decoder = None
 
         self.decoder = GreedyCTCDecoder(labels=bundle.get_labels())
@@ -91,7 +114,7 @@ class WaveToText(ProcessOp):
         if self.input_size == None and profile_input_size:
             self.input_size = len(pickle.dumps(batch_data))
         # data
-        audio = batch_data['audio']
+        audio = batch_data['audio'].to(device)
         ground_transcript = batch_data['transcript']
         # compute
         start_compute_time = time.time()
@@ -99,6 +122,11 @@ class WaveToText(ProcessOp):
         pred_transcript = self.decoder(emission[0])
         if profile_compute_latency:
             self.compute_latencies.append(time.time()-start_compute_time) 
+
+        # print(ground_transcript)
+        # print()
+        # print(pred_transcript)
+        # print()
         # accuracy
         wer = jiwer.wer(ground_transcript, pred_transcript)
         self.accuracy.append(wer)
@@ -116,100 +144,3 @@ class Decoder(ProcessOp):
         pass
     def get_endpoint_accuracy(self):
         pass
-
-# /data/wylin/VOiCES_devkit/distant-16k/speech/test
-
-
-
-# import random
-# import os
-# import librosa
-# def speech_file(room, noise, filename = ''):
-#     if len(filename) == 0:
-#         # randomly choose audio file for room, noise, specs
-#         path = '/data/wylin/VOiCES_devkit/distant-16k/speech/test/'+room+'/'+noise+'/'
-#         sp = random.choice([f for f in os.listdir(path) if f.startswith('sp')])
-#         path = path+sp+'/'
-#         filename = random.choice(os.listdir(path))
-#     else:
-#         room = filename[17:20] 
-#         noise = filename[21:25]
-#         path = 'distant-16k/speech/test'+room+'/'+noise+'/'+filename[26:filename.find('-ch')]+'/'
-#     x, sr = librosa.load(path+filename)
-#     duration = librosa.get_duration(path=path+filename)
-#     # print(len(x))
-#     # print(sr)
-#     # print(duration)
-#     return x, sr, path+filename, duration #[filename.find('sp'):filename.find('-mc')]
-# # audio, sr, file_path, duration = speech_file('rm1', 'musi')
-
-# import pandas as pd
-# reference = pd.read_csv('/data/wylin/VOiCES_devkit/references/filename_transcripts')
-# print(len(reference))
-# print(reference.columns)
-# filtered_df = reference[reference['file_name'] == 'Lab41-SRI-VOiCES-rm1-musi-sp5622-ch041172-sg0001-mc01-stu-clo-dg010']
-
-# # Get the 'transcript' column from the filtered DataFrame
-# transcript_for_file_a = filtered_df['transcript']
-
-# # Print the transcript
-# answer = [transcript_for_file_a.iloc[0].upper()]
-
-
-
-# audio, sr = librosa.load('/data/wylin/VOiCES_devkit/distant-16k/speech/test/rm1/musi/sp5622/Lab41-SRI-VOiCES-rm1-musi-sp5622-ch041172-sg0001-mc01-stu-clo-dg010.wav')
-# print(sr)
-# audio = torch.tensor(np.expand_dims(audio, axis=0))
-
-
-
-# import torchaudio
-# """ 
-# WAV2VEC2_ASR_BASE_960H
-# WAV2VEC2_ASR_LARGE_10M
-# WAV2VEC2_ASR_LARGE_960H
-# HUBERT_ASR_LARGE
-# HUBERT_ASR_XLARGE
-# """
-# bundle = torchaudio.pipelines.HUBERT_ASR_XLARGE
-# # Build the model and load pretrained weight.
-# model = bundle.get_model()
-# # Resample audio to the expected sampling rate
-# # waveform = torchaudio.functional.resample(waveform, sample_rate, bundle.sample_rate)
-# # Extract acoustic features
-# import time 
-# st = time.time()
-# emission, _ = model(audio)
-# print(time.time() - st)
-# # print(features)
-
-# decoder = GreedyCTCDecoder(labels=bundle.get_labels())
-# transcript: str = decoder(emission[0])
-
-
-# print(transcript)
-
-# import jiwer
-# wer = jiwer.wer(answer, [transcript])
-# print(wer)
-
-# exit()
-
-
-
-# # resample
-# print('resample')
-# audio = librosa.resample(audio, orig_sr=sr, target_sr=14000)
-
-# audio = torch.tensor(np.expand_dims(audio, axis=0))
-
-# # denoise
-# # print('denoise')
-# # import torch
-# from torchgating import TorchGating as TG
-# tg = TG(sr=int(sr), nonstationary=True, freq_mask_smooth_hz=4000).to(device)
-# audio = tg(audio)
-
-
-
-

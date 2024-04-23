@@ -1,0 +1,1877 @@
+[
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1440948,
+            "noise_reduction_input_size": 523520,
+            "wave_to_text_input_size": 522880,
+            "audio_sampler_compute_latency": 0.007543492317199707,
+            "noise_reduction_compute_latency": 0.010887885093688964,
+            "wave_to_text_compute_latency": 0.07275302410125732,
+            "accuracy": 0.9608460617305854,
+            "total_profile_time": 3.6574647426605225
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1463922,
+            "noise_reduction_input_size": 531882,
+            "wave_to_text_input_size": 531114,
+            "audio_sampler_compute_latency": 0.007079911231994629,
+            "noise_reduction_compute_latency": 0.012092947959899902,
+            "wave_to_text_compute_latency": 0.08944883346557617,
+            "accuracy": 0.9768630187824462,
+            "total_profile_time": 1.2367773056030273
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1351024,
+            "noise_reduction_input_size": 490920,
+            "wave_to_text_input_size": 490154,
+            "audio_sampler_compute_latency": 0.007726550102233887,
+            "noise_reduction_compute_latency": 0.011512064933776855,
+            "wave_to_text_compute_latency": 0.08529202938079834,
+            "accuracy": 0.9783333278946549,
+            "total_profile_time": 1.191391944885254
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1482472,
+            "noise_reduction_input_size": 538954,
+            "wave_to_text_input_size": 538314,
+            "audio_sampler_compute_latency": 0.007353830337524414,
+            "noise_reduction_compute_latency": 0.011907720565795898,
+            "wave_to_text_compute_latency": 0.08895249366760254,
+            "accuracy": 0.966687144536475,
+            "total_profile_time": 1.2287275791168213
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1252126,
+            "noise_reduction_input_size": 454964,
+            "wave_to_text_input_size": 454198,
+            "audio_sampler_compute_latency": 0.007097029685974121,
+            "noise_reduction_compute_latency": 0.012387537956237793,
+            "wave_to_text_compute_latency": 0.2392277717590332,
+            "accuracy": 0.9913694371721956,
+            "total_profile_time": 2.7569801807403564
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1406576,
+            "noise_reduction_input_size": 511388,
+            "wave_to_text_input_size": 510622,
+            "audio_sampler_compute_latency": 0.006709146499633789,
+            "noise_reduction_compute_latency": 0.010812973976135254,
+            "wave_to_text_compute_latency": 0.038739585876464845,
+            "accuracy": 0.9667588256207182,
+            "total_profile_time": 0.6961627006530762
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1418877,
+            "noise_reduction_input_size": 515821,
+            "wave_to_text_input_size": 514669,
+            "audio_sampler_compute_latency": 0.00753636360168457,
+            "noise_reduction_compute_latency": 0.01160891056060791,
+            "wave_to_text_compute_latency": 0.08129727840423584,
+            "accuracy": 0.9625170962694021,
+            "total_profile_time": 1.1484782695770264
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1445027,
+            "noise_reduction_input_size": 524913,
+            "wave_to_text_input_size": 524017,
+            "audio_sampler_compute_latency": 0.006162786483764648,
+            "noise_reduction_compute_latency": 0.012204194068908691,
+            "wave_to_text_compute_latency": 0.08274919986724853,
+            "accuracy": 0.9904416505480335,
+            "total_profile_time": 1.1581509113311768
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1396495,
+            "noise_reduction_input_size": 507607,
+            "wave_to_text_input_size": 506583,
+            "audio_sampler_compute_latency": 0.006178021430969238,
+            "noise_reduction_compute_latency": 0.012661099433898926,
+            "wave_to_text_compute_latency": 0.08817555904388427,
+            "accuracy": 0.9643125755972528,
+            "total_profile_time": 1.218942642211914
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1425171,
+            "noise_reduction_input_size": 517861,
+            "wave_to_text_input_size": 516837,
+            "audio_sampler_compute_latency": 0.005875587463378906,
+            "noise_reduction_compute_latency": 0.012132358551025391,
+            "wave_to_text_compute_latency": 0.26321218013763426,
+            "accuracy": 0.9661644171695185,
+            "total_profile_time": 2.9935190677642822
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1357612,
+            "noise_reduction_input_size": 493460,
+            "wave_to_text_input_size": 492180,
+            "audio_sampler_compute_latency": 0.006264519691467285,
+            "noise_reduction_compute_latency": 0.011659812927246094,
+            "wave_to_text_compute_latency": 0.042707276344299314,
+            "accuracy": 0.9763403649783001,
+            "total_profile_time": 0.7408077716827393
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1421621,
+            "noise_reduction_input_size": 516559,
+            "wave_to_text_input_size": 515791,
+            "audio_sampler_compute_latency": 0.00518035888671875,
+            "noise_reduction_compute_latency": 0.012790822982788086,
+            "wave_to_text_compute_latency": 0.08656721115112305,
+            "accuracy": 0.9613270150418802,
+            "total_profile_time": 1.1973466873168945
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1369986,
+            "noise_reduction_input_size": 497960,
+            "wave_to_text_input_size": 497320,
+            "audio_sampler_compute_latency": 0.004848504066467285,
+            "noise_reduction_compute_latency": 0.011370658874511719,
+            "wave_to_text_compute_latency": 0.07907519340515137,
+            "accuracy": 1.0384836519305538,
+            "total_profile_time": 1.0953845977783203
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1430833,
+            "noise_reduction_input_size": 519709,
+            "wave_to_text_input_size": 518813,
+            "audio_sampler_compute_latency": 0.004611420631408692,
+            "noise_reduction_compute_latency": 0.01205904483795166,
+            "wave_to_text_compute_latency": 0.08784761428833007,
+            "accuracy": 0.9582611309018907,
+            "total_profile_time": 1.1959600448608398
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1421142,
+            "noise_reduction_input_size": 516516,
+            "wave_to_text_input_size": 515750,
+            "audio_sampler_compute_latency": 0.004720473289489746,
+            "noise_reduction_compute_latency": 0.011518287658691406,
+            "wave_to_text_compute_latency": 0.2502281904220581,
+            "accuracy": 0.9753948291879034,
+            "total_profile_time": 2.8384578227996826
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1357199,
+            "noise_reduction_input_size": 493483,
+            "wave_to_text_input_size": 492203,
+            "audio_sampler_compute_latency": 0.004982972145080566,
+            "noise_reduction_compute_latency": 0.010505890846252442,
+            "wave_to_text_compute_latency": 0.03644101619720459,
+            "accuracy": 0.9708401645756775,
+            "total_profile_time": 0.6536285877227783
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1403829,
+            "noise_reduction_input_size": 510007,
+            "wave_to_text_input_size": 509495,
+            "audio_sampler_compute_latency": 0.004830718040466309,
+            "noise_reduction_compute_latency": 0.011167335510253906,
+            "wave_to_text_compute_latency": 0.08226006031036377,
+            "accuracy": 0.975212642436278,
+            "total_profile_time": 1.1285481452941895
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1463089,
+            "noise_reduction_input_size": 531925,
+            "wave_to_text_input_size": 531159,
+            "audio_sampler_compute_latency": 0.0044926881790161135,
+            "noise_reduction_compute_latency": 0.01162257194519043,
+            "wave_to_text_compute_latency": 0.08499660491943359,
+            "accuracy": 0.9733892961691879,
+            "total_profile_time": 1.1589651107788086
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1383196,
+            "noise_reduction_input_size": 502420,
+            "wave_to_text_input_size": 501396,
+            "audio_sampler_compute_latency": 0.003987789154052734,
+            "noise_reduction_compute_latency": 0.011369061470031739,
+            "wave_to_text_compute_latency": 0.0891230583190918,
+            "accuracy": 0.9654322684026615,
+            "total_profile_time": 1.1922645568847656
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1486868,
+            "noise_reduction_input_size": 540216,
+            "wave_to_text_input_size": 539320,
+            "audio_sampler_compute_latency": 0.004034805297851563,
+            "noise_reduction_compute_latency": 0.010938811302185058,
+            "wave_to_text_compute_latency": 0.25136580467224123,
+            "accuracy": 0.9722998177911173,
+            "total_profile_time": 2.8314671516418457
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1387166,
+            "noise_reduction_input_size": 504344,
+            "wave_to_text_input_size": 503448,
+            "audio_sampler_compute_latency": 0.003677558898925781,
+            "noise_reduction_compute_latency": 0.010909032821655274,
+            "wave_to_text_compute_latency": 0.037921571731567384,
+            "accuracy": 0.9683315147458392,
+            "total_profile_time": 0.6553895473480225
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1360696,
+            "noise_reduction_input_size": 494732,
+            "wave_to_text_input_size": 493196,
+            "audio_sampler_compute_latency": 0.0053408145904541016,
+            "noise_reduction_compute_latency": 0.011294388771057129,
+            "wave_to_text_compute_latency": 0.07851736545562744,
+            "accuracy": 1.0311332559779764,
+            "total_profile_time": 1.0891294479370117
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1436086,
+            "noise_reduction_input_size": 521590,
+            "wave_to_text_input_size": 520822,
+            "audio_sampler_compute_latency": 0.005180788040161133,
+            "noise_reduction_compute_latency": 0.011444091796875,
+            "wave_to_text_compute_latency": 0.0811262845993042,
+            "accuracy": 0.9752384466229076,
+            "total_profile_time": 1.1162099838256836
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1388017,
+            "noise_reduction_input_size": 504309,
+            "wave_to_text_input_size": 503413,
+            "audio_sampler_compute_latency": 0.004179525375366211,
+            "noise_reduction_compute_latency": 0.01125340461730957,
+            "wave_to_text_compute_latency": 0.08781671524047852,
+            "accuracy": 1.0221466208618872,
+            "total_profile_time": 1.1762347221374512
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1430833,
+            "noise_reduction_input_size": 519709,
+            "wave_to_text_input_size": 518823,
+            "audio_sampler_compute_latency": 0.004709792137145996,
+            "noise_reduction_compute_latency": 0.01088414192199707,
+            "wave_to_text_compute_latency": 0.24390225410461425,
+            "accuracy": 0.966022855409453,
+            "total_profile_time": 2.763812780380249
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1353182,
+            "noise_reduction_input_size": 614234,
+            "wave_to_text_input_size": 614008,
+            "audio_sampler_compute_latency": 0.007974815368652344,
+            "noise_reduction_compute_latency": 0.010767841339111328,
+            "wave_to_text_compute_latency": 0.0530738115310669,
+            "accuracy": 0.9658734094955574,
+            "total_profile_time": 0.8439161777496338
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1289281,
+            "noise_reduction_input_size": 585475,
+            "wave_to_text_input_size": 584357,
+            "audio_sampler_compute_latency": 0.008165454864501953,
+            "noise_reduction_compute_latency": 0.01117548942565918,
+            "wave_to_text_compute_latency": 0.10849387645721435,
+            "accuracy": 0.8954471196856335,
+            "total_profile_time": 1.418790578842163
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1425183,
+            "noise_reduction_input_size": 647141,
+            "wave_to_text_input_size": 645861,
+            "audio_sampler_compute_latency": 0.007051301002502441,
+            "noise_reduction_compute_latency": 0.01035757064819336,
+            "wave_to_text_compute_latency": 0.09885056018829345,
+            "accuracy": 0.8701706188791446,
+            "total_profile_time": 1.2985286712646484
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1395117,
+            "noise_reduction_input_size": 633475,
+            "wave_to_text_input_size": 632483,
+            "audio_sampler_compute_latency": 0.007000613212585449,
+            "noise_reduction_compute_latency": 0.011562156677246093,
+            "wave_to_text_compute_latency": 0.11617722511291503,
+            "accuracy": 0.849958048099019,
+            "total_profile_time": 1.4924817085266113
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1332047,
+            "noise_reduction_input_size": 604669,
+            "wave_to_text_input_size": 603805,
+            "audio_sampler_compute_latency": 0.006697702407836914,
+            "noise_reduction_compute_latency": 0.011119508743286132,
+            "wave_to_text_compute_latency": 0.2891979455947876,
+            "accuracy": 0.8687167312392698,
+            "total_profile_time": 3.2417380809783936
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1377415,
+            "noise_reduction_input_size": 625411,
+            "wave_to_text_input_size": 624225,
+            "audio_sampler_compute_latency": 0.0061249971389770504,
+            "noise_reduction_compute_latency": 0.0116410493850708,
+            "wave_to_text_compute_latency": 0.048943519592285156,
+            "accuracy": 0.9436352278072162,
+            "total_profile_time": 0.7983698844909668
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1478491,
+            "noise_reduction_input_size": 671089,
+            "wave_to_text_input_size": 670385,
+            "audio_sampler_compute_latency": 0.006402254104614258,
+            "noise_reduction_compute_latency": 0.0118818998336792,
+            "wave_to_text_compute_latency": 0.10729572772979737,
+            "accuracy": 0.9298339149819688,
+            "total_profile_time": 1.4030051231384277
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1404400,
+            "noise_reduction_input_size": 637498,
+            "wave_to_text_input_size": 636602,
+            "audio_sampler_compute_latency": 0.006057238578796387,
+            "noise_reduction_compute_latency": 0.011904740333557129,
+            "wave_to_text_compute_latency": 0.10614910125732421,
+            "accuracy": 0.7898787695768739,
+            "total_profile_time": 1.385040283203125
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1362454,
+            "noise_reduction_input_size": 619046,
+            "wave_to_text_input_size": 618118,
+            "audio_sampler_compute_latency": 0.0063157320022583004,
+            "noise_reduction_compute_latency": 0.01199803352355957,
+            "wave_to_text_compute_latency": 0.10959653854370117,
+            "accuracy": 0.8668440798927335,
+            "total_profile_time": 1.431894063949585
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1450699,
+            "noise_reduction_input_size": 659093,
+            "wave_to_text_input_size": 658101,
+            "audio_sampler_compute_latency": 0.00503079891204834,
+            "noise_reduction_compute_latency": 0.011293768882751465,
+            "wave_to_text_compute_latency": 0.29061572551727294,
+            "accuracy": 0.8669090519086273,
+            "total_profile_time": 3.2343719005584717
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1404344,
+            "noise_reduction_input_size": 637440,
+            "wave_to_text_input_size": 636544,
+            "audio_sampler_compute_latency": 0.004418706893920899,
+            "noise_reduction_compute_latency": 0.011632966995239257,
+            "wave_to_text_compute_latency": 0.04567711353302002,
+            "accuracy": 0.9109131436259096,
+            "total_profile_time": 0.7377455234527588
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1328093,
+            "noise_reduction_input_size": 603093,
+            "wave_to_text_input_size": 601771,
+            "audio_sampler_compute_latency": 0.006616783142089844,
+            "noise_reduction_compute_latency": 0.0117415189743042,
+            "wave_to_text_compute_latency": 0.10906152725219727,
+            "accuracy": 0.9362770691725653,
+            "total_profile_time": 1.4122881889343262
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1473649,
+            "noise_reduction_input_size": 669507,
+            "wave_to_text_input_size": 668357,
+            "audio_sampler_compute_latency": 0.006742787361145019,
+            "noise_reduction_compute_latency": 0.011086153984069824,
+            "wave_to_text_compute_latency": 0.09356441497802734,
+            "accuracy": 0.9306201966129359,
+            "total_profile_time": 1.2554786205291748
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1337369,
+            "noise_reduction_input_size": 607097,
+            "wave_to_text_input_size": 605881,
+            "audio_sampler_compute_latency": 0.004511427879333496,
+            "noise_reduction_compute_latency": 0.012601447105407716,
+            "wave_to_text_compute_latency": 0.11158320903778077,
+            "accuracy": 0.9329623271988348,
+            "total_profile_time": 1.4327194690704346
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1442792,
+            "noise_reduction_input_size": 655130,
+            "wave_to_text_input_size": 654032,
+            "audio_sampler_compute_latency": 0.0052689313888549805,
+            "noise_reduction_compute_latency": 0.011517810821533202,
+            "wave_to_text_compute_latency": 0.26886160373687745,
+            "accuracy": 0.8334462212823045,
+            "total_profile_time": 3.0265719890594482
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1482474,
+            "noise_reduction_input_size": 673524,
+            "wave_to_text_input_size": 672458,
+            "audio_sampler_compute_latency": 0.004679417610168457,
+            "noise_reduction_compute_latency": 0.012037968635559082,
+            "wave_to_text_compute_latency": 0.04861114025115967,
+            "accuracy": 0.9249168752732075,
+            "total_profile_time": 0.7898595333099365
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1421140,
+            "noise_reduction_input_size": 645478,
+            "wave_to_text_input_size": 644774,
+            "audio_sampler_compute_latency": 0.0038871526718139648,
+            "noise_reduction_compute_latency": 0.01209120750427246,
+            "wave_to_text_compute_latency": 0.1022104024887085,
+            "accuracy": 0.9327871273929504,
+            "total_profile_time": 1.3369183540344238
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1301163,
+            "noise_reduction_input_size": 591053,
+            "wave_to_text_input_size": 589453,
+            "audio_sampler_compute_latency": 0.004360342025756836,
+            "noise_reduction_compute_latency": 0.012434673309326173,
+            "wave_to_text_compute_latency": 0.10200362205505371,
+            "accuracy": 0.8583920909607704,
+            "total_profile_time": 1.3269834518432617
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1312226,
+            "noise_reduction_input_size": 595880,
+            "wave_to_text_input_size": 594598,
+            "audio_sampler_compute_latency": 0.004838085174560547,
+            "noise_reduction_compute_latency": 0.011990022659301759,
+            "wave_to_text_compute_latency": 0.1093360185623169,
+            "accuracy": 0.8564580293671831,
+            "total_profile_time": 1.4054300785064697
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1388017,
+            "noise_reduction_input_size": 630239,
+            "wave_to_text_input_size": 629365,
+            "audio_sampler_compute_latency": 0.005453038215637207,
+            "noise_reduction_compute_latency": 0.011642837524414062,
+            "wave_to_text_compute_latency": 0.2727747201919556,
+            "accuracy": 0.7964514980789041,
+            "total_profile_time": 3.0672709941864014
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1465643,
+            "noise_reduction_input_size": 665437,
+            "wave_to_text_input_size": 664191,
+            "audio_sampler_compute_latency": 0.00486295223236084,
+            "noise_reduction_compute_latency": 0.011360692977905273,
+            "wave_to_text_compute_latency": 0.04675250053405762,
+            "accuracy": 0.9216936204679035,
+            "total_profile_time": 0.7777504920959473
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1402580,
+            "noise_reduction_input_size": 636640,
+            "wave_to_text_input_size": 635530,
+            "audio_sampler_compute_latency": 0.0037308931350708008,
+            "noise_reduction_compute_latency": 0.011950516700744629,
+            "wave_to_text_compute_latency": 0.09818520545959472,
+            "accuracy": 0.9066523413901042,
+            "total_profile_time": 1.2783546447753906
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1423751,
+            "noise_reduction_input_size": 646243,
+            "wave_to_text_input_size": 645753,
+            "audio_sampler_compute_latency": 0.004581141471862793,
+            "noise_reduction_compute_latency": 0.010999631881713868,
+            "wave_to_text_compute_latency": 0.10181758403778077,
+            "accuracy": 0.9253739931612743,
+            "total_profile_time": 1.3116188049316406
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1435630,
+            "noise_reduction_input_size": 651814,
+            "wave_to_text_input_size": 650854,
+            "audio_sampler_compute_latency": 0.004625964164733887,
+            "noise_reduction_compute_latency": 0.01201634407043457,
+            "wave_to_text_compute_latency": 0.11143615245819091,
+            "accuracy": 0.8720337476290785,
+            "total_profile_time": 1.4252605438232422
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1431760,
+            "noise_reduction_input_size": 650310,
+            "wave_to_text_input_size": 648904,
+            "audio_sampler_compute_latency": 0.004745030403137207,
+            "noise_reduction_compute_latency": 0.011670684814453125,
+            "wave_to_text_compute_latency": 0.2774487018585205,
+            "accuracy": 0.6902573125283297,
+            "total_profile_time": 3.1024937629699707
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1391645,
+            "noise_reduction_input_size": 757851,
+            "wave_to_text_input_size": 757467,
+            "audio_sampler_compute_latency": 0.004430413246154785,
+            "noise_reduction_compute_latency": 0.013658761978149414,
+            "wave_to_text_compute_latency": 0.06295332908630372,
+            "accuracy": 0.8582235794307629,
+            "total_profile_time": 0.9417734146118164
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1347922,
+            "noise_reduction_input_size": 734106,
+            "wave_to_text_input_size": 733850,
+            "audio_sampler_compute_latency": 0.004486799240112305,
+            "noise_reduction_compute_latency": 0.012585783004760742,
+            "wave_to_text_compute_latency": 0.12455766201019287,
+            "accuracy": 0.803464081403931,
+            "total_profile_time": 1.5540211200714111
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1373511,
+            "noise_reduction_input_size": 747865,
+            "wave_to_text_input_size": 747161,
+            "audio_sampler_compute_latency": 0.003806591033935547,
+            "noise_reduction_compute_latency": 0.012235188484191894,
+            "wave_to_text_compute_latency": 0.12183327674865722,
+            "accuracy": 0.6075897302248977,
+            "total_profile_time": 1.514751672744751
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1428645,
+            "noise_reduction_input_size": 777965,
+            "wave_to_text_input_size": 776877,
+            "audio_sampler_compute_latency": 0.0040405035018920895,
+            "noise_reduction_compute_latency": 0.01280806064605713,
+            "wave_to_text_compute_latency": 0.13365848064422609,
+            "accuracy": 0.440187294663221,
+            "total_profile_time": 1.6488456726074219
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1445459,
+            "noise_reduction_input_size": 787301,
+            "wave_to_text_input_size": 786161,
+            "audio_sampler_compute_latency": 0.0038927793502807617,
+            "noise_reduction_compute_latency": 0.01320192813873291,
+            "wave_to_text_compute_latency": 0.3210351228713989,
+            "accuracy": 0.5273066118418558,
+            "total_profile_time": 3.547304630279541
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1413208,
+            "noise_reduction_input_size": 769642,
+            "wave_to_text_input_size": 768684,
+            "audio_sampler_compute_latency": 0.003569340705871582,
+            "noise_reduction_compute_latency": 0.01352088451385498,
+            "wave_to_text_compute_latency": 0.06057436466217041,
+            "accuracy": 0.7573436123438112,
+            "total_profile_time": 0.9112410545349121
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1390741,
+            "noise_reduction_input_size": 757509,
+            "wave_to_text_input_size": 756419,
+            "audio_sampler_compute_latency": 0.0037721872329711916,
+            "noise_reduction_compute_latency": 0.012740468978881836,
+            "wave_to_text_compute_latency": 0.12598843574523927,
+            "accuracy": 0.8209556177246113,
+            "total_profile_time": 1.5640249252319336
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1431770,
+            "noise_reduction_input_size": 779592,
+            "wave_to_text_input_size": 778952,
+            "audio_sampler_compute_latency": 0.004611492156982422,
+            "noise_reduction_compute_latency": 0.01263120174407959,
+            "wave_to_text_compute_latency": 0.12853403091430665,
+            "accuracy": 0.6161663572113754,
+            "total_profile_time": 1.614961862564087
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1332049,
+            "noise_reduction_input_size": 725469,
+            "wave_to_text_input_size": 724637,
+            "audio_sampler_compute_latency": 0.004165458679199219,
+            "noise_reduction_compute_latency": 0.012834501266479493,
+            "wave_to_text_compute_latency": 0.13289687633514405,
+            "accuracy": 0.3628003672964557,
+            "total_profile_time": 1.6372301578521729
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1395560,
+            "noise_reduction_input_size": 760026,
+            "wave_to_text_input_size": 759450,
+            "audio_sampler_compute_latency": 0.004014158248901367,
+            "noise_reduction_compute_latency": 0.01302950382232666,
+            "wave_to_text_compute_latency": 0.32081098556518556,
+            "accuracy": 0.41335342740134084,
+            "total_profile_time": 3.5464823246002197
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1462127,
+            "noise_reduction_input_size": 796171,
+            "wave_to_text_input_size": 795275,
+            "audio_sampler_compute_latency": 0.003137969970703125,
+            "noise_reduction_compute_latency": 0.012382102012634278,
+            "wave_to_text_compute_latency": 0.05600423812866211,
+            "accuracy": 0.8287925205130557,
+            "total_profile_time": 0.846264123916626
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1436645,
+            "noise_reduction_input_size": 782499,
+            "wave_to_text_input_size": 782061,
+            "audio_sampler_compute_latency": 0.0036725282669067385,
+            "noise_reduction_compute_latency": 0.012662315368652343,
+            "wave_to_text_compute_latency": 0.12398467063903809,
+            "accuracy": 0.8276233601690297,
+            "total_profile_time": 1.5430138111114502
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1422946,
+            "noise_reduction_input_size": 774808,
+            "wave_to_text_input_size": 773838,
+            "audio_sampler_compute_latency": 0.003381943702697754,
+            "noise_reduction_compute_latency": 0.012305855751037598,
+            "wave_to_text_compute_latency": 0.1178166151046753,
+            "accuracy": 0.5929070847604205,
+            "total_profile_time": 1.4708142280578613
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1482508,
+            "noise_reduction_input_size": 807468,
+            "wave_to_text_input_size": 806636,
+            "audio_sampler_compute_latency": 0.004002523422241211,
+            "noise_reduction_compute_latency": 0.012345623970031739,
+            "wave_to_text_compute_latency": 0.13286139965057372,
+            "accuracy": 0.4790184804598964,
+            "total_profile_time": 1.635890007019043
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1401306,
+            "noise_reduction_input_size": 763250,
+            "wave_to_text_input_size": 762534,
+            "audio_sampler_compute_latency": 0.003499746322631836,
+            "noise_reduction_compute_latency": 0.01348273754119873,
+            "wave_to_text_compute_latency": 0.3193225860595703,
+            "accuracy": 0.3357609661792459,
+            "total_profile_time": 3.5383872985839844
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1425545,
+            "noise_reduction_input_size": 776353,
+            "wave_to_text_input_size": 775839,
+            "audio_sampler_compute_latency": 0.003646111488342285,
+            "noise_reduction_compute_latency": 0.0137861967086792,
+            "wave_to_text_compute_latency": 0.0587519645690918,
+            "accuracy": 0.6412960624701094,
+            "total_profile_time": 0.8967359066009521
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1392872,
+            "noise_reduction_input_size": 758402,
+            "wave_to_text_input_size": 757378,
+            "audio_sampler_compute_latency": 0.0037909507751464843,
+            "noise_reduction_compute_latency": 0.013214993476867675,
+            "wave_to_text_compute_latency": 0.11886920928955078,
+            "accuracy": 0.7534156792871287,
+            "total_profile_time": 1.4992125034332275
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1482474,
+            "noise_reduction_input_size": 807434,
+            "wave_to_text_input_size": 806602,
+            "audio_sampler_compute_latency": 0.00334019660949707,
+            "noise_reduction_compute_latency": 0.013209867477416991,
+            "wave_to_text_compute_latency": 0.12549610137939454,
+            "accuracy": 0.7523390190071826,
+            "total_profile_time": 1.5652422904968262
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1455485,
+            "noise_reduction_input_size": 792635,
+            "wave_to_text_input_size": 792175,
+            "audio_sampler_compute_latency": 0.003449559211730957,
+            "noise_reduction_compute_latency": 0.012752985954284668,
+            "wave_to_text_compute_latency": 0.13278915882110595,
+            "accuracy": 0.3930680718469387,
+            "total_profile_time": 1.634166955947876
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1411900,
+            "noise_reduction_input_size": 769022,
+            "wave_to_text_input_size": 768702,
+            "audio_sampler_compute_latency": 0.003342723846435547,
+            "noise_reduction_compute_latency": 0.013250946998596191,
+            "wave_to_text_compute_latency": 0.3278107881546021,
+            "accuracy": 0.5009220404886383,
+            "total_profile_time": 3.610708236694336
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1389416,
+            "noise_reduction_input_size": 756546,
+            "wave_to_text_input_size": 756418,
+            "audio_sampler_compute_latency": 0.004055142402648926,
+            "noise_reduction_compute_latency": 0.012997889518737793,
+            "wave_to_text_compute_latency": 0.05849173069000244,
+            "accuracy": 0.7482391537850839,
+            "total_profile_time": 0.9033293724060059
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1238594,
+            "noise_reduction_input_size": 674616,
+            "wave_to_text_input_size": 673474,
+            "audio_sampler_compute_latency": 0.00433342456817627,
+            "noise_reduction_compute_latency": 0.011671829223632812,
+            "wave_to_text_compute_latency": 0.12484977245330811,
+            "accuracy": 0.7958563869575348,
+            "total_profile_time": 1.5720276832580566
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1395119,
+            "noise_reduction_input_size": 759715,
+            "wave_to_text_input_size": 759457,
+            "audio_sampler_compute_latency": 0.0028566598892211916,
+            "noise_reduction_compute_latency": 0.012125611305236816,
+            "wave_to_text_compute_latency": 0.12300832271575927,
+            "accuracy": 0.6955547824190564,
+            "total_profile_time": 1.5237112045288086
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1389870,
+            "noise_reduction_input_size": 756878,
+            "wave_to_text_input_size": 756440,
+            "audio_sampler_compute_latency": 0.0030434370040893556,
+            "noise_reduction_compute_latency": 0.011747932434082032,
+            "wave_to_text_compute_latency": 0.13216691017150878,
+            "accuracy": 0.28630755351866083,
+            "total_profile_time": 1.612806797027588
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1399529,
+            "noise_reduction_input_size": 762269,
+            "wave_to_text_input_size": 761511,
+            "audio_sampler_compute_latency": 0.0028118610382080076,
+            "noise_reduction_compute_latency": 0.012743306159973145,
+            "wave_to_text_compute_latency": 0.3197043418884277,
+            "accuracy": 0.5968249770666291,
+            "total_profile_time": 3.5192365646362305
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1412340,
+            "noise_reduction_input_size": 897016,
+            "wave_to_text_input_size": 896694,
+            "audio_sampler_compute_latency": 0.005605530738830566,
+            "noise_reduction_compute_latency": 0.014690494537353516,
+            "wave_to_text_compute_latency": 0.07338166236877441,
+            "accuracy": 0.5433884589326663,
+            "total_profile_time": 1.0791821479797363
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1425171,
+            "noise_reduction_input_size": 905221,
+            "wave_to_text_input_size": 904933,
+            "audio_sampler_compute_latency": 0.005204534530639649,
+            "noise_reduction_compute_latency": 0.013133931159973144,
+            "wave_to_text_compute_latency": 0.1472843647003174,
+            "accuracy": 0.7982005704803836,
+            "total_profile_time": 1.8012547492980957
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1395168,
+            "noise_reduction_input_size": 886164,
+            "wave_to_text_input_size": 885460,
+            "audio_sampler_compute_latency": 0.005192327499389649,
+            "noise_reduction_compute_latency": 0.012696933746337891,
+            "wave_to_text_compute_latency": 0.1498206377029419,
+            "accuracy": 0.4609127077820463,
+            "total_profile_time": 1.8317513465881348
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1437530,
+            "noise_reduction_input_size": 913058,
+            "wave_to_text_input_size": 912100,
+            "audio_sampler_compute_latency": 0.005023765563964844,
+            "noise_reduction_compute_latency": 0.013277029991149903,
+            "wave_to_text_compute_latency": 0.15431530475616456,
+            "accuracy": 0.44414831001071714,
+            "total_profile_time": 1.8690385818481445
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1461280,
+            "noise_reduction_input_size": 928052,
+            "wave_to_text_input_size": 927402,
+            "audio_sampler_compute_latency": 0.004728984832763672,
+            "noise_reduction_compute_latency": 0.012700271606445313,
+            "wave_to_text_compute_latency": 0.3989232540130615,
+            "accuracy": 0.4356688047724632,
+            "total_profile_time": 4.331366777420044
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1445459,
+            "noise_reduction_input_size": 918183,
+            "wave_to_text_input_size": 917233,
+            "audio_sampler_compute_latency": 0.004317831993103027,
+            "noise_reduction_compute_latency": 0.01300048828125,
+            "wave_to_text_compute_latency": 0.06914427280426025,
+            "accuracy": 0.44144494888672686,
+            "total_profile_time": 1.002485990524292
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1337369,
+            "noise_reduction_input_size": 849495,
+            "wave_to_text_input_size": 848579,
+            "audio_sampler_compute_latency": 0.004650712013244629,
+            "noise_reduction_compute_latency": 0.012875819206237793,
+            "wave_to_text_compute_latency": 0.14526240825653075,
+            "accuracy": 0.7582239088436714,
+            "total_profile_time": 1.7793059349060059
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1327236,
+            "noise_reduction_input_size": 843098,
+            "wave_to_text_input_size": 842436,
+            "audio_sampler_compute_latency": 0.003954792022705078,
+            "noise_reduction_compute_latency": 0.013116812705993653,
+            "wave_to_text_compute_latency": 0.1597810745239258,
+            "accuracy": 0.49095888523974407,
+            "total_profile_time": 1.9184613227844238
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1436529,
+            "noise_reduction_input_size": 912483,
+            "wave_to_text_input_size": 911991,
+            "audio_sampler_compute_latency": 0.004943728446960449,
+            "noise_reduction_compute_latency": 0.012708449363708496,
+            "wave_to_text_compute_latency": 0.15695815086364745,
+            "accuracy": 0.36724807662051434,
+            "total_profile_time": 1.892751932144165
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1252126,
+            "noise_reduction_input_size": 795284,
+            "wave_to_text_input_size": 795200,
+            "audio_sampler_compute_latency": 0.004472112655639649,
+            "noise_reduction_compute_latency": 0.013194847106933593,
+            "wave_to_text_compute_latency": 0.39258198738098143,
+            "accuracy": 0.38625301055337136,
+            "total_profile_time": 4.273152828216553
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1386331,
+            "noise_reduction_input_size": 880545,
+            "wave_to_text_input_size": 880323,
+            "audio_sampler_compute_latency": 0.004124903678894043,
+            "noise_reduction_compute_latency": 0.01334228515625,
+            "wave_to_text_compute_latency": 0.0646289587020874,
+            "accuracy": 0.6500730848727364,
+            "total_profile_time": 0.9475488662719727
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1305126,
+            "noise_reduction_input_size": 828966,
+            "wave_to_text_input_size": 828048,
+            "audio_sampler_compute_latency": 0.004993510246276855,
+            "noise_reduction_compute_latency": 0.012823057174682618,
+            "wave_to_text_compute_latency": 0.1453721523284912,
+            "accuracy": 0.6882925923078257,
+            "total_profile_time": 1.7763304710388184
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1375767,
+            "noise_reduction_input_size": 873837,
+            "wave_to_text_input_size": 873165,
+            "audio_sampler_compute_latency": 0.004534387588500976,
+            "noise_reduction_compute_latency": 0.01352696418762207,
+            "wave_to_text_compute_latency": 0.14743363857269287,
+            "accuracy": 0.3043958062704731,
+            "total_profile_time": 1.7996745109558105
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1420226,
+            "noise_reduction_input_size": 902088,
+            "wave_to_text_input_size": 901768,
+            "audio_sampler_compute_latency": 0.0034668684005737306,
+            "noise_reduction_compute_latency": 0.013160085678100586,
+            "wave_to_text_compute_latency": 0.15570213794708251,
+            "accuracy": 0.19144292412660263,
+            "total_profile_time": 1.8670876026153564
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1482518,
+            "noise_reduction_input_size": 941708,
+            "wave_to_text_input_size": 940780,
+            "audio_sampler_compute_latency": 0.0033994197845458986,
+            "noise_reduction_compute_latency": 0.01429603099822998,
+            "wave_to_text_compute_latency": 0.41719832420349123,
+            "accuracy": 0.389100088096955,
+            "total_profile_time": 4.521942377090454
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1402590,
+            "noise_reduction_input_size": 890890,
+            "wave_to_text_input_size": 890506,
+            "audio_sampler_compute_latency": 0.0034341335296630858,
+            "noise_reduction_compute_latency": 0.014582014083862305,
+            "wave_to_text_compute_latency": 0.062043166160583495,
+            "accuracy": 0.5620990350130548,
+            "total_profile_time": 0.9345850944519043
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1424689,
+            "noise_reduction_input_size": 904857,
+            "wave_to_text_input_size": 903853,
+            "audio_sampler_compute_latency": 0.003713059425354004,
+            "noise_reduction_compute_latency": 0.01365039348602295,
+            "wave_to_text_compute_latency": 0.13965246677398682,
+            "accuracy": 0.6658308415910906,
+            "total_profile_time": 1.7203600406646729
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1422946,
+            "noise_reduction_input_size": 903758,
+            "wave_to_text_input_size": 902872,
+            "audio_sampler_compute_latency": 0.00435490608215332,
+            "noise_reduction_compute_latency": 0.013381028175354004,
+            "wave_to_text_compute_latency": 0.1707409381866455,
+            "accuracy": 0.2905655532837438,
+            "total_profile_time": 2.0356643199920654
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1329749,
+            "noise_reduction_input_size": 844573,
+            "wave_to_text_input_size": 844359,
+            "audio_sampler_compute_latency": 0.0032399892807006836,
+            "noise_reduction_compute_latency": 0.012523651123046875,
+            "wave_to_text_compute_latency": 0.15464630126953124,
+            "accuracy": 0.5943275807300198,
+            "total_profile_time": 1.8525514602661133
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1242090,
+            "noise_reduction_input_size": 788984,
+            "wave_to_text_input_size": 788120,
+            "audio_sampler_compute_latency": 0.0033285856246948243,
+            "noise_reduction_compute_latency": 0.012648773193359376,
+            "wave_to_text_compute_latency": 0.370548415184021,
+            "accuracy": 0.33450169263398316,
+            "total_profile_time": 4.034192085266113
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1481546,
+            "noise_reduction_input_size": 940986,
+            "wave_to_text_input_size": 940698,
+            "audio_sampler_compute_latency": 0.0035042047500610353,
+            "noise_reduction_compute_latency": 0.012732648849487304,
+            "wave_to_text_compute_latency": 0.06454482078552246,
+            "accuracy": 0.45520432518341,
+            "total_profile_time": 0.9450876712799072
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1392870,
+            "noise_reduction_input_size": 884630,
+            "wave_to_text_input_size": 884344,
+            "audio_sampler_compute_latency": 0.003635740280151367,
+            "noise_reduction_compute_latency": 0.012483334541320801,
+            "wave_to_text_compute_latency": 0.13247175216674806,
+            "accuracy": 0.7319041040031835,
+            "total_profile_time": 1.6259195804595947
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1332049,
+            "noise_reduction_input_size": 846119,
+            "wave_to_text_input_size": 845469,
+            "audio_sampler_compute_latency": 0.003182053565979004,
+            "noise_reduction_compute_latency": 0.012746715545654297,
+            "wave_to_text_compute_latency": 0.14529752731323242,
+            "accuracy": 0.32764084003132815,
+            "total_profile_time": 1.7582643032073975
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1383263,
+            "noise_reduction_input_size": 878647,
+            "wave_to_text_input_size": 878305,
+            "audio_sampler_compute_latency": 0.0033168792724609375,
+            "noise_reduction_compute_latency": 0.01405031681060791,
+            "wave_to_text_compute_latency": 0.1376652479171753,
+            "accuracy": 0.29986388173274875,
+            "total_profile_time": 1.6847941875457764
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1420238,
+            "noise_reduction_input_size": 902088,
+            "wave_to_text_input_size": 901768,
+            "audio_sampler_compute_latency": 0.0034164667129516603,
+            "noise_reduction_compute_latency": 0.01273045539855957,
+            "wave_to_text_compute_latency": 0.39999268054962156,
+            "accuracy": 0.2814769584416528,
+            "total_profile_time": 4.328911781311035
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1401688,
+            "noise_reduction_input_size": 1018238,
+            "wave_to_text_input_size": 1016436,
+            "audio_sampler_compute_latency": 0.008015608787536621,
+            "noise_reduction_compute_latency": 0.013648557662963866,
+            "wave_to_text_compute_latency": 0.07308785915374756,
+            "accuracy": 0.43507085586603533,
+            "total_profile_time": 1.0820777416229248
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1412318,
+            "noise_reduction_input_size": 1025954,
+            "wave_to_text_input_size": 1024674,
+            "audio_sampler_compute_latency": 0.0077757596969604496,
+            "noise_reduction_compute_latency": 0.013218283653259277,
+            "wave_to_text_compute_latency": 0.1541074514389038,
+            "accuracy": 0.7887650494649918,
+            "total_profile_time": 1.8971760272979736
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1389870,
+            "noise_reduction_input_size": 1009368,
+            "wave_to_text_input_size": 1008334,
+            "audio_sampler_compute_latency": 0.007046747207641602,
+            "noise_reduction_compute_latency": 0.013099741935729981,
+            "wave_to_text_compute_latency": 0.14772500991821289,
+            "accuracy": 0.4083434308640797,
+            "total_profile_time": 1.8150041103363037
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 324171,
+            "noise_reduction_input_size": 235989,
+            "wave_to_text_input_size": 234965,
+            "audio_sampler_compute_latency": 0.005592751502990723,
+            "noise_reduction_compute_latency": 0.012877988815307616,
+            "wave_to_text_compute_latency": 0.15507543087005615,
+            "accuracy": 0.43077368188757426,
+            "total_profile_time": 1.8729112148284912
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1437046,
+            "noise_reduction_input_size": 1043904,
+            "wave_to_text_input_size": 1042114,
+            "audio_sampler_compute_latency": 0.007117700576782226,
+            "noise_reduction_compute_latency": 0.014274954795837402,
+            "wave_to_text_compute_latency": 0.4245510816574097,
+            "accuracy": 0.40872973309029037,
+            "total_profile_time": 4.626102924346924
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1426914,
+            "noise_reduction_input_size": 1036228,
+            "wave_to_text_input_size": 1034948,
+            "audio_sampler_compute_latency": 0.006507968902587891,
+            "noise_reduction_compute_latency": 0.013149785995483398,
+            "wave_to_text_compute_latency": 0.06829206943511963,
+            "accuracy": 0.6578175517172361,
+            "total_profile_time": 1.0104777812957764
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1350109,
+            "noise_reduction_input_size": 981139,
+            "wave_to_text_input_size": 979603,
+            "audio_sampler_compute_latency": 0.0069070100784301754,
+            "noise_reduction_compute_latency": 0.013013410568237304,
+            "wave_to_text_compute_latency": 0.15191419124603273,
+            "accuracy": 0.6225181478470951,
+            "total_profile_time": 1.8777203559875488
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1489518,
+            "noise_reduction_input_size": 1082312,
+            "wave_to_text_input_size": 1081022,
+            "audio_sampler_compute_latency": 0.006254434585571289,
+            "noise_reduction_compute_latency": 0.013347482681274414,
+            "wave_to_text_compute_latency": 0.15637006759643554,
+            "accuracy": 0.423897575993099,
+            "total_profile_time": 1.9046118259429932
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1332049,
+            "noise_reduction_input_size": 967069,
+            "wave_to_text_input_size": 966301,
+            "audio_sampler_compute_latency": 0.006167006492614746,
+            "noise_reduction_compute_latency": 0.013626289367675782,
+            "wave_to_text_compute_latency": 0.16467695236206054,
+            "accuracy": 0.45054299086658894,
+            "total_profile_time": 1.9910058975219727
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1351026,
+            "noise_reduction_input_size": 981162,
+            "wave_to_text_input_size": 979626,
+            "audio_sampler_compute_latency": 0.006113815307617188,
+            "noise_reduction_compute_latency": 0.012908649444580079,
+            "wave_to_text_compute_latency": 0.43661234378814695,
+            "accuracy": 0.3348900372571453,
+            "total_profile_time": 4.735722780227661
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1367742,
+            "noise_reduction_input_size": 993922,
+            "wave_to_text_input_size": 991874,
+            "audio_sampler_compute_latency": 0.005695152282714844,
+            "noise_reduction_compute_latency": 0.013319444656372071,
+            "wave_to_text_compute_latency": 0.07062711715698242,
+            "accuracy": 0.44293333055996353,
+            "total_profile_time": 1.0312321186065674
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1416769,
+            "noise_reduction_input_size": 1028557,
+            "wave_to_text_input_size": 1027789,
+            "audio_sampler_compute_latency": 0.005385088920593262,
+            "noise_reduction_compute_latency": 0.013731288909912109,
+            "wave_to_text_compute_latency": 0.1516770601272583,
+            "accuracy": 0.7125907919212101,
+            "total_profile_time": 1.8667590618133545
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1377415,
+            "noise_reduction_input_size": 1000291,
+            "wave_to_text_input_size": 999011,
+            "audio_sampler_compute_latency": 0.004592204093933105,
+            "noise_reduction_compute_latency": 0.013601565361022949,
+            "wave_to_text_compute_latency": 0.15176408290863036,
+            "accuracy": 0.2544071861715145,
+            "total_profile_time": 1.844865322113037
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1332049,
+            "noise_reduction_input_size": 967079,
+            "wave_to_text_input_size": 966301,
+            "audio_sampler_compute_latency": 0.0048809051513671875,
+            "noise_reduction_compute_latency": 0.013131475448608399,
+            "wave_to_text_compute_latency": 0.18160784244537354,
+            "accuracy": 0.3797235988060224,
+            "total_profile_time": 2.151740312576294
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1420787,
+            "noise_reduction_input_size": 1032447,
+            "wave_to_text_input_size": 1030911,
+            "audio_sampler_compute_latency": 0.005829644203186035,
+            "noise_reduction_compute_latency": 0.013438081741333008,
+            "wave_to_text_compute_latency": 0.443234920501709,
+            "accuracy": 0.2986872584583038,
+            "total_profile_time": 4.795794725418091
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1462595,
+            "noise_reduction_input_size": 1061789,
+            "wave_to_text_input_size": 1060509,
+            "audio_sampler_compute_latency": 0.004620504379272461,
+            "noise_reduction_compute_latency": 0.013204717636108398,
+            "wave_to_text_compute_latency": 0.0705061674118042,
+            "accuracy": 0.5330063699736989,
+            "total_profile_time": 1.0198726654052734
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1425183,
+            "noise_reduction_input_size": 1034991,
+            "wave_to_text_input_size": 1033957,
+            "audio_sampler_compute_latency": 0.005855035781860351,
+            "noise_reduction_compute_latency": 0.012934303283691407,
+            "wave_to_text_compute_latency": 0.1525777816772461,
+            "accuracy": 0.6164268582476566,
+            "total_profile_time": 1.8622159957885742
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 441948,
+            "noise_reduction_input_size": 321784,
+            "wave_to_text_input_size": 319992,
+            "audio_sampler_compute_latency": 0.005724787712097168,
+            "noise_reduction_compute_latency": 0.013463544845581054,
+            "wave_to_text_compute_latency": 0.14253549575805663,
+            "accuracy": 0.29164278310619773,
+            "total_profile_time": 1.754333257675171
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1387562,
+            "noise_reduction_input_size": 1007974,
+            "wave_to_text_input_size": 1006182,
+            "audio_sampler_compute_latency": 0.0043401956558227536,
+            "noise_reduction_compute_latency": 0.013182425498962402,
+            "wave_to_text_compute_latency": 0.16341471672058105,
+            "accuracy": 0.23618588734045556,
+            "total_profile_time": 1.9537625312805176
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1420777,
+            "noise_reduction_input_size": 1032437,
+            "wave_to_text_input_size": 1030901,
+            "audio_sampler_compute_latency": 0.004784679412841797,
+            "noise_reduction_compute_latency": 0.012738204002380371,
+            "wave_to_text_compute_latency": 0.40935943126678465,
+            "accuracy": 0.4598044854538851,
+            "total_profile_time": 4.4289586544036865
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1373511,
+            "noise_reduction_input_size": 997795,
+            "wave_to_text_input_size": 995993,
+            "audio_sampler_compute_latency": 0.0050337791442871095,
+            "noise_reduction_compute_latency": 0.012545132637023925,
+            "wave_to_text_compute_latency": 0.06672894954681396,
+            "accuracy": 0.5829048983676968,
+            "total_profile_time": 0.9703032970428467
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1445469,
+            "noise_reduction_input_size": 1050353,
+            "wave_to_text_input_size": 1048295,
+            "audio_sampler_compute_latency": 0.006602859497070313,
+            "noise_reduction_compute_latency": 0.012594962120056152,
+            "wave_to_text_compute_latency": 0.15236275196075438,
+            "accuracy": 0.6357707562088375,
+            "total_profile_time": 1.8649392127990723
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1403831,
+            "noise_reduction_input_size": 1019457,
+            "wave_to_text_input_size": 1018423,
+            "audio_sampler_compute_latency": 0.0049716711044311525,
+            "noise_reduction_compute_latency": 0.01374647617340088,
+            "wave_to_text_compute_latency": 0.15194494724273683,
+            "accuracy": 0.3362078288340341,
+            "total_profile_time": 1.8529162406921387
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1439649,
+            "noise_reduction_input_size": 1045157,
+            "wave_to_text_input_size": 1044123,
+            "audio_sampler_compute_latency": 0.004395914077758789,
+            "noise_reduction_compute_latency": 0.013874435424804687,
+            "wave_to_text_compute_latency": 0.16614749431610107,
+            "accuracy": 0.40760877946769725,
+            "total_profile_time": 1.9906208515167236
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1422946,
+            "noise_reduction_input_size": 1033678,
+            "wave_to_text_input_size": 1031896,
+            "audio_sampler_compute_latency": 0.004671525955200195,
+            "noise_reduction_compute_latency": 0.013794922828674316,
+            "wave_to_text_compute_latency": 0.44254236221313475,
+            "accuracy": 0.4451946329579636,
+            "total_profile_time": 4.785217761993408
+        }
+    }
+]

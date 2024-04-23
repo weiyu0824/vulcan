@@ -18,3 +18,8 @@
     sudo bash script/install_docker_gpu.sh
     sudo bash script/enable_docker_rootless.sh
     ```
+4. Environments: 
+    - conda
+        ```
+        conda create -n vulcan python=3.10
+        ```

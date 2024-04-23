@@ -1,4 +1,6 @@
-transformers
 librosa
 torchgating
 jiwer
+tqdm
+torch
+torchaudio
