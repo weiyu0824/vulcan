@@ -7,7 +7,7 @@ import random
 import tqdm
 import pandas as pd
 import numpy as np
-from op import AudioSampler, NoiseReduction, WaveToText
+from op import AudioSampler, NoiseReduction, WaveToText, Decoder
 
 
 knobs = [
@@ -53,6 +53,7 @@ def profile_pipeline():
     audio_sampler = AudioSampler(pipe_args)
     noise_reduction = NoiseReduction(pipe_args)
     wave_to_text = WaveToText(pipe_args)
+    decoder = Decoder(pipe_args)
 
 
     print('start profile this pipeline ...', pipe_args)
@@ -73,13 +74,16 @@ def profile_pipeline():
         batch_data = audio_sampler.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
         batch_data = noise_reduction.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
         batch_data = wave_to_text.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+        batch_data = decoder.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
 
     profile_result['audio_sampler_input_size'] = audio_sampler.get_input_size()
     profile_result['noise_reduction_input_size'] = noise_reduction.get_input_size()
     profile_result['wave_to_text_input_size'] = wave_to_text.get_input_size()
+    profile_result['decoder_input_size'] = decoder.get_input_size()
     profile_result['audio_sampler_compute_latency'] = audio_sampler.get_compute_latency()
     profile_result['noise_reduction_compute_latency'] = noise_reduction.get_compute_latency()
     profile_result['wave_to_text_compute_latency'] = wave_to_text.get_compute_latency()
+    profile_result['decoder_computer_latency'] = decoder.get_compute_latency()
     
     # print(profile_result)
 
@@ -99,13 +103,14 @@ def profile_pipeline():
         batch_data = audio_sampler.profile(batch_data)
         batch_data = noise_reduction.profile(batch_data)
         batch_data = wave_to_text.profile(batch_data)
+        batch_data = decoder.profile(batch_data)
 
         if i % batch_size == 0:
-            cum_accuracy.append(wave_to_text.get_endpoint_accuracy())
+            cum_accuracy.append(decoder.get_endpoint_accuracy())
 
 
 
-    profile_result['accuracy'] = wave_to_text.get_endpoint_accuracy()
+    profile_result['accuracy'] = decoder.get_endpoint_accuracy()
     profile_result['cummulative_accuracy'] = cum_accuracy 
     profile_result['total_profile_time'] = time.time() - start_time
     # Profile args:

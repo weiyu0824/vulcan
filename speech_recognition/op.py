@@ -52,8 +52,6 @@ class AudioSampler(ProcessOp):
         # compute:
         start_compute_time = time.time()
         
-        
-
         audio = torchaudio.functional.resample(audio, sr, self.target_sr)    
 
         batch_data['sr'] = self.target_sr
@@ -104,29 +102,63 @@ class WaveToText(ProcessOp):
             raise TypeError('model is not provided')
 
         self.model = bundle.get_model().to(device)
-        self.decoder = None
-
-        self.decoder = GreedyCTCDecoder(labels=bundle.get_labels())
-
-        self.accuracy = []
          
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
         if self.input_size == None and profile_input_size:
             self.input_size = len(pickle.dumps(batch_data))
         # data
         audio = batch_data['audio'].to(device)
-        ground_transcript = batch_data['transcript']
+        
         # compute
         start_compute_time = time.time()
-        emission, _ = self.model(audio)
-        pred_transcript = self.decoder(emission[0])
+        with torch.no_grad():
+            emission, _ = self.model(audio)
+        
+        batch_data['audio'] = None
+        batch_data['emission'] = emission[0]
+        
         if profile_compute_latency:
             self.compute_latencies.append(time.time()-start_compute_time) 
 
-        # print(ground_transcript)
-        # print()
-        # print(pred_transcript)
-        # print()
+        return batch_data
+        
+       
+
+class Decoder(ProcessOp):
+    def __init__(self, args):
+        super().__init__()
+
+        model_name = args['model']
+        if model_name == "wav2vec2-base":
+            bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
+        elif model_name == "wav2vec2-large-10m":
+            bundle = torchaudio.pipelines.WAV2VEC2_ASR_LARGE_10M
+        elif model_name == "wav2vec2-large-960h":
+            bundle = torchaudio.pipelines.WAV2VEC2_ASR_LARGE_960H
+        elif model_name == "hubert-large":
+            bundle = torchaudio.pipelines.HUBERT_ASR_LARGE
+        elif model_name == "hubert-xlarge":
+            bundle = torchaudio.pipelines.HUBERT_ASR_XLARGE
+        else:
+            raise TypeError('model is not provided')
+
+        self.decoder = GreedyCTCDecoder(labels=bundle.get_labels())
+
+        self.accuracy = []
+    
+    def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
+        if self.input_size == None and profile_input_size:
+            self.input_size = len(pickle.dumps(batch_data))
+
+        ground_transcript = batch_data['transcript']
+        emission = batch_data['emission']
+
+        # computer
+        start_compute_time = time.time()
+        pred_transcript = self.decoder(emission)
+        if profile_compute_latency:
+            self.compute_latencies.append(time.time()-start_compute_time) 
+
         # accuracy
         wer = jiwer.wer(ground_transcript, pred_transcript)
         self.accuracy.append(wer)
@@ -136,11 +168,3 @@ class WaveToText(ProcessOp):
         if len(self.accuracy) == 0:
             return 0
         return sum(self.accuracy) / len(self.accuracy)
-
-class Decoder(ProcessOp):
-    def __init__(self):
-        pass
-    def profile(self, batch_data): 
-        pass
-    def get_endpoint_accuracy(self):
-        pass
