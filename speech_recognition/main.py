@@ -89,6 +89,7 @@ def profile_pipeline():
 
     cum_accuracy = []
     for i in tqdm.tqdm(range(num_profile_sample)):
+        audio, sr, transcript = random_load_speech_data()
         batch_data = {
             'audio': torch.tensor(np.expand_dims(audio, axis=0)),
             'sr': sr, 
@@ -116,7 +117,8 @@ if __name__ == "__main__":
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
 
-    records = []
+    with open ('profile_result.json', 'w') as fp:
+        json.dump([], fp) 
     # os.environ["audio_sample_rate"] = str(16000)
     # os.environ["frequency_mask_width"] = str(500)
     # os.environ["model"] = 'hubert-xlarge' 
@@ -124,27 +126,29 @@ if __name__ == "__main__":
     # print(result)
     # exit()
 
-    with open ('profile_result.json', 'w') as fp:
-        json.dump(records, fp)
+    # with open ('profile_result.json', 'w') as fp:
+    #     json.dump(records, fp)
 
     for audio_sr in knobs[0][1]:
-        
-        if audio_sr == 16000:
-            brea
         for freq_mask in knobs[1][1]:
             for model in knobs[2][1]:
                 os.environ["audio_sample_rate"] = str(audio_sr)
                 os.environ["frequency_mask_width"] = str(freq_mask)
                 os.environ["model"] = str(model)
+
                 result = profile_pipeline() 
                 print(result)
                 print('----')
+
+                with open ('profile_result.json', 'r') as fp:
+                    records = json.load(fp) 
                 records.append(dict(
                     audio_sr=audio_sr,
                     freq_mask=freq_mask,
                     model=model,
                     result=result
                 ))
-    
-    with open ('profile_result.json', 'w') as fp:
-        json.dump(records, fp)
+                with open ('profile_result.json', 'w') as fp:
+                    records = json.dump(records, fp)  
+    # with open ('profile_result.json', 'w') as fp:
+    #     json.dump(records, fp)
