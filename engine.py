@@ -17,13 +17,25 @@ network_coef = 1
 # agpu:
 # anet:
 from typing import Tuple, Dict, List
-from pipeline import Pipeline
+# from pipeline import Pipeline
 
 
 video_analytics_knobs = [
     ('models', ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']),
     ('resize_factor', [0.9, 0.8, 0.7, 0.6, 0.5])
 ]
+speech_recongnition_knobs = [
+    ('audio_sample_rate', [8000, 10000, 12000, 14000, 16000]),
+    ('frequency_mask_width', [500, 1000, 2000, 3000, 4000]),
+    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'wav2vec2-large-960h', 'hubert-large', 'hubert-xlarge'])
+]
+speech_recognition_ops = ['audio_sampler', 'noise_reduction', 'wave_to_text', 'decoder']
+
+machine_infos = {
+    'compute': [0.01, 0.22, 0.6, 1],
+    'bandwidth': [0.08, 0.05, 0.01]
+}
+
 def sample_to_configs(sample: List[int], knob_list)-> dict: 
     config = {}
     assert len(sample) == len(knob_list), 'Sample and should have equal size as knob'
@@ -63,7 +75,8 @@ class Engine:
         self.port = 12343
         self.host = "localhost"
 
-        self.knob_list = video_analytics_knobs
+        self.knob_list = speech_recongnition_knobs
+        self.ops = speech_recognition_ops
 
     # def load_data_from_cache(config) -> ExecutionStats:
     #     pass
@@ -159,24 +172,61 @@ class Engine:
         # utility = perf / resource
         # return utility 
 
-        mbs_per_sec = 20
-        cpu_gpu_processing_diff = 25
-        appox_latency = 0
-        appox_latency += profile_stats['loader_compute_latency'] 
-        if placement == [0, 1]: # edge -> cloud
-            appox_latency += profile_stats['loader_output_size'] / (1e6 * mbs_per_sec)
-            appox_latency += profile_stats['detector_compute_latency']
-        else: # edge -> edge
-            appox_latency += profile_stats['detector_compute_latency'] * cpu_gpu_processing_diff 
+        assert len(self.ops) == len(placement)
 
-        utility = 0.5 * (profile_stats['accuracy'] - self.min_accuracy) + 0.5 * (self.max_latency - appox_latency)
+        prev_op_machine = 0
+        tot_compute_latency = 0
+        tot_transfer_latency = 0
+        for op, op_machine in zip(self.ops, placement):
+            compute_latency = profile_stats[f'{op}_compute_latency'] / machine_infos['compute'][op_machine]
 
-        return utility, appox_latency
+            transfer_latency = 0
+            for machine_id in range(prev_op_machine, op_machine):
+                bandwidth = machine_infos['compute'][machine_id]
+                transfer_latency += profile_stats[f'{op}_input_size'] / bandwidth
+            
+            tot_compute_latency += compute_latency
+            tot_transfer_latency += transfer_latency
+
+        pipe_accuracy = profile_stats['accuracy']
+        pipe_latency = tot_compute_latency + tot_transfer_latency
+
+        utility = 0.5 * (pipe_accuracy - self.min_accuracy) + 0.5 * (self.max_latency - pipe_latency) 
+        return utility 
+    
+        # mbs_per_sec = 20
+        # cpu_gpu_processing_diff = 25
+        # appox_latency = 0
+        # appox_latency += profile_stats['loader_compute_latency'] 
+        # if placement == [0, 1]: # edge -> cloud
+        #     appox_latency += profile_stats['loader_output_size'] / (1e6 * mbs_per_sec)
+        #     appox_latency += profile_stats['detector_compute_latency']
+        # else: # edge -> edge
+        #     appox_latency += profile_stats['detector_compute_latency'] * cpu_gpu_processing_diff 
+
+        # utility = 0.5 * (profile_stats['accuracy'] - self.min_accuracy) + 0.5 * (self.max_latency - appox_latency)
+
+        # return utility, appox_latency
 
     def generate_all_placement_choices(self):
+        num_ops = len(self.ops)
+        num_tier = len(machine_infos['compute'])
 
-        # hack
-        return [[0, 0], [0, 1]]
+        all_choices = []
+
+        def dfs(cur_placements):
+            if len(cur_placements) >= num_ops:
+                all_choices.append(cur_placements)
+                return
+
+            prev_placement = 0
+            if len(cur_placements) > 0:
+                prev_placement = cur_placements[-1]
+            for p in range(prev_placement, num_tier):
+                dfs(cur_placements + [p])
+
+        dfs([])
+        return all_choices
 
 
 
@@ -254,5 +304,7 @@ class Engine:
 if __name__ == "__main__":
 
     engine = Engine(min_accuracy=0.4, max_latency=3)
-    placement = engine.select_best_placement()
-    print(placement)
+    c = engine.generate_all_placement_choices()
+    print(c)
+    # placement = engine.select_best_placement()
+    # print(placement)
