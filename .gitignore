@@ -2,3 +2,5 @@ __pycache__
 *.pt
 .DS_Store
 *.out
+*.pth
+*work_dirs/
