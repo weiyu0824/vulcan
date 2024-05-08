@@ -1,6 +1,6 @@
 sudo apt update
 sudo apt upgrade 
-sudo apt install ubuntu-drivers-common
+sudo apt install -y ubuntu-drivers-common
 ubuntu-drivers devices
-sudo apt install nvidia-driver-525
+sudo apt install -y nvidia-driver-525
 nvidia-smi
