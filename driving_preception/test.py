@@ -9,6 +9,7 @@ from mmengine.runner import Runner
 
 from mmdet3d.utils import replace_ceph_backend
 
+import shutil
 
 # TODO: support fuse_conv_bn and format_only
 def parse_args():
@@ -60,6 +61,8 @@ def parse_args():
     # When using PyTorch version >= 2.0.0, the `torch.distributed.launch`
     # will pass the `--local-rank` parameter to `tools/test.py` instead
     # of `--local_rank`.
+
+    parser.add_argument('--ds', required=True, help='data source')
     parser.add_argument('--local_rank', '--local-rank', type=int, default=0)
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
@@ -99,6 +102,25 @@ def trigger_visualization_hook(cfg, args):
 def main():
     args = parse_args()
 
+    ## load data from datasource
+    def copy_folders(source_dir, destination_dir):
+        folders_to_copy = [
+            "samples", "sweeps"
+        ]
+
+        # Copy folders
+        for folder_name in folders_to_copy:
+            source_folder = os.path.join(source_dir, folder_name)
+            destination_folder = os.path.join(destination_dir, folder_name)
+            print(source_folder, destination_folder)
+            if os.path.exists(destination_folder):
+                shutil.rmtree(destination_folder)
+            if os.path.exists(source_folder):
+                shutil.copytree(source_folder, destination_folder)
+                print(f"Folder {folder_name} copied successfully.")
+    copy_folders(f'/mmdetection3d/data/nuscenes/{args.ds}', '/mmdetection3d/data/nuscenes/')
+    
+    # exit()
     # load config
     cfg = Config.fromfile(args.config)
 
@@ -116,9 +138,9 @@ def main():
         cfg.work_dir = args.work_dir
     elif cfg.get('work_dir', None) is None:
         # use config filename as default work_dir if cfg.work_dir is None
-        cfg.work_dir = osp.join('./work_dirs',
-                                osp.splitext(osp.basename(args.config))[0])
-
+        cfg.work_dir = osp.join('/app/work_dirs',
+                                osp.splitext(osp.basename(args.config))[0], args.ds)
+        
     cfg.load_from = args.checkpoint
 
     if args.show or args.show_dir:
@@ -143,7 +165,6 @@ def main():
 
     # start testing
     runner.test()
-
 
 if __name__ == '__main__':
     main()
