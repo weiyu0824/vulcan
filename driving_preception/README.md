@@ -3,9 +3,7 @@ docker build -t mmdetection3d .
 cd ~/vulcan/driving_preception
 sudo docker run --gpus all -it -v ./:/app  -v /dev/shm/wylin2:/mmdetection3d/data/nuscenes mmdetection3d bash
 
-cd /mmdetection3d
-
-
+cd /app/config/org
 mim download mmdet3d --config [] --dest .
 
 mim download mmdet3d --config centerpoint_pillar02_second_secfpn_head-dcn_8xb4-cyclic-20e_nus-3d --dest .
@@ -15,25 +13,41 @@ mim download mmdet3d --config hv_ssn_secfpn_sbn-all_16xb2-2x_nus-3d --dest .
 mim download mmdet3d --config pointpillars_hv_secfpn_sbn-all_8xb4-2x_nus-3d --dest .
 
 
+# process dataset
+bash preprocess.sh
+-- standard
+-- g10-v10
+-- g10-v20 
+...
+-- g50-v50
+
+
 
 # login to docker
-pip uninstall -y numpy && pip install numpy
+<!-- pip uninstall -y numpy && pip install numpy -->
 
-python /mmdetection3d/tools/create_data.py nuscenes --root-path /mmdetection3d/data/nuscenes/standard --out-dir /mmdetection3d/data/nuscenes/standard --extra-tag nuscenes/standard
+## build index
+cd /mmdetection3d/data/nuscenes/
 
+cp -r standard/samples/ ./
+cp -r standard/sweeps/ ./ 
+cp -r standard/maps/ ./
+if using 'v1.0-mini'
+    cp -r standard/v1.0-mini ./
+    mv v1.0-mini v1.0-trainval
+if using 'v1.0-trainval'
+    cp -r standard/v1.0-trainval ./ 
 
-- 
-vim : 
-:%s#'/data/nuscenes/,'#data_root,#g
-:%s#'/data/nuscenes/'#data_root+'#g
+cd /mmdetection3d/
+python tools/create_data.py nuscenes --root-path /mmdetection3d/data/nuscenes --out-dir /mmdetection3d/data/nuscenes --extra-tag nuscenes
 
-- 0: python /mmdetection3d/demo/pcd_demo.py /mmdetection3d/demo/data/kitti/000008.bin pointpillars_hv_secfpn_8xb6-160e_kitti-3d-car.py hv_pointpillars_secfpn_6x8_160e_kitti-3d-car_20220331_134606-d42d15ed.pth --show
+## run inference
+cd /app
 
+python3 /app/test.py  [config] [checkpoint] [data_source]
+ex: 
 
-bash /mmdetection3d/tools/dist_test.sh [config] [ckpt] [num_node]
-<!-- bash /mmdetection3d/tools/dist_test.sh ./centerpoint_pillar02_second_secfpn_head-circlenms_8xb4-cyclic-20e_nus-3d.py ./centerpoint_02pillar_second_secfpn_circlenms_4x8_cyclic_20e_nus_20220811_031844-191a3822.pth 1 -->
+python3 test.py config/centerpoint_circlenms.py config/centerpoint_circlenms.pth --ds g10-v20
 
-1. chance data path in config file 
-
-bash /mmdetection3d/tools/dist_test.sh /app/tmp/centerpoint_pillar02_second_secfpn_head-circlenms_8xb4-cyclic-20e_nus-3d.py /app/tmp/centerpoint_02pillar_second_secfpn_circlenms_4x8_cyclic_20e_nus_20220811_031844-191a3822.pth 1
-
+#or
+bash profile.sh

@@ -3,6 +3,8 @@ import time
 import numpy as np
 import argparse
 import tqdm
+import pickle
+import json
 
 from utils import load_pcd, save_pcd
 from ground_removal import remove_ground
@@ -52,11 +54,11 @@ if __name__ == '__main__':
             
             # print(files)
 
-            input_sizes = []
-            post_gnd_sizes = []
-            post_vox_sizes = []
-            gnd_times = []
-            vox_times = []
+            gnd_input_size = []
+            vox_input_size = []
+            det_input_size = []
+            gnd_compute_latencies = []
+            vox_compute_latencies = []
 
             for pcd_file in tqdm.tqdm(files):
                 pcd_input_path = input_folder_path + '/' + pcd_file
@@ -67,31 +69,44 @@ if __name__ == '__main__':
                 # pcd = o3d.io.read_point_cloud(pcd_input_path)
                 # o3d.visualization.draw_geometries([pcd])
 
-                # input_sizes.append(np.shape(pcd)[0])
                 # print(np.shape(pcd))
             
                 # ground removal
-                # t1 = time.time()
+                gnd_input_size.append(len(pickle.dumps(pcd)))
+                t1 = time.time()
                 pcd_object, pcd_ground = remove_ground(pcd, distance)
-                # t2 = time.time()
-                # post_gnd_sizes.append(np.shape(pcd_object)[0])
-                # gnd_times.append(t2-t1)
-                # print(np.shape(pcd_object), np.shape(pcd_ground), (t2-t1)/1000)
+                t2 = time.time()
+                gnd_compute_latencies.append(t2-t1)
 
                 # voxelization
-                # t3 = time.time()
+                vox_input_size.append(len(pickle.dumps(pcd_object)))
+                t3 = time.time()
                 pcd_voxelized = voxelize_o3d(pcd_object, voxel_size)
-                # t4 = time.time()
-                # post_vox_sizes.append(np.shape(pcd_voxelized)[0])
-                # vox_times.append(t4-t3)
-                # print(np.shape(pcd_voxelized), (t4-t3)/1000)
+                t4 = time.time()
+                vox_compute_latencies.append(t4-t3)
 
-                # # object detection
-                # result, data = inf.object_detection(pcd_path)  # todo: change pcd_path to pcd
+                # detection
+                det_input_size.append(np.shape(pcd_voxelized)[0])
 
                 pcd = pcd_voxelized
 
-                # filename = os.path.split(pcd_path)[-1]  # with extension
-                save_pcd(pcd, pcd_output_path)
+                # save_pcd(pcd, pcd_output_path)
                 # print('save')
                 # break
+            
+            with open('profile_result.json', 'r') as fp:
+                records = json.load(fp)
+            with open('profile_result.json', 'w') as fp:
+                records.append(dict(
+                    ground_factor=args.ground_para,
+                    voxel_factor =args.voxel_para,
+                    result={
+                        'ground_removal_compute_latency': np.mean(gnd_compute_latencies),
+                        'voxelization_compute_latency': np.mean(vox_compute_latencies),
+                        'ground_removal_input_size': np.mean(gnd_input_size),
+                        'voxelization_input_size': np.mean(vox_input_size),
+                        'detector_input_size': np.mean(det_input_size)
+                    } 
+                ))
+                json.dump(records, fp)
+            exit(0)

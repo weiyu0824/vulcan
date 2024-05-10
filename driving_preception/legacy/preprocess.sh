@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the ranges of parameters
-g_params=(0.4 0.5)
+g_params=(0.1 0.2 0.3 0.4 0.5)
 v_params=(0.1 0.2 0.3 0.4 0.5)
 
 # Iterate over parameter combinations
