@@ -85,7 +85,6 @@ def profile_pipeline():
     profile_result['wave_to_text_compute_latency'] = wave_to_text.get_compute_latency()
     profile_result['decoder_computer_latency'] = decoder.get_compute_latency()
     
-    # print(profile_result)
 
     print('profile accuracy')
     num_profile_sample = 300
@@ -113,26 +112,13 @@ def profile_pipeline():
     profile_result['accuracy'] = decoder.get_endpoint_accuracy()
     profile_result['cummulative_accuracy'] = cum_accuracy 
     profile_result['total_profile_time'] = time.time() - start_time
-    # Profile args:
 
     return profile_result
 
 
 if __name__ == "__main__":
-    # addr, port = 'localhost', 12343
-    # start_connect(addr, port)
-
     with open ('profile_result.json', 'w') as fp:
         json.dump([], fp) 
-    # os.environ["audio_sample_rate"] = str(16000)
-    # os.environ["frequency_mask_width"] = str(500)
-    # os.environ["model"] = 'hubert-xlarge' 
-    # result = profile_pipeline()
-    # print(result)
-    # exit()
-
-    # with open ('profile_result.json', 'w') as fp:
-    #     json.dump(records, fp)
 
     for audio_sr in knobs[0][1]:
         for freq_mask in knobs[1][1]:
@@ -155,5 +141,3 @@ if __name__ == "__main__":
                 ))
                 with open ('profile_result.json', 'w') as fp:
                     records = json.dump(records, fp)  
-    # with open ('profile_result.json', 'w') as fp:
-    #     json.dump(records, fp)
