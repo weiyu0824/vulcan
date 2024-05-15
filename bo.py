@@ -4,6 +4,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import Matern
 from sklearn.metrics import mean_squared_error
 from typing import List
+import random
 
 class BayesianOptimization:
     def __init__(self, feat_bounds: List[List[int]], acquisition='ucb'):
@@ -14,8 +15,8 @@ class BayesianOptimization:
         self.feat_bounds = feat_bounds
         self.num_feats = len(feat_bounds)
         self.acquisition = acquisition
-        kernel = Matern(nu=2.5)
-        self.gp = GaussianProcessRegressor(kernel=kernel)
+        self.kernel = Matern(nu=2.5)
+        self.gp = GaussianProcessRegressor(random_state=0, kernel=self.kernel)
     
     def _get_acq_val(self, x, keppa=2):
         x = np.array(x)
@@ -32,26 +33,49 @@ class BayesianOptimization:
         return samples
     
     def get_random_samples(self, num_samples: int): 
+        # samples = self._get_random_raw_samples(100)
+        # # best_acq_val = -10e100
+        # arr = []
+        # for sample in samples:
+        #     _, _, std = self._get_acq_val(sample)   
+        #     arr.append((std, sample))
+        # arr.sort(key=lambda x: x[0], reverse=True)
+
+        # return [arr[i][1] for i in range(num_samples)]
+
         return self._get_random_raw_samples(num_samples)
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         """
         Fit samples
         """
-        self.gp.fit(X, y)
+        self.gp = GaussianProcessRegressor(random_state=0, kernel=self.kernel).fit(X, y)
         return True
 
     def get_next_sample(self):
         """Get a sample based on acqusition func"""
         samples = self._get_random_raw_samples(100)
-        best_sample = None
-        best_acq_val = 0
+        # best_acq_val = -10e100
+        arr = []
         for sample in samples:
-            acq_val = self._get_acq_val(sample)        
-            if acq_val > best_acq_val:
-                best_sample = sample
+            acq_val = self._get_acq_val(sample)   
+            arr.append((acq_val, sample))
 
-        return best_sample
+        arr.sort(key=lambda x: x[0], reverse=True)
+        # print('pred', arr[0][0])
+        return arr[0][1]
+
+    def get_sorted_samples(self):
+        samples = self._get_random_raw_samples(100)
+        # best_acq_val = -10e100
+        arr = []
+        for sample in samples:
+            acq_val = self._get_acq_val(sample)   
+            arr.append((acq_val, sample))
+
+        arr.sort(key=lambda x: x[0], reverse=True)
+        return [x[1] for x in arr]
+        # return random.choice(arr)[1]
 
 if __name__ == "__main__":
     # Example usage:
