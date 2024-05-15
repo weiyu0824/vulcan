@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the ranges of parameters
-g_params=(10 20 30)
+g_params=(40 50)
 v_params=(10 20 30 40 50)
 m_params=(centerpoint_dcn centerpoint_circlenms pointpillars_secfpn ssn_second)
 
