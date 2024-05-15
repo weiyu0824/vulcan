@@ -83,12 +83,12 @@ def profile_pipeline():
     profile_result['audio_sampler_compute_latency'] = audio_sampler.get_compute_latency()
     profile_result['noise_reduction_compute_latency'] = noise_reduction.get_compute_latency()
     profile_result['wave_to_text_compute_latency'] = wave_to_text.get_compute_latency()
-    profile_result['decoder_computer_latency'] = decoder.get_compute_latency()
+    profile_result['decoder_compute_latency'] = decoder.get_compute_latency()
     
 
     print('profile accuracy')
-    num_profile_sample = 300
-    batch_size = 10 # calculate cummulated accuracy every batch
+    num_profile_sample = 5000
+    batch_size = 1 # calculate cummulated accuracy every batch
 
     cum_accuracy = []
     for i in tqdm.tqdm(range(num_profile_sample)):
@@ -115,11 +115,9 @@ def profile_pipeline():
 
     return profile_result
 
-
-if __name__ == "__main__":
-    with open ('profile_result.json', 'w') as fp:
+def start_exp(result_fname):
+    with open (result_fname, 'w') as fp:
         json.dump([], fp) 
-
     for audio_sr in knobs[0][1]:
         for freq_mask in knobs[1][1]:
             for model in knobs[2][1]:
@@ -131,7 +129,7 @@ if __name__ == "__main__":
                 print(result)
                 print('----')
 
-                with open ('profile_result.json', 'r') as fp:
+                with open (result_fname, 'r') as fp:
                     records = json.load(fp) 
                 records.append(dict(
                     audio_sr=audio_sr,
@@ -139,5 +137,15 @@ if __name__ == "__main__":
                     model=model,
                     result=result
                 ))
-                with open ('profile_result.json', 'w') as fp:
+                with open (result_fname, 'w') as fp:
                     records = json.dump(records, fp)  
+
+if __name__ == "__main__":
+    # addr, port = 'localhost', 12343
+    # start_connect(addr, port)
+
+    start_exp('profile_result_1.json') 
+    start_exp('profile_result_2.json') 
+    start_exp('profile_result_3.json') 
+    start_exp('profile_result_4.json') 
+    start_exp('profile_result_5.json')  
