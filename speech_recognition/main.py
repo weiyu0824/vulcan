@@ -8,7 +8,9 @@ import tqdm
 import pandas as pd
 import numpy as np
 from op import AudioSampler, NoiseReduction, WaveToText, Decoder
+from sampler import VOiCERandomSampler
 
+DATA_SET_PATH="/data"
 
 knobs = [
     ('audio_sample_rate', [8000, 10000, 12000, 14000, 16000]),
@@ -24,13 +26,13 @@ def get_pipeline_args():
     }
 
 
-ref_df = pd.read_csv('/data/wylin2/VOiCES_devkit/references/filename_transcripts')
+ref_df = pd.read_csv(DATA_SET_PATH + '/VOiCES_devkit/references/filename_transcripts')
 ref_df.set_index('file_name', inplace=True)
 def random_load_speech_data():
     # randomly choose audio file for room, noise, specs
     room = random.choice(['rm1', 'rm2', 'rm3', 'rm4'])
     noise = random.choice(['babb', 'musi', 'none', 'tele'])
-    path = '/data/wylin2/VOiCES_devkit/distant-16k/speech/test/' + room + '/' + noise + '/'
+    path = DATA_SET_PATH + '/VOiCES_devkit/distant-16k/speech/test/' + room + '/' + noise + '/'
     sp = random.choice([f for f in os.listdir(path) if f.startswith('sp')])
     path = path + sp + '/'
     filename = random.choice(os.listdir(path))
@@ -44,8 +46,19 @@ def random_load_speech_data():
 
     return audio, sr, transcript
 
+def sample_speech_data(sampler: VOiCERandomSampler, method: str):
 
-def profile_pipeline():
+    filename = sampler.sample(method)  
+    # /data/VOiCES_devkit/distant-16k/speech/test/rm2/none/sp1898/Lab41-SRI-VOiCES-rm2-none-sp1898-ch145702-sg0011-mc01-stu-clo-dg080.wav
+    audio, sr = librosa.load(filename)
+    
+    # Transcription
+    transcript = ref_df.loc[filename.split('/')[-1].split('.')[0], 'transcript'] # split to remove .wav
+
+    return audio, sr, transcript
+
+def profile_pipeline(method:str):
+    sampler = VOiCERandomSampler()
     pipe_args = get_pipeline_args()
     
     profile_result = {}
@@ -59,31 +72,31 @@ def profile_pipeline():
     print('start profile this pipeline ...', pipe_args)
     start_time = time.time()
 
-    print('profile latency & input size')
-    # Profile args:
-    num_profile_sample_latency  = 10 #Can't be small because of warm-up
+    # print('profile latency & input size')
+    # # Profile args:
+    # num_profile_sample_latency  = 10 #Can't be small because of warm-up
 
-    for _ in tqdm.tqdm(range(num_profile_sample_latency)):
-        audio, sr, transcript = random_load_speech_data()
-        batch_data = {
-            'audio': torch.tensor(np.expand_dims(audio, axis=0)),
-            'sr': sr,
-            'transcript': transcript
-        }
+    # for _ in tqdm.tqdm(range(num_profile_sample_latency)):
+    #     audio, sr, transcript = random_load_speech_data()
+    #     batch_data = {
+    #         'audio': torch.tensor(np.expand_dims(audio, axis=0)),
+    #         'sr': sr,
+    #         'transcript': transcript
+    #     }
 
-        batch_data = audio_sampler.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
-        batch_data = noise_reduction.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
-        batch_data = wave_to_text.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
-        batch_data = decoder.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+    #     batch_data = audio_sampler.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+    #     batch_data = noise_reduction.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+    #     batch_data = wave_to_text.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+    #     batch_data = decoder.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
 
-    profile_result['audio_sampler_input_size'] = audio_sampler.get_input_size()
-    profile_result['noise_reduction_input_size'] = noise_reduction.get_input_size()
-    profile_result['wave_to_text_input_size'] = wave_to_text.get_input_size()
-    profile_result['decoder_input_size'] = decoder.get_input_size()
-    profile_result['audio_sampler_compute_latency'] = audio_sampler.get_compute_latency()
-    profile_result['noise_reduction_compute_latency'] = noise_reduction.get_compute_latency()
-    profile_result['wave_to_text_compute_latency'] = wave_to_text.get_compute_latency()
-    profile_result['decoder_compute_latency'] = decoder.get_compute_latency()
+    # profile_result['audio_sampler_input_size'] = audio_sampler.get_input_size()
+    # profile_result['noise_reduction_input_size'] = noise_reduction.get_input_size()
+    # profile_result['wave_to_text_input_size'] = wave_to_text.get_input_size()
+    # profile_result['decoder_input_size'] = decoder.get_input_size()
+    # profile_result['audio_sampler_compute_latency'] = audio_sampler.get_compute_latency()
+    # profile_result['noise_reduction_compute_latency'] = noise_reduction.get_compute_latency()
+    # profile_result['wave_to_text_compute_latency'] = wave_to_text.get_compute_latency()
+    # profile_result['decoder_compute_latency'] = decoder.get_compute_latency()
     
 
     print('profile accuracy')
@@ -92,7 +105,8 @@ def profile_pipeline():
 
     cum_accuracy = []
     for i in tqdm.tqdm(range(num_profile_sample)):
-        audio, sr, transcript = random_load_speech_data()
+        audio, sr, transcript = sample_speech_data(sampler, method)
+        # audio, sr, transcript = random_load_speech_data()
         batch_data = {
             'audio': torch.tensor(np.expand_dims(audio, axis=0)),
             'sr': sr, 
@@ -103,7 +117,6 @@ def profile_pipeline():
         batch_data = noise_reduction.profile(batch_data)
         batch_data = wave_to_text.profile(batch_data)
         batch_data = decoder.profile(batch_data)
-
         if i % batch_size == 0:
             cum_accuracy.append(decoder.get_endpoint_accuracy())
 
@@ -115,7 +128,7 @@ def profile_pipeline():
 
     return profile_result
 
-def start_exp(result_fname):
+def start_exp(result_fname, method: str = "random"):
     with open (result_fname, 'w') as fp:
         json.dump([], fp) 
     for audio_sr in knobs[0][1]:
@@ -125,7 +138,7 @@ def start_exp(result_fname):
                 os.environ["frequency_mask_width"] = str(freq_mask)
                 os.environ["model"] = str(model)
 
-                result = profile_pipeline() 
+                result = profile_pipeline(method) 
                 print(result)
                 print('----')
 
@@ -143,9 +156,6 @@ def start_exp(result_fname):
 if __name__ == "__main__":
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
-
-    start_exp('profile_result_1.json') 
-    start_exp('profile_result_2.json') 
-    start_exp('profile_result_3.json') 
-    start_exp('profile_result_4.json') 
-    start_exp('profile_result_5.json')  
+    method = "random"
+    for i in range(5):
+        start_exp(f"./result/profile_{method}_{i}.json", method)

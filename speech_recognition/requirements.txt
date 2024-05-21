@@ -4,3 +4,4 @@ jiwer
 tqdm
 torch
 torchaudio
+pandas
