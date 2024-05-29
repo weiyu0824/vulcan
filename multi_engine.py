@@ -625,7 +625,7 @@ class Engine:
 
         
         st = time.time()
-        num_process = 100
+        num_process = 10
 
         with Pool(num_process) as pool:
             manager = Manager()
