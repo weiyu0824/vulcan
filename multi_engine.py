@@ -11,6 +11,7 @@ import numpy as np
 import itertools
 from tqdm import tqdm
 from multiprocessing import Pool, Manager
+import time
 
 
 import warnings
@@ -199,8 +200,8 @@ class Engine:
         self.queries = [
             Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
             Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            # Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            # Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+            Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+            Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
             # Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
         ]
 
@@ -586,7 +587,8 @@ class Engine:
         max_tot_util = -100000
         optimal_combined_query_setup = None
         optimal_cluster_state = ClusterState(self.cluster_spec)
-        for combined_query_setup in combined_query_setups:
+        st = time.time()
+        for idx, combined_query_setup in enumerate(combined_query_setups):
             cluster_state = ClusterState(self.cluster_spec)
             for query, query_setup in zip(self.queries, combined_query_setup):
                 cluster_state.push_query(query, query_setup['placement'], query_setup)
@@ -595,6 +597,9 @@ class Engine:
                 max_tot_util = cluster_state.tot_util
                 optimal_combined_query_setup = combined_query_setup
                 optimal_cluster_state = cluster_state 
+            if idx % 200000 == 0:
+                print('chunk:',chunk_idx, idx, "/", len(combined_query_setups), 'time', time.time() - st)
+                st = time.time()
         result[chunk_idx] = {
             'max_tot_util': max_tot_util, 
             'optimal_combined_query_setup': optimal_combined_query_setup,
@@ -619,8 +624,8 @@ class Engine:
             total_combintation *= len(query_setups) 
 
         
-            
-        num_process = 10
+        st = time.time()
+        num_process = 100
 
         with Pool(num_process) as pool:
             manager = Manager()
@@ -650,7 +655,7 @@ class Engine:
         # print(sorted_result[0]['optimal_cluster_state'].tier_state)
         print(sorted_result[0]['max_tot_util']) 
         
-                   
+        print('iterate time:', time.time()-st)                   
 
     def single_optimize(self):
         cluster_state = ClusterState(self.cluster_spec)
@@ -902,6 +907,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     engine = Engine(num_profile_sample=5000)
     
+    st = time.time()
     if args.method == 'joint':
         engine.joint_optimize()
     elif args.method == 'single':
@@ -909,18 +915,4 @@ if __name__ == "__main__":
     elif args.method == 'exhaustive':
         engine.exhaustive_optimize()
     # engine.single_optimize()
-
-
-"""
-{'placement': ([0, 1, 1, 2], [0, 1, 2, 2], [1, 1, 2, 2]), 'profile': 
-[{'utility': 5.086042993358486, 'gpu_time': 2.0310568809509277, 'accuracy': 0.3484612275645886, 'latency': 0.09493792006595127, 'compute_latency_by_op': [0.3050851821899414, 0.05508780479431152, 0.09232076731595126, 0.09792938232421874], 'transfer_latency': 0.0026171527500000002, 'config': {'audio_sr': 14000, 'freq_mask': 4000, 'model': 'hubert-large'}, 'placement': [0, 1, 1, 2], 'gpu_mem_usgs': [0, 0, 2000, 0], 'tot_gpu_time': 0.020310568809509277}, 
-{'utility': 6.027449276074536, 'gpu_time': 2.024819850921631, 'accuracy': 0.3616419270891887, 'latency': 0.04426809401843262, 'compute_latency_by_op': [0.2631664276123047, 0.05475185134194114, 0.02024819850921631, 0.09687254428863526], 'transfer_latency': 0.0037716970000000005, 'config': {'audio_sr': 14000, 'freq_mask': 500, 'model': 'hubert-large'}, 'placement': [0, 1, 2, 2], 'gpu_mem_usgs': [0, 0, 2000, 0], 'tot_gpu_time': 0.02024819850921631}, 
-{'utility': 7.659651567409671, 'gpu_time': 1.975371837615967, 'accuracy': 0.35096379440343944, 'latency': 0.046423005752319335, 'compute_latency_by_op': [0.01598921689120206, 0.05630894140763716, 0.01975371837615967, 0.10268964767456054], 'transfer_latency': 0.006915569, 'config': {'audio_sr': 16000, 'freq_mask': 3000, 'model': 'hubert-large'}, 'placement': [1, 1, 2, 2], 'gpu_mem_usgs': [0, 0, 2000, 0], 'tot_gpu_time': 0.01975371837615967}], 'tot_util': 18.773143836842692}
-
-{'utility': 6.4076665782014945, 'gpu_time': 1.9707894325256345, 'accuracy': 0.3496364547601433, 'latency': 0.047800313650512696, 'compute_latency_by_op': [0.013537190177223898, 0.012384700775146484, 0.019707894325256346, 0.0983954906463623], 'transfer_latency': 0.008384525, 'config': {'audio_sr': 16000, 'freq_mask': 4000, 'model': 'hubert-large'}, 'placement': [1, 2, 2, 2], 'gpu_mem_usgs': [0, 0, 2000, 0], 'tot_gpu_time': 0.019707894325256346, 'type': 'search'}
-{'utility': 5.175026436054828, 'gpu_time': 1.975371837615967, 'accuracy': 0.35096379440343944, 'latency': 0.09458417598254394, 'compute_latency_by_op': [0.01598921689120206, 0.05630894140763716, 0.08978962898254395, 0.10268964767456054], 'transfer_latency': 0.004794547, 'config': {'audio_sr': 16000, 'freq_mask': 3000, 'model': 'hubert-large'}, 'placement': [1, 1, 1, 2], 'gpu_mem_usgs': [0, 0, 2000, 0], 'tot_gpu_time': 0.01975371837615967, 'type': 'random'}
-{'utility': 7.138993910332716, 'gpu_time': 1.073906421661377, 'accuracy': 0.5181785062266171, 'latency': 0.02848926568322754, 'compute_latency_by_op': [0.3180861473083496, 0.01252896785736084, 0.01073906421661377, 0.04091677665710449], 'transfer_latency': 0.00701113725, 'config': {'audio_sr': 16000, 'freq_mask': 2000, 'model': 'wav2vec2-base'}, 'placement': [0, 2, 2, 2], 'gpu_mem_usgs': [0, 0, 1000, 0], 'tot_gpu_time': 0.01073906421661377, 'type': 'random'}
-[[NodeState(remain_gpu_memory=1000, num_gpu_ps=0)], [NodeState(remain_gpu_memory=0, num_gpu_ps=1)], [NodeState(remain_gpu_memory=0, num_gpu_ps=2)]]
-0
-18.721686924589036
-"""
+    print('total time:', time.time() - st)
