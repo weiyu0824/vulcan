@@ -14,8 +14,16 @@ class VOiCERandomSampler(Sampler):
         self.stratified_data = dict()
         self.stratified_weight = dict()
         self.stratified_idx = dict()
+        self.strata_next = 0
         self.get_all_data()
         print(f"Summary:\n\t#Samples:{len(self.random_data)}")
+        l1s = ["rm1", "rm2", "rm3", "rm4"]
+        l2s = ['babb', 'musi', 'none', 'tele']
+        cul = 0
+        for l1 in l1s:
+            for l2 in l2s:
+                print(f"\t{l1}-{l2}:{len(self.stratified_data[l1][l2])} {self.stratified_weight[l1][l2] - cul}")
+                cul = self.stratified_weight[l1][l2]
          
     def get_all_data(self):
         l0 = "/data/VOiCES_devkit/distant-16k/speech/test"
@@ -64,8 +72,17 @@ class VOiCERandomSampler(Sampler):
                     return l1, l2
         raise Exception("Weight not in range")
     
+    def sample_strata_ordered(self):
+        l1s = ["rm1", "rm2", "rm3", "rm4"]
+        l2s = ['babb', 'musi', 'none', 'tele']
+        l1 = self.strata_next % len(l1s)
+        l2 = self.strata_next // len(l1s)
+        self.strata_next = (self.strata_next + 1) % (len(l1s) * len(l2s))
+        return l1s[l1], l2s[l2]
+    
     def stratified_sample(self):  
-        l1, l2 = self.sample_strata_based_on_weight()
+        l1, l2 = self.sample_strata_ordered()
+        # l1, l2 = self.sample_strata_based_on_weight()
         idx = self.stratified_idx[l1][l2]
         data = self.stratified_data[l1][l2]
         self.stratified_idx[l1][l2] = (idx + 1) % len(data)

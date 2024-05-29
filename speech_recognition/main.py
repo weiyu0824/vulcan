@@ -12,10 +12,16 @@ from sampler import VOiCERandomSampler
 
 DATA_SET_PATH="/data"
 
+# knobs = [
+#     ('audio_sample_rate', [8000, 10000, 12000, 14000, 16000]),
+#     ('frequency_mask_width', [500, 1000, 2000, 3000, 4000]),
+#     ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'wav2vec2-large-960h', 'hubert-large', 'hubert-xlarge'])
+# ]
+
 knobs = [
-    ('audio_sample_rate', [8000, 10000, 12000, 14000, 16000]),
-    ('frequency_mask_width', [500, 1000, 2000, 3000, 4000]),
-    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'wav2vec2-large-960h', 'hubert-large', 'hubert-xlarge'])
+    ('audio_sample_rate', [8000, 12000, 16000]),
+    ('frequency_mask_width', [500, 2000, 4000]),
+    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-large'])
 ]
 
 def get_pipeline_args():
@@ -100,7 +106,7 @@ def profile_pipeline(method:str):
     
 
     print('profile accuracy')
-    num_profile_sample = 5000
+    num_profile_sample = 6400
     batch_size = 1 # calculate cummulated accuracy every batch
 
     cum_accuracy = []
@@ -139,8 +145,8 @@ def start_exp(result_fname, method: str = "random"):
                 os.environ["model"] = str(model)
 
                 result = profile_pipeline(method) 
-                print(result)
-                print('----')
+                # print(result)
+                # print('----')
 
                 with open (result_fname, 'r') as fp:
                     records = json.load(fp) 
@@ -156,6 +162,7 @@ def start_exp(result_fname, method: str = "random"):
 if __name__ == "__main__":
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
-    method = "random"
-    for i in range(5):
-        start_exp(f"./result/profile_{method}_{i}.json", method)
+    # method = "random"
+    for method in ["random", "stratified"]:
+        for i in range(10):
+            start_exp(f"./result/profile_{method}_{i}.json", method)
