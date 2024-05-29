@@ -49,10 +49,11 @@ def profile_pipeline():
     pipe_args = get_pipeline_args()
     
     profile_result = {}
-
+    # torch.cuda.reset_peak_memory_stats() 
     audio_sampler = AudioSampler(pipe_args)
     noise_reduction = NoiseReduction(pipe_args)
     wave_to_text = WaveToText(pipe_args)
+    
     decoder = Decoder(pipe_args)
 
 
@@ -62,7 +63,7 @@ def profile_pipeline():
     print('profile latency & input size')
     # Profile args:
     num_profile_sample_latency  = 10 #Can't be small because of warm-up
-
+    
     for _ in tqdm.tqdm(range(num_profile_sample_latency)):
         audio, sr, transcript = random_load_speech_data()
         batch_data = {
@@ -74,8 +75,14 @@ def profile_pipeline():
         batch_data = audio_sampler.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
         batch_data = noise_reduction.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
         batch_data = wave_to_text.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
-        batch_data = decoder.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+        # Reset peak memory stats
 
+        batch_data = decoder.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
+    max_memory_allocated = torch.cuda.max_memory_allocated()
+    max_memory_reserved = torch.cuda.max_memory_reserved()
+    # print(f"Maximum memory allocated: {max_memory_allocated / 1024 ** 2} MB")
+    # print(f"Maximum memory reserved: {max_memory_reserved / 1024 ** 2} MB")
+    # exit(0)
     profile_result['audio_sampler_input_size'] = audio_sampler.get_input_size()
     profile_result['noise_reduction_input_size'] = noise_reduction.get_input_size()
     profile_result['wave_to_text_input_size'] = wave_to_text.get_input_size()
@@ -87,7 +94,7 @@ def profile_pipeline():
     
 
     print('profile accuracy')
-    num_profile_sample = 5000
+    num_profile_sample = 10 
     batch_size = 1 # calculate cummulated accuracy every batch
 
     cum_accuracy = []
@@ -108,7 +115,6 @@ def profile_pipeline():
             cum_accuracy.append(decoder.get_endpoint_accuracy())
 
 
-
     profile_result['accuracy'] = decoder.get_endpoint_accuracy()
     profile_result['cummulative_accuracy'] = cum_accuracy 
     profile_result['total_profile_time'] = time.time() - start_time
@@ -124,6 +130,7 @@ def start_exp(result_fname):
                 os.environ["audio_sample_rate"] = str(audio_sr)
                 os.environ["frequency_mask_width"] = str(freq_mask)
                 os.environ["model"] = str(model)
+                torch.cuda.empty_cache()
 
                 result = profile_pipeline() 
                 print(result)
@@ -144,8 +151,9 @@ if __name__ == "__main__":
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
 
-    start_exp('profile_result_1.json') 
-    start_exp('profile_result_2.json') 
-    start_exp('profile_result_3.json') 
-    start_exp('profile_result_4.json') 
-    start_exp('profile_result_5.json')  
+    # start_exp('profile_result_1.json') 
+    # start_exp('profile_result_2.json') 
+    # start_exp('profile_result_3.json') 
+    # start_exp('profile_result_4.json') 
+    # start_exp('profile_result_5.json')  
+    start_exp('profile_result_tmp.json')
