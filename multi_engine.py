@@ -10,6 +10,8 @@ from dataclasses import dataclass
 import numpy as np
 import itertools
 from tqdm import tqdm
+from multiprocessing import Pool, Manager
+
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
@@ -197,8 +199,8 @@ class Engine:
         self.queries = [
             Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
             Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+            # Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+            # Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
             # Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
         ]
 
@@ -578,40 +580,76 @@ class Engine:
             print('----none----')
             return foot_print[0], self.profile_lat
         return f_foot_print[0], self.profile_lat
-
-    def exhuastive_optimize(self):
+    
+    def eval(self, chunk_idx, combined_query_setups, result):
         
-        all_query_setups = [] 
-        for query in self.queries:
-            per_query_setups = self.vulcan_search(query, ClusterState(self.cluster_spec))
-            
-            valid_per_query_setups = []
-            for per_query_setup in per_query_setups:
-                if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
-                    valid_per_query_setups.append(per_query_setup)    
-            all_query_setups.append(per_query_setups) 
-
-        print(len(all_query_setups), [len(per_query_setups) for per_query_setups in all_query_setups])
-        total_combintation = 1
-        for per_query_setups in all_query_setups:
-            total_combintation *= len(per_query_setups) 
-
         max_tot_util = -100000
-        optimal_all_query_setup = None
+        optimal_combined_query_setup = None
         optimal_cluster_state = ClusterState(self.cluster_spec)
-        for all_query_setup in tqdm(itertools.product(*all_query_setups), total=total_combintation):
+        for combined_query_setup in combined_query_setups:
             cluster_state = ClusterState(self.cluster_spec)
-            for query, per_query_setup in zip(self.queries, all_query_setup):
-                cluster_state.push_query(query, per_query_setup['placement'], per_query_setup)
+            for query, query_setup in zip(self.queries, combined_query_setup):
+                cluster_state.push_query(query, query_setup['placement'], query_setup)
             # print(cluster_state.tier_state)
             if cluster_state.is_cluster_out_of_memory() == False and cluster_state.tot_util > max_tot_util:
                 max_tot_util = cluster_state.tot_util
-                optimal_all_query_setup = all_query_setup
+                optimal_combined_query_setup = combined_query_setup
                 optimal_cluster_state = cluster_state 
+        result[chunk_idx] = {
+            'max_tot_util': max_tot_util, 
+            'optimal_combined_query_setup': optimal_combined_query_setup,
+            # 'optimal_cluster_state': optimal_cluster_state
+        }
 
-        print(optimal_all_query_setup) 
-        print(optimal_cluster_state.tier_state)
-        print(max_tot_util)
+    def exhaustive_optimize(self):
+        
+        query_setups_per_query= [] 
+        for query in self.queries:
+            query_setups = self.vulcan_search(query, ClusterState(self.cluster_spec))
+            
+            valid_per_query_setups = []
+            for per_query_setup in query_setups:
+                if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
+                    valid_per_query_setups.append(per_query_setup)    
+            query_setups_per_query.append(query_setups) 
+
+        print(len(query_setups_per_query), [len(query_setups) for query_setups in query_setups_per_query])
+        total_combintation = 1
+        for query_setups in query_setups_per_query:
+            total_combintation *= len(query_setups) 
+
+        
+            
+        num_process = 10
+
+        with Pool(num_process) as pool:
+            manager = Manager()
+            result = manager.list([{'max_tot_util': -20000000} for _ in range(num_process + 1)])
+            combined_query_setups = [combined_query_setup for combined_query_setup in itertools.product(*query_setups_per_query)] 
+            chunk_size = len(combined_query_setups) // num_process
+            jobs = []
+            start_idx = 0
+            chunk_idx = 0
+            while(start_idx < len(combined_query_setups)):
+                if start_idx + chunk_idx <= len(combined_query_setups):
+                    job = pool.apply_async(self.eval, (chunk_idx, combined_query_setups[start_idx: start_idx+chunk_size], result))
+                else:
+                    job = pool.apply_async(self.eval, (chunk_idx, combined_query_setups[start_idx: start_idx+chunk_size], result))
+                start_idx += chunk_size
+                chunk_idx += 1
+
+                jobs.append(job)
+
+            # Wait for all jobs to finish
+            for job in jobs:
+                job.get()
+            sorted_result = sorted(result, key=lambda x: x['max_tot_util'], reverse=True)
+
+            # print([r['max_tot_util'] for r in sorted_result])
+        print(sorted_result[0]['optimal_combined_query_setup'])
+        # print(sorted_result[0]['optimal_cluster_state'].tier_state)
+        print(sorted_result[0]['max_tot_util']) 
+        
                    
 
     def single_optimize(self):
@@ -863,12 +901,13 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--method', choices=['single', 'joint', 'exhaustive'], required=True)
     args = parser.parse_args()
     engine = Engine(num_profile_sample=5000)
+    
     if args.method == 'joint':
         engine.joint_optimize()
     elif args.method == 'single':
         engine.single_optimize()
     elif args.method == 'exhaustive':
-        engine.exhuastive_optimize()
+        engine.exhaustive_optimize()
     # engine.single_optimize()
 
 
