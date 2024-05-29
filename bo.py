@@ -8,6 +8,9 @@ import random
 
 class BayesianOptimization:
     def __init__(self, feat_bounds: List[List[int]], acquisition='ucb'):
+        """
+        This BO is used to minimize cost 
+        """
         
         for bound in feat_bounds:
             assert len(bound) != 0, 'feat bounds should not be empty'
@@ -17,44 +20,50 @@ class BayesianOptimization:
         self.acquisition = acquisition
         self.kernel = Matern(nu=2.5)
         self.gp = GaussianProcessRegressor(random_state=0, kernel=self.kernel)
-    
+        self.y_min = 0
+
     def _get_acq_val(self, x, keppa=2):
         x = np.array(x)
+        x = x.reshape(1, -1)
         if self.acquisition == 'ucb':
-            x = x.reshape(1, -1)
-            mean, std = self.gp.predict(x.reshape(1, -1), return_std=True)
+            mean, std = self.gp.predict(x, return_std=True)
             return mean + keppa * std
+        elif self.acquisition == 'ei':
+            mean, std = self.gp.predict(x, return_std=True)
+            z = (self.y_min - mean) / std
+            ei = (self.y_min - mean) * norm.cdf(z) + std * norm.pdf(z) 
+            # print(mean, std, z, ei)
+
+            # z = (y_pred - best_y) / y_std
+            # ei = (y_pred - best_y) * norm.cdf(z) + y_std * norm.pdf(z)
     
-    def _get_random_raw_samples(self, num_samples: int):
-        samples = []
+            return ei
+        
+    def get_pred(self, x):
+        x = np.array(x)
+        mean, std = self.gp.predict(x.reshape(1, -1), return_std=True)
+        return mean, std 
+    
+    def _get_random_raw_samples(self, num_samples: int=300):
+        samples = list()
         for _ in range(num_samples):
             feat_choices = [np.random.choice(bounds) for bounds in self.feat_bounds]
-            samples.append(feat_choices )
+            samples.append(feat_choices)
         return samples
-    
-    def get_random_samples(self, num_samples: int): 
-        # samples = self._get_random_raw_samples(100)
-        # # best_acq_val = -10e100
-        # arr = []
-        # for sample in samples:
-        #     _, _, std = self._get_acq_val(sample)   
-        #     arr.append((std, sample))
-        # arr.sort(key=lambda x: x[0], reverse=True)
-
-        # return [arr[i][1] for i in range(num_samples)]
-
-        return self._get_random_raw_samples(num_samples)
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         """
         Fit samples
         """
         self.gp = GaussianProcessRegressor(random_state=0, kernel=self.kernel).fit(X, y)
+        self.y_min = min(y)
+        # print(self.y_max)
+        # exit()
         return True
 
     def get_next_sample(self):
         """Get a sample based on acqusition func"""
-        samples = self._get_random_raw_samples(100)
+        samples = self._get_random_raw_samples()
         # best_acq_val = -10e100
         arr = []
         for sample in samples:
@@ -66,7 +75,7 @@ class BayesianOptimization:
         return arr[0][1]
 
     def get_sorted_samples(self):
-        samples = self._get_random_raw_samples(100)
+        samples = self._get_random_raw_samples()
         # best_acq_val = -10e100
         arr = []
         for sample in samples:
