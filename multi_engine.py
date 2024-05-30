@@ -582,13 +582,19 @@ class Engine:
             return foot_print[0], self.profile_lat
         return f_foot_print[0], self.profile_lat
     
-    def eval(self, chunk_idx, combined_query_setups, result):
-        
+    def eval_setups(self, subtask_id, query_setups_per_query):
+        first_query_setup = query_setups_per_query[0][subtask_id]    
+        total_combinations = 1        
+        for query_setups in query_setups_per_query[1:]:
+            total_combinations *= len(query_setups) 
+
         max_tot_util = -100000
         optimal_combined_query_setup = None
         optimal_cluster_state = ClusterState(self.cluster_spec)
         st = time.time()
-        for idx, combined_query_setup in enumerate(combined_query_setups):
+        for idx, partial_query_setup in enumerate(itertools.product(*query_setups_per_query[1:])):
+            combined_query_setup = (first_query_setup,) + partial_query_setup
+            # print(len(combined_query_setup))
             cluster_state = ClusterState(self.cluster_spec)
             for query, query_setup in zip(self.queries, combined_query_setup):
                 cluster_state.push_query(query, query_setup['placement'], query_setup)
@@ -598,9 +604,10 @@ class Engine:
                 optimal_combined_query_setup = combined_query_setup
                 optimal_cluster_state = cluster_state 
             if idx % 200000 == 0:
-                print('chunk:',chunk_idx, idx, "/", len(combined_query_setups), 'time', time.time() - st)
+                print('subtask:', subtask_id, idx, "/", total_combinations, 'time', time.time() - st)
                 st = time.time()
-        result[chunk_idx] = {
+
+        return  {
             'max_tot_util': max_tot_util, 
             'optimal_combined_query_setup': optimal_combined_query_setup,
             # 'optimal_cluster_state': optimal_cluster_state
@@ -612,48 +619,33 @@ class Engine:
         for query in self.queries:
             query_setups = self.vulcan_search(query, ClusterState(self.cluster_spec))
             
-            valid_per_query_setups = []
-            for per_query_setup in query_setups:
-                if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
-                    valid_per_query_setups.append(per_query_setup)    
+            # valid_per_query_setups = []
+            # for per_query_setup in query_setups:
+            #     if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
+            #         valid_per_query_setups.append(per_query_setup)    
             query_setups_per_query.append(query_setups) 
 
         print(len(query_setups_per_query), [len(query_setups) for query_setups in query_setups_per_query])
-        total_combintation = 1
-        for query_setups in query_setups_per_query:
-            total_combintation *= len(query_setups) 
-
         
         st = time.time()
         num_process = 10
 
         with Pool(num_process) as pool:
-            manager = Manager()
-            result = manager.list([{'max_tot_util': -20000000} for _ in range(num_process + 1)])
-            combined_query_setups = [combined_query_setup for combined_query_setup in itertools.product(*query_setups_per_query)] 
-            chunk_size = len(combined_query_setups) // num_process
             jobs = []
-            start_idx = 0
-            chunk_idx = 0
-            while(start_idx < len(combined_query_setups)):
-                if start_idx + chunk_idx <= len(combined_query_setups):
-                    job = pool.apply_async(self.eval, (chunk_idx, combined_query_setups[start_idx: start_idx+chunk_size], result))
-                else:
-                    job = pool.apply_async(self.eval, (chunk_idx, combined_query_setups[start_idx: start_idx+chunk_size], result))
-                start_idx += chunk_size
-                chunk_idx += 1
-
+            for subtask_id in range(len(query_setups_per_query[0])):
+                job = pool.apply_async(self.eval_setups, (subtask_id, query_setups_per_query))
                 jobs.append(job)
 
             # Wait for all jobs to finish
+            results = []
             for job in jobs:
-                job.get()
-            sorted_result = sorted(result, key=lambda x: x['max_tot_util'], reverse=True)
+                results.append(job.get())
+            sorted_result = sorted(results, key=lambda x: x['max_tot_util'], reverse=True)
 
             # print([r['max_tot_util'] for r in sorted_result])
-        print(sorted_result[0]['optimal_combined_query_setup'])
-        # print(sorted_result[0]['optimal_cluster_state'].tier_state)
-        print(sorted_result[0]['max_tot_util']) 
+            print(sorted_result[0]['optimal_combined_query_setup'])
+            # print(sorted_result[0]['optimal_cluster_state'].tier_state)
+            print(sorted_result[0]['max_tot_util']) 
         
         print('iterate time:', time.time()-st)                   
 
