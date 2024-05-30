@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from op import AudioSampler, NoiseReduction, WaveToText, Decoder
 from sampler import VOiCERandomSampler
+import multiprocessing as mp
 
 DATA_SET_PATH="/data"
 
@@ -21,8 +22,15 @@ DATA_SET_PATH="/data"
 knobs = [
     ('audio_sample_rate', [8000, 12000, 16000]),
     ('frequency_mask_width', [500, 2000, 4000]),
-    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-large'])
+    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-xlarge'])
 ]
+
+# knobs = [
+#     ('audio_sample_rate', [12000]),
+#     ('frequency_mask_width', [2000]),
+#     ('model', ['wav2vec2-large-10m', 'hubert-large'])
+# ]
+
 
 def get_pipeline_args():
     return {
@@ -61,7 +69,7 @@ def sample_speech_data(sampler: VOiCERandomSampler, method: str):
     # Transcription
     transcript = ref_df.loc[filename.split('/')[-1].split('.')[0], 'transcript'] # split to remove .wav
 
-    return audio, sr, transcript
+    return audio, sr, transcript, filename
 
 def profile_pipeline(method:str):
     sampler = VOiCERandomSampler()
@@ -109,9 +117,11 @@ def profile_pipeline(method:str):
     num_profile_sample = 6400
     batch_size = 1 # calculate cummulated accuracy every batch
 
+    group_accuracy = [[] for i in range(16)]
     cum_accuracy = []
-    for i in tqdm.tqdm(range(num_profile_sample)):
-        audio, sr, transcript = sample_speech_data(sampler, method)
+    # for i in tqdm.tqdm(range(num_profile_sample)):
+    for i in range(num_profile_sample):
+        audio, sr, transcript, filename = sample_speech_data(sampler, method)
         # audio, sr, transcript = random_load_speech_data()
         batch_data = {
             'audio': torch.tensor(np.expand_dims(audio, axis=0)),
@@ -125,9 +135,15 @@ def profile_pipeline(method:str):
         batch_data = decoder.profile(batch_data)
         if i % batch_size == 0:
             cum_accuracy.append(decoder.get_endpoint_accuracy())
+        # batch size in decoder is also 1
+        sampler.feedback((filename, decoder.get_last_accuracy()))
+        group_accuracy[i % 16].append(decoder.get_last_accuracy())
 
-
-
+    print("Group reulst:")
+    for i in range(16):
+        print(f"Group {i}: {np.mean(group_accuracy[i]):4f} {np.std(group_accuracy[i]):4f} {np.max(group_accuracy[i]):4f} {np.min(group_accuracy[i]):4f} ")
+    profile_result["group_acc"] = [np.mean(group_accuracy[i]) for i in range(16)]
+    profile_result["group_std"] = [np.std(group_accuracy[i]) for i in range(16)]
     profile_result['accuracy'] = decoder.get_endpoint_accuracy()
     profile_result['cummulative_accuracy'] = cum_accuracy 
     profile_result['total_profile_time'] = time.time() - start_time
@@ -163,6 +179,21 @@ if __name__ == "__main__":
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
     # method = "random"
+    
+    mp.set_start_method('spawn')
+    procs = []
+    
+    num = 2
     for method in ["random", "stratified"]:
-        for i in range(10):
-            start_exp(f"./result/profile_{method}_{i}.json", method)
+        for i in range(num):
+            p = mp.Process(target=start_exp, args=(f"./result/profile_{method}_{i}", method))
+            procs.append(p)
+            # start_exp(f"./result/profile_{method}_{i}.json", method)
+        for p in procs:
+            print(f"Start process {p}")
+            p.start()
+        for p in procs:
+            p.join()
+    
+    # method = "stratified"
+    # start_exp(f"./result/acc_{method}.json", method)

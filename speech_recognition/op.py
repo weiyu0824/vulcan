@@ -168,3 +168,8 @@ class Decoder(ProcessOp):
         if len(self.accuracy) == 0:
             return 0
         return sum(self.accuracy) / len(self.accuracy)
+
+    def get_last_accuracy(self):
+        if len(self.accuracy) == 0:
+            raise ValueError('No accuracy is computed')
+        return self.accuracy[-1]
