@@ -8,7 +8,7 @@ import tqdm
 import pandas as pd
 import numpy as np
 from op import AudioSampler, NoiseReduction, WaveToText, Decoder
-from sampler import VOiCERandomSampler
+from sampler import VOiCERandomSampler, VOiCEBootstrapSampler
 import multiprocessing as mp
 
 DATA_SET_PATH="/data"
@@ -19,17 +19,17 @@ DATA_SET_PATH="/data"
 #     ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'wav2vec2-large-960h', 'hubert-large', 'hubert-xlarge'])
 # ]
 
-knobs = [
-    ('audio_sample_rate', [8000, 12000, 16000]),
-    ('frequency_mask_width', [500, 2000, 4000]),
-    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-xlarge'])
-]
-
 # knobs = [
-#     ('audio_sample_rate', [12000]),
-#     ('frequency_mask_width', [2000]),
-#     ('model', ['wav2vec2-large-10m', 'hubert-large'])
+#     ('audio_sample_rate', [8000, 12000, 16000]),
+#     ('frequency_mask_width', [500, 2000, 4000]),
+#     ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-xlarge'])
 # ]
+
+knobs = [
+    ('audio_sample_rate', [12000]),
+    ('frequency_mask_width', [2000]),
+    ('model', ['wav2vec2-large-10m', 'hubert-large'])
+]
 
 
 def get_pipeline_args():
@@ -83,7 +83,7 @@ def profile_pipeline(method:str):
     decoder = Decoder(pipe_args)
 
 
-    print('start profile this pipeline ...', pipe_args)
+    print(f"Start {method} profile args: {pipe_args}")
     start_time = time.time()
 
     # print('profile latency & input size')
@@ -139,9 +139,10 @@ def profile_pipeline(method:str):
         sampler.feedback((filename, decoder.get_last_accuracy()))
         group_accuracy[i % 16].append(decoder.get_last_accuracy())
 
-    print("Group reulst:")
-    for i in range(16):
-        print(f"Group {i}: {np.mean(group_accuracy[i]):4f} {np.std(group_accuracy[i]):4f} {np.max(group_accuracy[i]):4f} {np.min(group_accuracy[i]):4f} ")
+    # print("Group result:")
+    # for i in range(16):
+    #     print(f"Group {i}: {np.mean(group_accuracy[i]):4f} {np.std(group_accuracy[i]):4f} {np.max(group_accuracy[i]):4f} {np.min(group_accuracy[i]):4f} ")
+    
     profile_result["group_acc"] = [np.mean(group_accuracy[i]) for i in range(16)]
     profile_result["group_std"] = [np.std(group_accuracy[i]) for i in range(16)]
     profile_result['accuracy'] = decoder.get_endpoint_accuracy()
@@ -150,6 +151,76 @@ def profile_pipeline(method:str):
 
     return profile_result
 
+
+def bootstrap_profile_pipeline():
+    pipe_args = get_pipeline_args()
+    
+    profile_result = {}
+
+    audio_sampler = AudioSampler(pipe_args)
+    noise_reduction = NoiseReduction(pipe_args)
+    wave_to_text = WaveToText(pipe_args)
+    decoder = Decoder(pipe_args)
+
+    print(f"Bootrap profile args: {pipe_args}")
+    print("start bootstraping")
+    boostrap_sample_per_stratum = 10
+    n_stratum = 16
+    sampler = VOiCEBootstrapSampler(n_stratum * boostrap_sample_per_stratum)
+    
+
+    for i in range(n_stratum * boostrap_sample_per_stratum):
+        audio, sr, transcript, filename = sample_speech_data(sampler, "feedback")
+        batch_data = {
+            'audio': torch.tensor(np.expand_dims(audio, axis=0)),
+            'sr': sr, 
+            'transcript': transcript
+        }
+        batch_data = audio_sampler.profile(batch_data)
+        batch_data = noise_reduction.profile(batch_data)
+        batch_data = wave_to_text.profile(batch_data)
+        batch_data = decoder.profile(batch_data)
+        sampler.feedback((filename, decoder.get_last_accuracy()))
+        
+    sampler.update_weight()
+    
+    start_time = time.time()
+    
+    print('profile accuracy')
+    num_profile_sample = 1000
+    batch_size = 1 # calculate cummulated accuracy every batch
+
+    group_accuracy = [[] for i in range(16)]
+    cum_accuracy = []
+    # for i in tqdm.tqdm(range(num_profile_sample)):
+    for i in range(num_profile_sample):
+        audio, sr, transcript, filename = sample_speech_data(sampler, "weighted")
+        # audio, sr, transcript = random_load_speech_data()
+        batch_data = {
+            'audio': torch.tensor(np.expand_dims(audio, axis=0)),
+            'sr': sr, 
+            'transcript': transcript
+        }
+    
+        batch_data = audio_sampler.profile(batch_data)
+        batch_data = noise_reduction.profile(batch_data)
+        batch_data = wave_to_text.profile(batch_data)
+        batch_data = decoder.profile(batch_data)
+        if i % batch_size == 0:
+            cum_accuracy.append(decoder.get_endpoint_accuracy())
+        # batch size in decoder is also 1
+        sampler.feedback((filename, decoder.get_last_accuracy()))
+        group_accuracy[i % 16].append(decoder.get_last_accuracy())
+    
+    profile_result["group_acc"] = [np.mean(group_accuracy[i]) for i in range(16)]
+    profile_result["group_std"] = [np.std(group_accuracy[i]) for i in range(16)]
+    profile_result['accuracy'] = decoder.get_endpoint_accuracy()
+    profile_result['cummulative_accuracy'] = cum_accuracy 
+    profile_result['total_profile_time'] = time.time() - start_time
+
+    return profile_result
+    
+    
 def start_exp(result_fname, method: str = "random"):
     with open (result_fname, 'w') as fp:
         json.dump([], fp) 
@@ -160,7 +231,10 @@ def start_exp(result_fname, method: str = "random"):
                 os.environ["frequency_mask_width"] = str(freq_mask)
                 os.environ["model"] = str(model)
 
-                result = profile_pipeline(method) 
+                if method == "feedback":
+                    result = bootstrap_profile_pipeline()
+                else:
+                    result = profile_pipeline(method) 
                 # print(result)
                 # print('----')
 
@@ -175,6 +249,7 @@ def start_exp(result_fname, method: str = "random"):
                 with open (result_fname, 'w') as fp:
                     records = json.dump(records, fp)  
 
+
 if __name__ == "__main__":
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
@@ -183,17 +258,17 @@ if __name__ == "__main__":
     mp.set_start_method('spawn')
     procs = []
     
-    num = 2
-    for method in ["random", "stratified"]:
-        for i in range(num):
-            p = mp.Process(target=start_exp, args=(f"./result/profile_{method}_{i}", method))
-            procs.append(p)
-            # start_exp(f"./result/profile_{method}_{i}.json", method)
-        for p in procs:
-            print(f"Start process {p}")
-            p.start()
-        for p in procs:
-            p.join()
+    # num = 2
+    # for method in ["random", "stratified"]:
+    #     for i in range(num):
+    #         p = mp.Process(target=start_exp, args=(f"./result/profile_{method}_{i}", method))
+    #         procs.append(p)
+    #         # start_exp(f"./result/profile_{method}_{i}.json", method)
+    #     for p in procs:
+    #         print(f"Start process {p}")
+    #         p.start()
+    #     for p in procs:
+    #         p.join()
     
-    # method = "stratified"
-    # start_exp(f"./result/acc_{method}.json", method)
+    method = "feedback"
+    start_exp(f"./result/weighted_{method}.json", method)

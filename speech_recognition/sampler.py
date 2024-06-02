@@ -8,6 +8,8 @@ class Sampler():
         pass
     def feedback(self, ctx):
         pass
+    def update_weight():
+        pass
     
 class VOiCERandomSampler(Sampler):
     def __init__(self) -> None:
@@ -101,7 +103,7 @@ class VOiCERandomSampler(Sampler):
 
 
 class VOiCEBootstrapSampler(Sampler):
-    def __init__(self) -> None:
+    def __init__(self, boostrap_th) -> None:
         self.random_data = [] 
         self.random_idx = 0
         self.stratified_data = dict()
@@ -109,7 +111,7 @@ class VOiCEBootstrapSampler(Sampler):
         self.stratified_idx = dict()
         self.strata_next = 0
         self.feedback_idx = 0
-        self.feedback_threshold = 10 * 16
+        self.feedback_threshold = boostrap_th # 160 here
         self.feedback_data = dict()
         self.get_all_data()
         print(f"Summary:\n\t#Samples:{len(self.random_data)}")
@@ -174,6 +176,12 @@ class VOiCEBootstrapSampler(Sampler):
             for l2 in l2s:
                 # normalize weight
                 self.stratified_weight[l1][l2] /= culmulative_weight
+                
+        suf = 0
+        for l1 in l1s:
+            for l2 in l2s:
+                suf += self.stratified_weight[l1][l2]
+                self.stratified_weight[l1][l2] = suf
 
     def sample_strata_based_on_weight(self):
         weight = random.uniform(0, 1)
@@ -204,6 +212,15 @@ class VOiCEBootstrapSampler(Sampler):
     def feedback_sample(self):
         if self.feedback_idx < self.feedback_threshold:
             return self.stratified_sample()
+        else:
+            raise Exception("Feedback threshold reached")
+        # l1, l2 = self.sample_strata_based_on_weight()
+        # idx = self.stratified_idx[l1][l2]
+        # data = self.stratified_data[l1][l2]
+        # self.stratified_idx[l1][l2] = (idx + 1) % len(data)
+        # return data[idx]
+
+    def weighted_sample(self):
         l1, l2 = self.sample_strata_based_on_weight()
         idx = self.stratified_idx[l1][l2]
         data = self.stratified_data[l1][l2]
@@ -217,20 +234,19 @@ class VOiCEBootstrapSampler(Sampler):
             return self.stratified_sample()
         elif ctx == "feedback":
             return self.feedback_sample()
+        elif ctx == "weighted":
+            return self.weighted_sample()
 
     def feedback(self, ctx):
-        if self.feedback_idx > self.feedback_threshold:
-            return
         def get_l1_l2(name):
-            l1 = name.split('/')[5]
-            l2 = name.split('/')[6]
+            l1 = name.split('/')[6]
+            l2 = name.split('/')[7]
             return l1, l2
         name, wer = ctx
         l1, l2 = get_l1_l2(name)
         self.feedback_data[l1][l2].append(wer)
-        if self.feedback_idx == self.feedback_threshold:
-            self.update_weight_based_on_feedback()
         self.feedback_idx += 1
-
         
-        
+    def update_weight(self):
+        print(f"Update weight based on feedback #sample = {self.feedback_idx}")
+        self.update_weight_based_on_feedback()

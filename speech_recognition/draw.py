@@ -58,8 +58,45 @@ def plot2(ra, st, prefix=""):
     plt.legend()
     plt.savefig(f"./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
 
+
+def plot2_short(ra, st, prefix=""):
+    audio_sr = ra['audio_sr']
+    freq_mask = ra['freq_mask']
+    model = ra['model']
+    ra_acc = ra['result']['accuracy']
+    ra_cul_acc = ra['result']['cummulative_accuracy']
+    st_acc = st['result']['accuracy']
+    st_cul_acc =  st['result']['cummulative_accuracy']
+    print(f"audio_sr: {audio_sr}, freq_mask: {freq_mask}, model: {model}, acc: {ra_acc:2f}^{st_acc:2f}")
+    assert(audio_sr == st['audio_sr'])
+    assert(freq_mask == st['freq_mask'])
+    assert(model == st['model'])
+    #assert(len(ra_cul_acc) == len(st_cul_acc))
+
+    skip = 100
+    end = len(st_cul_acc[skip:])
+    x = range(end - skip)
+    plt.cla()
+    plt.plot(x, ra_cul_acc[skip:end], label='random', color='r')
+    plt.plot(x, st_cul_acc[skip:end], label='stratified', color='b')
+    plt.xticks([i for i in x if i % 500 == 0], [str(i + skip) for i in x if i % 500 == 0])
+    plt.xlim(0, len(x) - 1)
+    # plt.axhline(y=ra_acc, color='g', linestyle='dashed', label='acc')
+    plt.axhline(y=ra_acc + 0.01, color='g', linestyle='dashed', label='acc+1%')
+    plt.axhline(y=ra_acc - 0.01, color='g', linestyle='dashed', label='acc-1%')
+
+    plt.ylim(ra_acc - 0.05, ra_acc + 0.05)
+    
+    plt.xlabel('# sample')
+    plt.ylabel('Accuracy')
+    
+    plt.title(f'{model} sr:{audio_sr} fm:{freq_mask}')
+    plt.legend()
+    plt.savefig(f"./result/weighted_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
+
 def plot_all(ras, sts, prefix=""):
     assert(len(ras) == len(sts))
+    plt.cla()
     for i in range(len(ras)):
         ra = ras[i]
         st = sts[i]
@@ -96,25 +133,46 @@ def plot_all(ras, sts, prefix=""):
     plt.savefig(f"./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
     print(f"Save to ./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
 
+
+def draw_all():
+    ras = []
+    sts = []
+    rec_ran = []
+    rec_sts = []
     
+    for idx in range(2, 10):
+        with open(f'./result/profile_random_{idx}.json', 'r') as fp:
+            records_random = json.load(fp)
+            rec_ran.append(records_random)
+            # ras.append(records_random[j])
+        with open(f'./result/profile_stratified_{idx}.json', 'r') as fp:
+            records_stratified = json.load(fp)
+            rec_sts.append(records_stratified)
+            # sts.append(records_stratified[j])
+    
+    num_of_knob = len(rec_ran[0])
+    assert(len(rec_ran) == len(rec_sts))
+    for j in range(num_of_knob):
+        ras = [rec_ran[i][j] for i in range(len(rec_ran))]
+        sts = [rec_sts[i][j] for i in range(len(rec_sts))]
+        plot_all(ras, sts, "all")
+        
 if __name__ == "__main__":
     # assert(len(sys.argv) == 2)
     # method = sys.argv[1]
     # idx = sys.argv[1]
-    ras = []
-    sts = []
-    for idx in range(10):
-        with open(f'./result/profile_random_{idx}.json', 'r') as fp:
-            records_random = json.load(fp)
-            ras.append(records_random[1])
-        with open(f'./result/profile_stratified_{idx}.json', 'r') as fp:
-            records_stratified = json.load(fp)
-            sts.append(records_stratified[1])
 
     # for record in records:
     #     plot(record, f"{method}:{idx}")
     
-    # plot2(records_random[0], records_stratified[0], f"{idx}")
-    # plot2(records_random[1], records_stratified[1], f"{idx}")
+    with open(f'./result/profile_random_0.json', 'r') as fp:
+        records_random = json.load(fp)
+        # ras.append(records_random[j])
+    with open(f'./result/weighted_feedback.json', 'r') as fp:
+        records_weighted = json.load(fp)
+            # sts.append(records_stratified[j])
+    
+    plot2_short(records_random[0], records_weighted[0], f"")
+    plot2_short(records_random[1], records_weighted[1], f"")
 
-    plot_all(ras, sts, "all")
+   
