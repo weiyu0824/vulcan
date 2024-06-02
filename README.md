@@ -22,4 +22,8 @@
     - conda
         ```
         conda create -n vulcan python=3.10
+        conda create -f vulcan.yaml # or from file, modified the prefix field if needed
         ```
+
+
+    

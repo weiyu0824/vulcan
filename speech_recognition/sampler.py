@@ -248,5 +248,5 @@ class VOiCEBootstrapSampler(Sampler):
         self.feedback_idx += 1
         
     def update_weight(self):
-        print(f"Update weight based on feedback #sample = {self.feedback_idx}")
+        print(f"Update weight based on feedback, #sample = {self.feedback_idx}")
         self.update_weight_based_on_feedback()

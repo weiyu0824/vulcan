@@ -15,6 +15,9 @@ class ProcessOp():
     def get_input_size(self):
         return self.input_size 
 
+    def get_result(self):
+        pass
+
 class SourceOp():
     def load_batch(self):
         """Do some transformation"""

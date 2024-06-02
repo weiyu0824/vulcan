@@ -122,8 +122,6 @@ class WaveToText(ProcessOp):
 
         return batch_data
         
-       
-
 class Decoder(ProcessOp):
     def __init__(self, args):
         super().__init__()
