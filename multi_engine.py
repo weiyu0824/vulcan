@@ -12,6 +12,7 @@ import itertools
 from tqdm import tqdm
 from multiprocessing import Pool, Manager
 import time
+import os
 
 
 import warnings
@@ -200,8 +201,8 @@ class Engine:
         self.queries = [
             Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
             Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+            # Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+            # Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
             # Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
         ]
 
@@ -615,15 +616,19 @@ class Engine:
 
     def exhaustive_optimize(self):
         
-        query_setups_per_query= [] 
-        for query in self.queries:
-            query_setups = self.vulcan_search(query, ClusterState(self.cluster_spec))
-            
-            # valid_per_query_setups = []
-            # for per_query_setup in query_setups:
-            #     if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
-            #         valid_per_query_setups.append(per_query_setup)    
-            query_setups_per_query.append(query_setups) 
+        query_setups_per_query = [] 
+        with Pool(min(os.cpu_count(), len(self.queries))) as pool:
+            jobs = []
+            for query in self.queries:
+                job = pool.apply_async(self.vulcan_search, (query, ClusterState(self.cluster_spec)))
+                jobs.appen(job)
+            for job in jobs:
+                query_setups = job.get()
+                # valid_per_query_setups = []
+                # for per_query_setup in query_setups:
+                #     if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
+                #         valid_per_query_setups.append(per_query_setup)    
+                query_setups_per_query.append(query_setups)
 
         print(len(query_setups_per_query), [len(query_setups) for query_setups in query_setups_per_query])
         
@@ -650,31 +655,36 @@ class Engine:
         print('iterate time:', time.time()-st)                   
 
     def single_optimize(self):
+        query_setups_per_query = [] 
+        with Pool(min(os.cpu_count(), len(self.queries))) as pool:
+            jobs = []
+            for query in self.queries:
+                job = pool.apply_async(self.vulcan_search, (query, ClusterState(self.cluster_spec)))
+                jobs.append(job)
+            for job in jobs:
+                query_setups = job.get()
+                query_setups_per_query.append(query_setups)
+                
         cluster_state = ClusterState(self.cluster_spec)
         query_result = []
-        for query in self.queries:
-            foot_print = self.vulcan_search(query, ClusterState(self.cluster_spec))
+        for query, query_setups in zip(self.queries, query_setups_per_query):
             
             #TODO: Remove this assumtion that there must be a placement that is qualify
             # print(foot_print)
             placable_footprint = []
-            cluster_utils = []
-            for d in foot_print:
-                plc = d['placement']
-
-                query_id = cluster_state.push_query(query, plc, profile_result=d)
+            best_query_setup = None 
+            best_tot_util = -10000
+            for query_setup in query_setups:
+                query_id = cluster_state.push_query(query, query_setup['placement'], query_setup)
                 if cluster_state.is_cluster_out_of_memory() == False:
-                    placable_footprint.append(d)
-                    cluster_utils.append(cluster_state.tot_util) 
+                    if cluster_state.tot_util > best_tot_util:
+                        best_query_setup = query_setup
+                        best_tot_util = cluster_state.tot_util
                 cluster_state.pop_query(query_id)
-            print(len(placable_footprint)) 
 
-            #sort by total utility
-            sorted_footprint = [d for _, d in sorted(zip(cluster_utils, placable_footprint), key=lambda x: x[0], reverse=True)]
 
-            query_result.append(sorted_footprint[0])
-            cluster_state.push_query(query, sorted_footprint[0]['placement'], sorted_footprint[0])
-            print(len(cluster_state.deployed_queries))
+            query_result.append(best_query_setup)
+            cluster_state.push_query(query, best_query_setup['placement'], best_query_setup)
 
         print('===========')
         # print(query_result)
@@ -684,211 +694,118 @@ class Engine:
         print('tot_gpu_processing_time', cluster_state.tot_gpu_processing_time)
         print('tot_util', cluster_state.tot_util)
 
+    def vulcan_search_multiple_query(self, subtask_id, num_subtask,  placement_by_query):
+        print('Subtask', subtask_id, '/', num_subtask, 'start ...')
+        def simulate_sample(sample: List[int]):
+            sample_sid = 0
+            cluster_state = ClusterState(self.cluster_spec)
+            query_ids = []
+            for query, placement in zip(self.queries, placement_by_query):
+                sample_per_query = sample[sample_sid:sample_sid+len(query.knob_list)]        
+                sample_sid += len(query.knob_list)
+                config_per_query = sample_to_config(sample_per_query, query.knob_list)
+                result_per_query = self.simulate_run_pipeline(config_per_query, query)
+                post_result_per_query = self.postprocess_result(result_per_query, placement, config_per_query, query)
+                query_id = cluster_state.push_query(query, placement, post_result_per_query)
+
+                query_ids.append(query_id)
+            # After placing 
+            deployed_profiles = []
+            for query_id in query_ids:
+                deployed_profile = cluster_state.get_query_profile(query_id)
+                deployed_profiles.append(deployed_profile) 
+
+            global_query_setup = {
+                'placement': placement_by_query,
+                'profile': deployed_profiles, 
+                'cluster_state': cluster_state.tier_state,
+                'tot_util': cluster_state.tot_util, 
+                # 'type': 'random'
+            }
+            return cluster_state, global_query_setup 
+
+
+        feat_bounds = []
+        for query in self.queries:
+            feat_bounds_per_query = self.get_feat_bounds(query)
+            feat_bounds += feat_bounds_per_query
+        
+        bo = BayesianOptimization(feat_bounds=feat_bounds)
+        
+        
+        init_samples = bo._get_random_raw_samples(num_samples=self.num_init_sample_configs)
+        init_utils = []
+        num_exploded_cluster = 0
+        best_tot_util = -10000
+        best_global_query_setup = None
+        for sample in init_samples:
+            cluster_state, global_query_setup = simulate_sample(sample)
+            
+            init_utils.append(cluster_state.tot_util)
+            if cluster_state.is_cluster_out_of_memory():
+                num_exploded_cluster += 1
+            else:
+                if cluster_state.tot_util > best_tot_util:
+                    best_tot_util = cluster_state.tot_util
+                    best_global_query_setup = global_query_setup 
+
+        if num_exploded_cluster == self.num_init_sample_configs:
+            return best_tot_util, None
+            
+        bo.fit(X=np.array(init_samples), y=np.array(init_utils))
+        # Start searching
+        early_prune_cnt, bo_stop_cnt = 0, 0
+        max_tot_util = -100000000
+        while True: 
+            sample = bo.get_next_sample()                 
+            cluster_state, global_query_setup = simulate_sample(sample)
+            tot_util = cluster_state.tot_util
+            if cluster_state.is_cluster_out_of_memory() == False:
+                if  tot_util > best_tot_util:
+                    best_global_query_setup = global_query_setup
+                    best_tot_util = tot_util
+            
+            #early prune or bo stop 
+            early_prune_cnt += 1 if tot_util < 0 else 0
+            bo_stop_cnt = bo_stop_cnt + 1 if tot_util <= max_tot_util else 0 
+            max_tot_util = max(tot_util, max_tot_util) 
+
+            if early_prune_cnt >= self.early_prune_count:
+                break 
+            if bo_stop_cnt >= self.bo_stop_count:
+                break
+            # print(early_prune_cnt, bo_stop_cnt, max_tot_util)
+
+        return best_tot_util, best_global_query_setup
+
     def joint_optimize(self):
         self.num_init_sample_configs = self.num_init_sample_configs ** len(self.queries)
         self.early_prune_count = self.num_init_sample_configs * len(self.queries)
         
-
-
         plcs_by_query = [self.gen_all_place_choices(query, self.cluster_spec) for query in self.queries]        
-        print(plcs_by_query)
-
-        foot_print = [] 
 
         total_combinations = 1
         for lst in plcs_by_query:
             total_combinations *= len(lst)
-        
-        for plcs in tqdm(itertools.product(*plcs_by_query), total=total_combinations):
-            feat_bounds = []
-            for query in self.queries:
-                feat_bounds_per_query = self.get_feat_bounds(query)
-                # print(feat_bounds_per_query)
-                feat_bounds += feat_bounds_per_query
-            
-            bo = BayesianOptimization(feat_bounds=feat_bounds)
-            
-            
-            init_samples = bo._get_random_raw_samples(num_samples=self.num_init_sample_configs)
-            init_utils = []
-            num_exploded_cluster = 0
 
-            for sample in init_samples:
-                # Simulate each pipeline:
-                # old_tot_util = 0
-                sample_sid = 0
-                cluster_state = ClusterState(self.cluster_spec)
-                query_ids = []
-                for query, plc in zip(self.queries, plcs):
-                    sample_per_query = sample[sample_sid:sample_sid+len(query.knob_list)]        
-                    sample_sid += len(query.knob_list)
-                    # print(sample_per_query)
-                    config_per_query = sample_to_config(sample_per_query, query.knob_list)
-                    # print(config_per_query)
-                    result_per_query = self.simulate_run_pipeline(config_per_query, query)
-                    # print(result_per_query)
-                    post_result_per_query = self.postprocess_result(result_per_query, plc, config_per_query, query)
+        best_global_query_setup = None
+        best_tot_util = -10000
+        with Pool(os.cpu_count()) as pool:
+            jobs = [] 
+            for subtask_id, plcs in enumerate(itertools.product(*plcs_by_query)):
+                job = pool.apply_async(self.vulcan_search_multiple_query, (subtask_id, total_combinations, plcs))
+                jobs.append(job)
+            for job in jobs:
+                tot_util, global_query_setup = job.get()
+                if global_query_setup != None and tot_util > best_tot_util:
+                    best_tot_util = tot_util
+                    best_global_query_setup = global_query_setup
+                    
 
-                    uuid = cluster_state.push_query(query, plc, post_result_per_query)
-
-                    # print(post_result_per_query)
-                    # print()
-                    # old_tot_util += post_result_per_query['utility']
-
-                    query_ids.append(uuid)
-                # print('======== After placing ==========')
-                tot_util = 0 
-                deployed_profiles = []
-                for query_id in query_ids:
-                    deployed_profile = cluster_state.get_query_profile(query_id)
-                    deployed_profiles.append(deployed_profile) 
-                    # print()
-                    tot_util += deployed_profile['utility'] 
-                     
-
-                if cluster_state.is_cluster_out_of_memory() == True:
-                    num_exploded_cluster += 1
-                else: 
-                    foot_print.append({
-                        'placement': plcs,
-                        'profile': deployed_profiles, 
-                        'cluster_state': cluster_state.tier_state,
-                        'tot_util': tot_util, 
-                        'type': 'random'
-                    })  
-                    # exit()
-
-                # print(old_tot_util, 'new:', tot_util)
-                # print(cluster_state.tier_state, 'explode:', cluster_state.exploded)
-
-                init_utils.append(tot_util)
-
-                # foot_print.append(post_result)
-            # :('num exploded', num_exploded_cluster)            
-
-            if num_exploded_cluster == self.num_init_sample_configs:
-                # print('Go to next placement')
-                continue
-                
-            bo.fit(X=np.array(init_samples), y=np.array(init_utils))
-            # Start searching
-            early_prune_cnt, bo_stop_cnt = 0, 0
-            max_tot_util = -100000000
-            while True: 
-                sample = bo.get_next_sample()                 
-                 # Simulate each pipeline:
-                # old_tot_util = 0
-                sample_sid = 0
-                cluster_state = ClusterState(self.cluster_spec)
-                query_ids = []
-                for query, plc in zip(self.queries, plcs):
-                    sample_per_query = sample[sample_sid:sample_sid+len(query.knob_list)]        
-                    sample_sid += len(query.knob_list)
-                    # print(sample_per_query)
-                    config_per_query = sample_to_config(sample_per_query, query.knob_list)
-                    # print(config_per_query)
-                    result_per_query = self.simulate_run_pipeline(config_per_query, query)
-                    # print(result_per_query)
-                    post_result_per_query = self.postprocess_result(result_per_query, plc, config_per_query, query)
-
-                    uuid = cluster_state.push_query(query, plc, post_result_per_query)
-
-                    query_ids.append(uuid)
-                    # print(post_result_per_query)
-                    # print()
-                    # old_tot_util += post_result_per_query['utility']
-                # print('query ids:', query_ids)
-                deployed_profiles = []
-                for query_id in query_ids:
-                    deployed_profile = cluster_state.get_query_profile(query_id)
-                    # print(deployed_profile)
-                    deployed_profiles.append(deployed_profile) 
-                tot_util = cluster_state.tot_util
-
-                if cluster_state.is_cluster_out_of_memory == False:
-                    foot_print.append({
-                        'placement': plcs,
-                        'profile': deployed_profiles, 
-                        'cluster_state': cluster_state.tier_state,
-                        'tot_util': tot_util, 
-                        'type': 'search'
-                    })
-
-                #early prune or bo stop 
-                early_prune_cnt += 1 if tot_util < 0 else 0
-                bo_stop_cnt = bo_stop_cnt + 1 if tot_util <= max_tot_util else 0 
-                max_tot_util = max(tot_util, max_tot_util) 
-
-                if early_prune_cnt >= self.early_prune_count:
-                    break 
-                if bo_stop_cnt >= self.bo_stop_count:
-                    break
-                print(early_prune_cnt, bo_stop_cnt, max_tot_util)
-
-        foot_print.sort(key=lambda x: x['tot_util'], reverse=True)
-        print(foot_print[0])
-        # print(len(foot_print))
-        return foot_print 
-
-    def exhausitive_search(self):
-        poss_plc_per_query = []
-        poss_config_per_query = []
-        for query in self.queries:
-            poss_plc = self.gen_all_place_choices(query, self.cluster_spec)
-            poss_plc_per_query.append(poss_plc)
-
-            poss_config = self.generate_all_configs(query)
-            poss_config_per_query.append(poss_config)
-        
-        # print(poss_config_per_query)
-        import itertools
-        # result = 
-        # print(result)
-        i = 0 
-        for plcs in itertools.product(*poss_plc_per_query):
-            for configs in itertools.product(*poss_config_per_query):
-                new_cluster_state = ClusterState(self.cluster_spec)
-                post_results = []
-                for plc, config, query in zip(plcs, configs, self.queries):
-                    profile_result = self.simulate_run_pipeline(config, query)        
-                    post_result = self.postprocess_result(profile_result, plc, query, cluster_state, config)
-                    post_results.append(post_result) 
-
-                # check placeable
-                can_place = True
-                for plc, config, query, post_result in zip(plcs, configs, self.queries, post_results):
-                    if new_cluster_state.can_place_pipline(plc, query.op_list, post_result['gpu_mem_usgs']):
-                        new_cluster_state.update(plc, post_result['gpu_mem_usgs'])
-                    else:
-                        can_place = False
-                        break
-                for plc, config, query, post_result in zip(plcs, configs, self.queries, post_results):
-                    print(plc, config) 
-
-                if can_place == False : continue
-
-                # print(post_results)
-                
-                # update latency
-                can_place = True
-                for plc, config, query, post_result in zip(plcs, configs, self.queries, post_results):
-                    print(plc, config) 
-                
-                
-                # cal tot_gpu_time for further sorting
-
-
-
-
-                exit()
-
-        #     print(r)
-        #     i += 1
-        # print(i)
+        print(best_global_query_setup)
 
     def print_result(self):
         pass
-        # print #qualify query, # tot_gpu_time(cloud gpu time)
    
 
 if __name__ == "__main__":
