@@ -1,0 +1,6 @@
+docker
+scipy 
+scikit-learn
+tqdm
+numpy
+pandas
