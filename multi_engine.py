@@ -188,7 +188,7 @@ class ClusterState:
         return True
 
 class Engine:
-    def __init__(self, num_profile_sample=-1):
+    def __init__(self, queries: List[Query], num_profile_sample=-1,):
         self.early_prune_count = 10 
         self.bo_stop_count = 3
         self.num_init_sample_configs = 5
@@ -197,14 +197,8 @@ class Engine:
         # self.min_accuracy = min_accuracy
         # self.max_latency = max_latency
         self.num_profile_sample = num_profile_sample
+        self.queries = queries
 
-        self.queries = [
-            Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
-            Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            # Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            # Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-            # Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-        ]
 
         self.cache = {}
 
@@ -813,8 +807,20 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--method', choices=['single', 'joint', 'exhaustive'], required=True)
+    parser.add_argument('-q', '--num_queries', required=True)
     args = parser.parse_args()
-    engine = Engine(num_profile_sample=5000)
+    
+
+    
+    queries = [
+        Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
+        Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+        Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+        Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+        Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+    ]
+    queries = queries[:int(args.num_queries)] 
+    engine = Engine(queries, num_profile_sample=5000)
     
     st = time.time()
     if args.method == 'joint':
