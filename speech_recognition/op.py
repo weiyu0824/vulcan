@@ -61,6 +61,14 @@ class AudioSampler(ProcessOp):
            self.compute_latencies.append(time.time() - start_compute_time)
         return batch_data 
 
+    def process(self, batch_data):
+        sr = batch_data['sr']
+        audio = batch_data['audio']
+        audio = torchaudio.functional.resample(audio, sr, self.target_sr)    
+        batch_data['sr'] = self.target_sr
+        batch_data['audio'] = audio
+        return batch_data
+
 class NoiseReduction(ProcessOp):
     def __init__(self, args):
         super().__init__()
@@ -81,6 +89,12 @@ class NoiseReduction(ProcessOp):
 
         if profile_compute_latency:
            self.compute_latencies.append(time.time() - start_compute_time)
+        return batch_data
+    
+    def process(self, batch_data):
+        audio = batch_data['audio'] 
+        audio = self.tg(audio)
+        batch_data['audio'] = audio
         return batch_data
 
 class WaveToText(ProcessOp):
@@ -120,6 +134,14 @@ class WaveToText(ProcessOp):
         if profile_compute_latency:
             self.compute_latencies.append(time.time()-start_compute_time) 
 
+        return batch_data
+    
+    def process(self, batch_data):
+        audio = batch_data['audio'].to(device)
+        with torch.no_grad():
+            emission, _ = self.model(audio)
+        batch_data['audio'] = None
+        batch_data['emission'] = emission[0]
         return batch_data
         
 class Decoder(ProcessOp):
@@ -161,6 +183,13 @@ class Decoder(ProcessOp):
         wer = jiwer.wer(ground_transcript, pred_transcript)
         self.accuracy.append(wer)
         return 
+    
+    def process(self, batch_data):
+        ground_transcript = batch_data['transcript']
+        emission = batch_data['emission']
+        pred_transcript = self.decoder(emission)
+        batch_data['prediction'] = pred_transcript
+        return batch_data
 
     def get_endpoint_accuracy(self):
         if len(self.accuracy) == 0:

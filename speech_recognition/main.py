@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from op import AudioSampler, NoiseReduction, WaveToText, Decoder
 from sampler import VOiCERandomSampler, VOiCEBootstrapSampler
+from pipeline import Evaluator, Pipeline, WordErrorRate, BatchData
 import multiprocessing as mp
 
 DATA_SET_PATH="/data"
@@ -69,7 +70,8 @@ def sample_speech_data(sampler: VOiCERandomSampler, method: str):
     # Transcription
     transcript = ref_df.loc[filename.split('/')[-1].split('.')[0], 'transcript'] # split to remove .wav
 
-    return audio, sr, transcript, filename
+    pruned_filename = filename.split('/')[-1]
+    return audio, sr, transcript, pruned_filename
 
 def profile_pipeline(method:str):
     sampler = VOiCERandomSampler()
@@ -220,7 +222,51 @@ def bootstrap_profile_pipeline():
 
     return profile_result
     
+# use Pipeline
+def profile_pipeline2(sample_method: str):
+    pipe_args = get_pipeline_args()
+    dump_filename = '_'.join([str(i) for i in pipe_args.values()])
+
+    eval_result = {}
+
+    audio_sampler = AudioSampler(pipe_args)
+    noise_reduction = NoiseReduction(pipe_args)
+    wave_to_text = WaveToText(pipe_args)
+    decoder = Decoder(pipe_args)
+    ev = WordErrorRate()
+    pipeline = Pipeline(name="speech_recognition", ops=[audio_sampler, noise_reduction, wave_to_text, decoder], evaluator=ev, cache=None)
+    print(f"Bootrap profile args: {pipe_args}")
+    sampler = VOiCERandomSampler()
     
+    nsample = 6400
+    for _ in range(nsample):
+        audio, sr, transcript, filename = sample_speech_data(sampler, "random")
+        batch_data = BatchData(name=filename, data={
+            'audio': torch.tensor(np.expand_dims(audio, axis=0)),
+            'sr': sr, 
+            'transcript': transcript,
+            'prediction': None,
+        },label=transcript)
+        result = pipeline.run(batch_data)
+        eval_result.update({filename: {"metric": result}})
+        
+    dump = {"args": pipe_args, "eval": "wer", "results": eval_result}    
+    with open(f"./cache/{dump_filename}.json", 'w') as f:
+        f.write(json.dumps(dump))
+    print(f"Done, saved to {dump_filename}")
+    return 
+      
+# use this to get cache
+def start_prepare():
+    for audio_sr in knobs[0][1]:
+        for freq_mask in knobs[1][1]:
+            for model in knobs[2][1]:
+                os.environ["audio_sample_rate"] = str(audio_sr)
+                os.environ["frequency_mask_width"] = str(freq_mask)
+                os.environ["model"] = str(model)
+                print(f"Prepare {audio_sr} {freq_mask} {model}")
+                profile_pipeline2("random")
+
 def start_exp(result_fname, method: str = "random"):
     with open (result_fname, 'w') as fp:
         json.dump([], fp) 
@@ -255,8 +301,8 @@ if __name__ == "__main__":
     # start_connect(addr, port)
     # method = "random"
     
-    mp.set_start_method('spawn')
-    procs = []
+    # mp.set_start_method('spawn')
+    # procs = []
     
     # num = 2
     # for method in ["random", "stratified"]:
@@ -270,5 +316,7 @@ if __name__ == "__main__":
     #     for p in procs:
     #         p.join()
     
-    method = "feedback"
-    start_exp(f"./result/weighted_{method}.json", method)
+    # method = "feedback"
+    # start_exp(f"./result/weighted_{method}.json", method)
+    
+    start_prepare()
