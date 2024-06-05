@@ -32,6 +32,14 @@ knobs = [
     ('model', ['wav2vec2-large-10m', 'hubert-large'])
 ]
 
+ref_df = pd.read_csv(DATA_SET_PATH + '/VOiCES_devkit/references/filename_transcripts')
+ref_df.set_index('file_name', inplace=True)
+
+def load_cache(pipe_args):
+    dump_filename = '_'.join([str(i) for i in pipe_args.values()])
+    with open(f"./cache/{dump_filename}.json", 'r') as f:
+        dump = json.load(f)
+    return dump
 
 def get_pipeline_args():
     return {
@@ -40,9 +48,6 @@ def get_pipeline_args():
        'model': os.environ.get('model', 'wav2vec2-base')
     }
 
-
-ref_df = pd.read_csv(DATA_SET_PATH + '/VOiCES_devkit/references/filename_transcripts')
-ref_df.set_index('file_name', inplace=True)
 def random_load_speech_data():
     # randomly choose audio file for room, noise, specs
     room = random.choice(['rm1', 'rm2', 'rm3', 'rm4'])
@@ -153,7 +158,6 @@ def profile_pipeline(method:str):
 
     return profile_result
 
-
 def bootstrap_profile_pipeline():
     pipe_args = get_pipeline_args()
     
@@ -222,8 +226,78 @@ def bootstrap_profile_pipeline():
 
     return profile_result
     
-# use Pipeline
-def profile_pipeline2(sample_method: str):
+def profile_pipeline_cached(method: str):
+    assert(method in ["bootstrap", "stratified", "random"])
+    start_time = time.time()
+
+    pipe_args = get_pipeline_args()
+    print(f"Bootrap profile args: {pipe_args}")
+
+    cache = load_cache(pipe_args)
+    profile_result = {}
+    audio_sampler = AudioSampler(pipe_args)
+    noise_reduction = NoiseReduction(pipe_args)
+    wave_to_text = WaveToText(pipe_args)
+    decoder = Decoder(pipe_args)
+    ev = WordErrorRate()
+    
+    pipeline = Pipeline(name="speech_recognition", ops=[audio_sampler, noise_reduction, wave_to_text, decoder], evaluator=ev, cache=cache)
+    
+    start_time = time.time()
+    bt_per_stratum = 100
+    n_stratum = 16
+    group_accuracy = [[] for i in range(16)]
+    accuracy = []
+    
+    if method == "bootstrap":
+        sampler = VOiCEBootstrapSampler(n_stratum * bt_per_stratum)
+    else:
+        sampler = VOiCERandomSampler()
+    
+    print("Init done, taking time: ", time.time() - start_time)
+    
+    if method == "bootstrap":
+        nsample = 6400 - n_stratum * bt_per_stratum
+
+        for i in range(n_stratum * bt_per_stratum):
+            filename = sampler.sample("stratified").split('/')[-1]
+            result = pipeline.run_cached(filename)
+            
+            accuracy.append(result)
+            group_accuracy[i % 16].append(result)
+            
+            sampler.feedback((filename, result))
+        
+        sampler.update_weight()
+    else:
+        nsample = 6400
+    
+    print("Bootstrap done, taking time: ", time.time() - start_time)
+    
+    start_time = time.time()
+    for i in range(nsample):
+        if method == "bootstrap":
+            filename = sampler.sample("weighted").split('/')[-1]
+        else:
+            filename = sampler.sample(method).split('/')[-1]
+        result = pipeline.run_cached(filename)
+        
+        group_accuracy[i % 16].append(result)
+        accuracy.append(result)
+
+    print("Profile done, taking time: ", time.time() - start_time)
+    
+    cul_accuracy = [sum(accuracy[:i+1])/(i+1) for i in range(len(accuracy))]    
+        
+    profile_result["group_acc"] = [np.mean(group_accuracy[i]) for i in range(16)]
+    profile_result["group_std"] = [np.std(group_accuracy[i]) for i in range(16)]
+    profile_result['accuracy'] = accuracy
+    profile_result['cummulative_accuracy'] = cul_accuracy
+    
+    return profile_result
+      
+# use Pipeline to get cache
+def profile_pipeline_normal(sample_method: str):
     pipe_args = get_pipeline_args()
     dump_filename = '_'.join([str(i) for i in pipe_args.values()])
 
@@ -265,11 +339,13 @@ def start_prepare():
                 os.environ["frequency_mask_width"] = str(freq_mask)
                 os.environ["model"] = str(model)
                 print(f"Prepare {audio_sr} {freq_mask} {model}")
-                profile_pipeline2("random")
+                profile_pipeline_normal("random")
 
-def start_exp(result_fname, method: str = "random"):
+def start_exp(result_fname, method):
+    if method not in ["bootstrap", "stratified", "random"]:
+        raise ValueError("Method must be one of 'bootstrap', 'stratified', 'random'")
     with open (result_fname, 'w') as fp:
-        json.dump([], fp) 
+        records = json.dump([], fp)  
     for audio_sr in knobs[0][1]:
         for freq_mask in knobs[1][1]:
             for model in knobs[2][1]:
@@ -277,14 +353,11 @@ def start_exp(result_fname, method: str = "random"):
                 os.environ["frequency_mask_width"] = str(freq_mask)
                 os.environ["model"] = str(model)
 
-                if method == "feedback":
-                    result = bootstrap_profile_pipeline()
-                else:
-                    result = profile_pipeline(method) 
+                result = profile_pipeline_cached(method)
                 # print(result)
                 # print('----')
 
-                with open (result_fname, 'r') as fp:
+                with open(result_fname, 'r') as fp:
                     records = json.load(fp) 
                 records.append(dict(
                     audio_sr=audio_sr,
@@ -307,16 +380,11 @@ if __name__ == "__main__":
     # num = 2
     # for method in ["random", "stratified"]:
     #     for i in range(num):
-    #         p = mp.Process(target=start_exp, args=(f"./result/profile_{method}_{i}", method))
-    #         procs.append(p)
-    #         # start_exp(f"./result/profile_{method}_{i}.json", method)
-    #     for p in procs:
-    #         print(f"Start process {p}")
-    #         p.start()
-    #     for p in procs:
-    #         p.join()
+    #         start_exp(f"./result/{method}_{i}.json", method)
     
-    # method = "feedback"
-    # start_exp(f"./result/weighted_{method}.json", method)
-    
-    start_prepare()
+    date_time_str = time.strftime("%Y-%m-%d-%H-%M-%S")
+    for method in ["bootstrap", "stratified"]:
+        start_exp(f"./result/{date_time_str}_{method}.json", method)
+        print(f"Save to ./result/{date_time_str}_{method}.json")
+
+    # start_prepare()

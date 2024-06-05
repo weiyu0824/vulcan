@@ -37,7 +37,7 @@ class Pipeline():
         self.ev = evaluator 
         self.results = []
         self.cache = cache
-    
+        
     def run(self, batch: BatchData):
         x = batch.data
         for op in self.ops:
@@ -46,9 +46,8 @@ class Pipeline():
         self.results.append(result)
         return result
     
-    def run_cached(self, batch):
-        x = batch.name
-        return self.cache[x]
+    def run_cached(self, name):
+        return self.cache["results"][name]["metric"]
         
         
         
