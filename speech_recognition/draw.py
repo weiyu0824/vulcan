@@ -1,162 +1,72 @@
 import matplotlib.pyplot as plt
 import json
 import sys
+import os
+import numpy as np
+import time
 
 
-def plot(record, prefix=""):
-    audio_sr = record['audio_sr']
-    freq_mask = record['freq_mask']
-    model = record['model']
-    acc = record['result']['accuracy']
-    cul_acc = record['result']['cummulative_accuracy']
-    print(f"audio_sr: {audio_sr}, freq_mask: {freq_mask}, model: {model}, acc: {acc}")
-    
-    x = range(len(cul_acc[100:]))
+color_map = {
+    "random": "r",
+    "stratified": "b",
+    "bootstrap": "g",
+}
 
+
+def draw_new(records, prefix=""):
     plt.cla()
-    plt.plot(x, cul_acc[100:], label='Cummulative Accuracy')
-    plt.xticks([i for i in x if i % 500 == 0], [str(i + 100) for i in x if i % 500 == 0])
-    plt.axhline(y=acc, color='r', linestyle='-', label='Accuracy')
-
-    plt.xlabel('Index')
-    plt.ylabel('Accuracy')
-    plt.title(f'{prefix} plot')
-    plt.legend()
-    plt.savefig(f"./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
-
-def plot2(ra, st, prefix=""):
-    audio_sr = ra['audio_sr']
-    freq_mask = ra['freq_mask']
-    model = ra['model']
-    ra_acc = ra['result']['accuracy']
-    ra_cul_acc = ra['result']['cummulative_accuracy']
-    st_acc = st['result']['accuracy']
-    st_cul_acc =  st['result']['cummulative_accuracy']
-    print(f"audio_sr: {audio_sr}, freq_mask: {freq_mask}, model: {model}, acc: {ra_acc:2f}^{st_acc:2f}")
-    assert(audio_sr == st['audio_sr'])
-    assert(freq_mask == st['freq_mask'])
-    assert(model == st['model'])
-    assert(len(ra_cul_acc) == len(st_cul_acc))
-
-    skip = 100
-    x = range(len(ra_cul_acc[skip:]))
-    plt.cla()
-    plt.plot(x, ra_cul_acc[skip:], label='random', color='r')
-    plt.plot(x, st_cul_acc[skip:], label='stratified', color='b')
-    plt.xticks([i for i in x if i % 500 == 0], [str(i + skip) for i in x if i % 500 == 0])
-    plt.xlim(0, len(x) - 1)
-    # plt.axhline(y=ra_acc, color='g', linestyle='dashed', label='acc')
-    plt.axhline(y=ra_acc + 0.01, color='g', linestyle='dashed', label='acc+1%')
-    plt.axhline(y=ra_acc - 0.01, color='g', linestyle='dashed', label='acc-1%')
-
-    plt.ylim(ra_acc - 0.05, ra_acc + 0.05)
+    figures_dict = {}
+    num_fig = 0
+    for r in records:
+        audio_sr = r['audio_sr']
+        freq_mask = r['freq_mask']
+        model = r['model']
+        key = f"{audio_sr}_{freq_mask}_{model}"
+        if key not in figures_dict:
+            num_fig += 1
+            figures_dict[key] = []
+        figures_dict[key].append(r)
     
-    plt.xlabel('# sample')
-    plt.ylabel('Accuracy')
-    
-    plt.title(f'{model} sr:{audio_sr} fm:{freq_mask}')
-    plt.legend()
-    plt.savefig(f"./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
-
-
-def plot2_short(ra, st, prefix=""):
-    audio_sr = ra['audio_sr']
-    freq_mask = ra['freq_mask']
-    model = ra['model']
-    ra_acc = ra['result']['accuracy']
-    ra_cul_acc = ra['result']['cummulative_accuracy']
-    st_acc = st['result']['accuracy']
-    st_cul_acc =  st['result']['cummulative_accuracy']
-    print(f"audio_sr: {audio_sr}, freq_mask: {freq_mask}, model: {model}, acc: {ra_acc:2f}^{st_acc:2f}")
-    assert(audio_sr == st['audio_sr'])
-    assert(freq_mask == st['freq_mask'])
-    assert(model == st['model'])
-    #assert(len(ra_cul_acc) == len(st_cul_acc))
-
-    skip = 100
-    end = len(st_cul_acc[skip:])
-    x = range(end - skip)
-    plt.cla()
-    plt.plot(x, ra_cul_acc[skip:end], label='random', color='r')
-    plt.plot(x, st_cul_acc[skip:end], label='stratified', color='b')
-    plt.xticks([i for i in x if i % 500 == 0], [str(i + skip) for i in x if i % 500 == 0])
-    plt.xlim(0, len(x) - 1)
-    # plt.axhline(y=ra_acc, color='g', linestyle='dashed', label='acc')
-    plt.axhline(y=ra_acc + 0.01, color='g', linestyle='dashed', label='acc+1%')
-    plt.axhline(y=ra_acc - 0.01, color='g', linestyle='dashed', label='acc-1%')
-
-    plt.ylim(ra_acc - 0.05, ra_acc + 0.05)
-    
-    plt.xlabel('# sample')
-    plt.ylabel('Accuracy')
-    
-    plt.title(f'{model} sr:{audio_sr} fm:{freq_mask}')
-    plt.legend()
-    plt.savefig(f"./result/weighted_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
-
-def plot_all(ras, sts, prefix=""):
-    assert(len(ras) == len(sts))
-    plt.cla()
-    for i in range(len(ras)):
-        ra = ras[i]
-        st = sts[i]
-        audio_sr = ra['audio_sr']
-        freq_mask = ra['freq_mask']
-        model = ra['model']
-        ra_acc = ra['result']['accuracy']
-        ra_cul_acc = ra['result']['cummulative_accuracy']
-        st_acc = st['result']['accuracy']
-        st_cul_acc =  st['result']['cummulative_accuracy']
-        print(f"audio_sr: {audio_sr}, freq_mask: {freq_mask}, model: {model}, acc: {ra_acc:2f}^{st_acc:2f}")
-        assert(audio_sr == st['audio_sr'])
-        assert(freq_mask == st['freq_mask'])
-        assert(model == st['model'])
-        assert(len(ra_cul_acc) == len(st_cul_acc))
-
-        skip = 100
-        x = range(len(ra_cul_acc[skip:]))
-        plt.plot(x, ra_cul_acc[skip:], label='random', color='r', linewidth=0.25)
-        plt.plot(x, st_cul_acc[skip:], label='stratified', color='b', linewidth=0.25)
-        plt.xticks([i for i in x if i % 500 == 0], [str(i + skip) for i in x if i % 500 == 0])
-        plt.xlim(0, len(x) - 1)
-        # plt.axhline(y=ra_acc, color='g', linestyle='dashed', label='acc')
-        if i == 0:
-            plt.axhline(y=ra_acc + 0.01, color='g', linestyle='dashed', label='acc+1%')
-            plt.axhline(y=ra_acc - 0.01, color='g', linestyle='dashed', label='acc-1%')
-            plt.ylim(ra_acc - 0.05, ra_acc + 0.05)
+    fig, axs = plt.subplots(num_fig, 1, figsize=(10, 10))
         
-            plt.xlabel('# sample')
-            plt.ylabel('Accuracy')
-        
-            plt.title(f'{model} sr:{audio_sr} fm:{freq_mask}')
-            plt.legend()
-    plt.savefig(f"./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
-    print(f"Save to ./result/profile_{prefix}_{audio_sr}_{freq_mask}_{model}.png")
+    for axid, k in enumerate(figures_dict.keys()):
+        ax = axs[axid]
+        for idx, r in enumerate(figures_dict[k]):
+            record = r
+            method = record['method']
+            audio_sr = record['audio_sr']
+            freq_mask = record['freq_mask']
+            model = record['model']
+            acc = record['result']['accuracy']
+            cul_acc = record['result']['cummulative_accuracy']
 
+            # assert(np.average(acc) == cul_acc[-1])
 
-def draw_all():
-    ras = []
-    sts = []
-    rec_ran = []
-    rec_sts = []
+            skip = 100
+            xid = range(len(cul_acc[skip:]))
+            
+            
+            ax.plot(xid, cul_acc[skip:], label=method, color=color_map[method], linewidth=0.25)
+            
+            if idx == 0:
+                print(f"audio_sr: {audio_sr}, freq_mask: {freq_mask}, model: {model}")
+                ax.set_xlabel('# sample')
+                ax.set_ylabel('Accuracy')
+                ax.set_title(f'{model} sr:{audio_sr} fm:{freq_mask}')
+                ax.set_xticks([i for i in xid if i % 500 == 0], [str(i + skip) for i in xid if i % 500 == 0])
+                ax.set_xlim(0, len(xid) - 1)
+                # plt.axhline(y=ra_acc, color='g', linestyle='dashed', label='acc')
+                ground_truth = cul_acc[-1]
+                ax.axhline(y=ground_truth + 0.01, color='g', linestyle='dashed', label='acc+1%')
+                ax.axhline(y=ground_truth - 0.01, color='g', linestyle='dashed', label='acc-1%')
+                ax.set_ylim(ground_truth - 0.05, ground_truth + 0.05)
+        handles, labels = ax.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax.legend(by_label.values(), by_label.keys())
+    plt.savefig(f"./result/figures/{prefix}.png")
+    print(f"Save to ./result/figures/{prefix}.png")
+
     
-    for idx in range(2, 10):
-        with open(f'./result/profile_random_{idx}.json', 'r') as fp:
-            records_random = json.load(fp)
-            rec_ran.append(records_random)
-            # ras.append(records_random[j])
-        with open(f'./result/profile_stratified_{idx}.json', 'r') as fp:
-            records_stratified = json.load(fp)
-            rec_sts.append(records_stratified)
-            # sts.append(records_stratified[j])
-    
-    num_of_knob = len(rec_ran[0])
-    assert(len(rec_ran) == len(rec_sts))
-    for j in range(num_of_knob):
-        ras = [rec_ran[i][j] for i in range(len(rec_ran))]
-        sts = [rec_sts[i][j] for i in range(len(rec_sts))]
-        plot_all(ras, sts, "all")
-        
 if __name__ == "__main__":
     # assert(len(sys.argv) == 2)
     # method = sys.argv[1]
@@ -165,14 +75,27 @@ if __name__ == "__main__":
     # for record in records:
     #     plot(record, f"{method}:{idx}")
     
-    with open(f'./result/profile_random_0.json', 'r') as fp:
-        records_random = json.load(fp)
-        # ras.append(records_random[j])
-    with open(f'./result/weighted_feedback.json', 'r') as fp:
-        records_weighted = json.load(fp)
-            # sts.append(records_stratified[j])
+    # with open(f'./result/profile_random_0.json', 'r') as fp:
+    #     records_random = json.load(fp)
+    #     # ras.append(records_random[j])
+    # with open(f'./result/weighted_feedback.json', 'r') as fp:
+    #     records_weighted = json.load(fp)
+    #         # sts.append(records_stratified[j])
     
-    plot2_short(records_random[0], records_weighted[0], f"")
-    plot2_short(records_random[1], records_weighted[1], f"")
+    # plot2_short(records_random[0], records_weighted[0], f"")
+    # plot2_short(records_random[1], records_weighted[1], f"")
 
-   
+    records = []
+    for (dirpath, dirname, filenames) in os.walk("./result/"):
+        for filename in filenames:
+            if not filename.endswith(".json"):
+                continue
+            method = filename.split("_")[0]
+            # idx = filename.split("_")[1]
+            with open(f'./result/{filename}', 'r') as fp:
+                record = json.load(fp)
+                records += record
+                
+    date_time = time.strftime("%Y-%m-%d-%H-%M-%S")
+    draw_new(records, f"all_{date_time}")
+    # plot_new(records_random[0], f"random_0")
