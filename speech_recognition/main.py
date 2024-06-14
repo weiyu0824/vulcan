@@ -20,17 +20,17 @@ DATA_SET_PATH="/data"
 #     ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'wav2vec2-large-960h', 'hubert-large', 'hubert-xlarge'])
 # ]
 
-knobs = [
-    ('audio_sample_rate', [12000, 14000, 16000]),
-    ('frequency_mask_width', [500, 2000, 4000]),
-    ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-xlarge'])
-]
-
 # knobs = [
-#     ('audio_sample_rate', [12000]),
-#     ('frequency_mask_width', [2000]),
-#     ('model', ['wav2vec2-large-10m', 'hubert-large'])
+#     ('audio_sample_rate', [12000, 14000, 16000]),
+#     ('frequency_mask_width', [500, 2000, 4000]),
+#     ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'hubert-large', 'hubert-xlarge'])
 # ]
+
+knobs = [
+    ('audio_sample_rate', [12000]),
+    ('frequency_mask_width', [2000]),
+    ('model', ['wav2vec2-large-10m', 'hubert-large'])
+]
 
 ref_df = pd.read_csv(DATA_SET_PATH + '/VOiCES_devkit/references/filename_transcripts')
 ref_df.set_index('file_name', inplace=True)
@@ -275,6 +275,13 @@ def profile_pipeline_cached(method: str):
     
     print("Bootstrap done, taking time: ", time.time() - start_time)
     
+    def get_group_id(name) -> int:
+        l1 = name.split('-')[3]
+        l2 = name.split('-')[4]
+        l1s = {"rm1":0, "rm2":1, "rm3":2, "rm4":3}
+        l2s = {'babb':0, 'musi':1, 'none':2, 'tele':3}
+        return l1s[l1] * 4 + l2s[l2]
+    
     start_time = time.time()
     for i in range(nsample):
         if method == "bootstrap":
@@ -283,7 +290,9 @@ def profile_pipeline_cached(method: str):
             filename = sampler.sample(method).split('/')[-1]
         result = pipeline.run_cached(filename)
         
-        group_accuracy[i % 16].append(result)
+        gid = get_group_id(filename)
+        
+        group_accuracy[gid].append(result)
         accuracy.append(result)
 
     print("Profile done, taking time: ", time.time() - start_time)
@@ -294,7 +303,17 @@ def profile_pipeline_cached(method: str):
     profile_result["group_std"] = [np.std(group_accuracy[i]) for i in range(16)]
     profile_result['accuracy'] = accuracy
     profile_result['cummulative_accuracy'] = cul_accuracy
+    # profile_result['corrected_acc'] = np.sum([np.sum(group_accuracy[i]) / total for i in range(16)])
     
+    corrected_acc = 0
+    len_group = total / 16
+    print("Len group: ", len_group)
+    for i in range(16):
+        print(f"Group {i}: {np.mean(group_accuracy[i]):4f} {len(group_accuracy[i])}")
+        corrected_acc += np.mean(group_accuracy[i]) * len_group / len(group_accuracy[i])
+    corrected_acc /= 16
+    profile_result['corrected_acc'] = corrected_acc
+    print(f"Corrected acc: {profile_result['corrected_acc']}")
     return profile_result
       
 # use Pipeline to get cache
@@ -380,9 +399,10 @@ if __name__ == "__main__":
     #     for i in range(num):
     #         start_exp(f"./result/{method}_{i}.json", method)
     
-    num = 10
+    num = 5
     date_time_str = time.strftime("%Y-%m-%d-%H-%M-%S")
-    for method in ["bootstrap", "stratified", "random"]:
+    # for method in ["bootstrap", "stratified", "random"]:
+    for method in ["bootstrap"]:
         start_exp(f"./result/{method}_{date_time_str}.json", method, num)
         print(f"Save to {method}_{date_time_str}.json")
 
