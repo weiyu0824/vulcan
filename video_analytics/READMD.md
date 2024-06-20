@@ -7,6 +7,18 @@
 2. Download requirements
     - ```pip install -r requirements.txt```
 
+## Run without Container
+- step1: build index
+    ```
+    python3 main.py -m build
+    ```
+    then you will get a file call `v1.0-<version>-idx.json`
+- step2: profile
+    ```
+    python3 main.py -m profile
+    ```
+Note: modify the data_root & version at op.py
+
 
 ## Run Container
 sudo docker build -t video-task . 

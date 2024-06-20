@@ -5,6 +5,7 @@ import os
 import tqdm
 import time
 from torch.utils.data import DataLoader
+import argparse
 # import torch
 
 def get_detector_args():
@@ -113,27 +114,34 @@ def start_connect(host, port):
 
 
 if __name__ == "__main__":
-    # addr, port = 'localhost', 12343
-    # start_connect(addr, port)
-
-    records = []
-
-    resize_factors = [0.8]
-    models = ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']
-
-    for rf in resize_factors:
-        for model in models:
-            os.environ["resize_factor"] = str(rf)
-            os.environ["model"] = str(model)
-            result = profile_pipeline() 
-            print(result)
-            records.append(dict(
-                rf=rf,
-                model=model,
-                result=result
-            ))
     
-    with open ('profile_result.json', 'w') as fp:
-        json.dump(records, fp)
+    
+    parser = argparse.ArgumentParser(description='Project management CLI')
+    parser.add_argument('--method', '-m', choices=['build', 'profile'], required=True, help='Method to execute')
+
+
+    args = parser.parse_args()
+    if args.method == 'build':
+        loader = Loader()
+        loader.build_index()
+    elif args.method == 'profile':
+        records = []
+        resize_factors = [0.8]
+        models = ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']
+
+        for rf in resize_factors:
+            for model in models:
+                os.environ["resize_factor"] = str(rf)
+                os.environ["model"] = str(model)
+                result = profile_pipeline() 
+                print(result)
+                records.append(dict(
+                    rf=rf,
+                    model=model,
+                    result=result
+                ))
+        
+        with open ('profile_result.json', 'w') as fp:
+            json.dump(records, fp)
 
 
