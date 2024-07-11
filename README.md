@@ -27,8 +27,8 @@
 # Searching alogirthm
 ## Single query search
 Both search_by_utility & search_by_accuracy are functions used to search best query_setup for single query. 
-    - search_by_utility: metric=utility defined in vulcan
-    - search_by_accuracy: self-defined metric excluded latency
+- search_by_utility: metric=utility defined in vulcan
+- search_by_accuracy: self-defined metric excluded latency
 ```
 python3 multi-engine.py
 ```
