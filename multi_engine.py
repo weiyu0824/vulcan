@@ -1,240 +1,54 @@
-from bo import BayesianOptimization
-import docker 
-import socket
 import json 
 import copy 
-from task import speech_recognition_ops, speech_recongnition_knobs, Knob, Operator, speech_recognition_dnn_usg
-from typing import Tuple, Dict, List
-from scipy.stats import norm
-from dataclasses import dataclass
 import numpy as np
 import itertools
-from tqdm import tqdm
-from multiprocessing import Pool, Manager
+from multiprocessing import Pool
 import time
 import os
-
+from typing import List
+from bo import BayesianOptimization
+from data import Query, QuerySetup, TierSpec, SetupMetric
+from cluster import ClusterState
+from task import speech_recognition_ops, speech_recongnition_knobs, Knob, Operator, speech_recognition_dnn_usg
+from utils import get_feat_bounds, probability_greater_than_t, sample_to_config, config_to_sample
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 
 
-
-mach_info = {
-    "compute": [0.1, 0.22, 1],
-    "bandwidth": [0.08, 0.05, 0] #gbs 
-}
-
-
-
-
-def probability_greater_than_t(mu, sigma, t):
-    z = (t - mu) / sigma
-    cdf_value = norm.cdf(z)
-    probability = 1 - cdf_value
-    return probability
-
-def sample_to_config(sample: List[int], knob_list: List[Knob])-> dict: 
-    config = {}
-    assert len(sample) == len(knob_list), "Sample and should have equal size as knob"
-
-    for knob_idx, knob in enumerate(knob_list): 
-        config[knob.name] = knob.choice[sample[knob_idx]]
-    return config
-
-def config_to_sample(config: dict, knob_list: List[Knob]) -> List[int]:
-    sample = []
-    for knob in knob_list:  
-        i = knob.choice.index(config[knob.name])
-        sample.append(i)
-    return sample
-
-@dataclass
-class Query:
-    acc_thold: float 
-    lat_thold: float
-    profile_result_file: str
-    knob_list: List[Knob]
-    op_list: List[Operator]
-    dnn_gpu_usg: Dict[str, int]
-@dataclass
-class TierSpec:
-    name: str
-    num_nodes: int
-    num_gpus: int
-    gpu_memory_size: int
-    compute_speed: float
-    bandwidth: float
-@dataclass
-class NodeState:
-    remain_gpu_memory: float
-    num_gpu_ps: int = 0
-    # ps: List[Operator] = []
-    # ps_gpu_times: List[int] = []
-
-    
-
-class ClusterState:
-    def __init__(self, spec: List[TierSpec]):
-        # op, ps, gpu_time, memory
-        self.next_query_uuid = 0
-
-        self.spec = spec
-        self.tier_state: List[List[NodeState]] = [] 
-
-        self.deployed_queries = {}
-        for tier_spec in spec:
-            node_states = [NodeState(tier_spec.gpu_memory_size) for _ in range(tier_spec.num_nodes)] 
-            self.tier_state.append(node_states)
-
-        self.tot_util = 0
-            
-    def _find_node_level_plc(self, query, plc: List[int]): 
-        # place them on node 0. 
-        node_level_plc = []
-        for tier_id in plc:
-            node_level_plc.append({
-                'tier_id': tier_id,
-                'node_id': 0 
-            })
-            
-        return node_level_plc 
-
-    def _add_query(self, tier_level_plc: List[int], query: Query, profile_result: dict):
-        node_level_plc = self._find_node_level_plc(query, tier_level_plc)
-
-        for plc_by_op, op, gpu_mem_usg in zip(node_level_plc, query.op_list, profile_result['gpu_mem_usgs']):
-            # print(tier_id, op.tpy, gpu_mem_usg)
-            tier_id = plc_by_op['tier_id']
-            node_id = plc_by_op['node_id']
-            if op.tpy == 'dnn':
-                self.tier_state[tier_id][node_id].num_gpu_ps += 1
-                self.tier_state[tier_id][node_id].remain_gpu_memory -= gpu_mem_usg
-
-        # place query
-        self.deployed_queries[self.next_query_uuid] = {
-            'query': query,
-            'placement': tier_level_plc,
-            'node_level_plc': node_level_plc,
-            'profile_result': profile_result
-        } 
-
-        query_uuid = self.next_query_uuid 
-
-        self.next_query_uuid += 1
-
-        return query_uuid 
-    
-    def _remove_query(self, query_id):
-        node_level_plc = self.deployed_queries[query_id]['node_level_plc']
-        query = self.deployed_queries[query_id]['query']
-        profile_result = self.deployed_queries[query_id]['profile_result']    
-
-        for plc_by_op, op, gpu_mem_usg in zip(node_level_plc, query.op_list, profile_result['gpu_mem_usgs']):
-            # print(tier_id, op.tpy, gpu_mem_usg)
-            tier_id = plc_by_op['tier_id']
-            node_id = plc_by_op['node_id']
-            if op.tpy == 'dnn':
-                self.tier_state[tier_id][node_id].num_gpu_ps -= 1
-                self.tier_state[tier_id][node_id].remain_gpu_memory += gpu_mem_usg
-        self.deployed_queries.pop(query_id)        
-
-    def is_cluster_out_of_memory(self):
-        for tier_id in range(0, len(self.tier_state)):
-            for node_id in range(0, len(self.tier_state[tier_id])):
-                if self.tier_state[tier_id][node_id].remain_gpu_memory < 0: 
-                    return True
-        return False
-
-    def _recompute_global_profile(self):
-
-        self.tot_util = 0
-        self.tot_gpu_processing_time = 0
-
-        # update latency, update utility
-        for query_id, deployed_query in self.deployed_queries.items():
-            compute_latency = 0
-            profile_result = deployed_query['profile_result']
-            for op, tier_id, op_latency in zip(deployed_query['query'].op_list, deployed_query['placement'], profile_result['compute_latency_by_op']):
-                if op.tpy == 'dnn': 
-                    # GPU bottleneck
-                    compute_latency += op_latency * self.tier_state[tier_id][0].num_gpu_ps
-                else: 
-                    compute_latency += op_latency
-
-            pipe_latency = compute_latency + profile_result['transfer_latency']
-            utility = (0.5 * -1 * (profile_result['accuracy'] - deployed_query['query'].acc_thold) + 0.5 * (deployed_query['query'].lat_thold - (pipe_latency))) / profile_result['tot_gpu_time'] 
-            deployed_query['profile_result']['utility'] = utility
-            
-            deployed_query['profile_result']['latency'] = pipe_latency 
-
-            self.deployed_queries[query_id] = deployed_query 
-
-            # global metric
-            self.tot_util += utility
-            self.tot_gpu_processing_time += deployed_query['profile_result']['gpu_time']
-
-    def get_query_profile(self, query_id):
-        return self.deployed_queries[query_id]['profile_result']
-    
-    def push_query(self, query: Query, tier_level_plc: List[int], profile_result):
-        query_id = self._add_query(tier_level_plc, query, profile_result)
-        self._recompute_global_profile()
-        return query_id
-        
-    def pop_query(self, query_id):
-        self._remove_query(query_id)
-        self._recompute_global_profile() 
-        return True
-
 class Engine:
-    def __init__(self, queries: List[Query], num_profile_sample=-1,):
+    def __init__(self, queries: List[Query], cluster_spec: List[TierSpec], num_profile_sample=-1):
+        # BO arguments
         self.early_prune_count = 10 
         self.bo_stop_count = 3
         self.num_init_sample_configs = 5
         self.utility_thold = 0  
 
-        # self.min_accuracy = min_accuracy
-        # self.max_latency = max_latency
+        # metric to evalute BO efficiency
         self.num_profile_sample = num_profile_sample
-        self.queries = queries
-
-
         self.cache = {}
-
-        # self.feat_bounds = self.get_feat_bounds()
-
         self.profile_lat = 0        
 
-        self.cluster_spec = [
-            TierSpec('edge', num_nodes=1, num_gpus=1, gpu_memory_size=1000, compute_speed=mach_info['compute'][0], bandwidth=mach_info['bandwidth'][0]),
-            TierSpec('on-perm', num_nodes=1, num_gpus=1, gpu_memory_size=2000, compute_speed=mach_info['compute'][1], bandwidth=mach_info['bandwidth'][1]),
-            TierSpec('cloud', num_nodes=1, num_gpus=1, gpu_memory_size=3000, compute_speed=mach_info['compute'][2], bandwidth=mach_info['bandwidth'][2]),
-        ]
+        # Engine Spec (Machine & Quries)
+        self.queries = queries
+        self.cluster_spec = cluster_spec
         
-        # speed up
+        # Speed up by loading all result file.
         self.profile_result_cache = {}
         for query in self.queries:
             if query.profile_result_file not in self.profile_result_cache:
                 with open(query.profile_result_file, 'r') as fp:
                     profile_result = json.load(fp)        
-                self.profile_result_cache[query.profile_result_file] = profile_result        
-    def get_feat_bounds(self, query: Query):
-        feat_bounds = []
-        for knob in query.knob_list: 
-            feat_bounds.append([i for i in range(len(knob.choice))]) 
-        
-        return feat_bounds
+                self.profile_result_cache[query.profile_result_file] = profile_result   
+             
 
-    def simulate_run_pipeline(self, config: dict, query: Query) -> dict:
+
+    def simulate_pipeline(self, config: dict, query: Query) -> dict:
 
         config_str = json.dumps(config)
-        # print(config_str)
         if config_str in self.cache:
             return self.cache[config_str]
 
-        # with open (query.profile_result_file, 'r') as fp:
-        #     profile_result = json.load(fp) 
         profile_result = self.profile_result_cache[query.profile_result_file]
         for pf in profile_result:
             found = True
@@ -249,40 +63,25 @@ class Engine:
 
         return {}
 
-    def postprocess_result(self, profile_result: dict, placement: List[int], config: dict, query: Query):
-        # Vulcan implmentation: 
-        # Uq,p,c = Pq,p,c/Rq,p,c
-        # Pq,p,c(A,L) = g·aA ·(A - Am)+(1 - g)·aL ·(Lm - L)
-        #             = weight * Accuracy + weight * Latency
-        # Rq,p,c = agpu · Rgpu + anet · Rnet
-        #        = gpu processing time + consumed network bandwidth
-        
-        # perf = perf_weight * exec_stat.accuracy + (1 - perf_weight) * exec_stat.latency 
-        # resource = compute_coef * exec_stat.compute_cost + network_coef * exec_stat.network_cost
-        # utility = perf / resource
-        # return utility 
-
-        # assert len(self.ops) == len(placement)
-
+    def postprocess_result(self, profile_result: dict, placement: List[int], config: dict, query: Query) -> SetupMetric:
         prev_op_machine = 0
         tot_compute_latency = 0
         tot_transfer_latency = 0
         tot_gpu_time = 0
         compute_latency_by_op = []
-        gpu_mem_usgs = []
+        gpu_mem_usg_by_op = []
         for op, op_machine in zip(query.op_list, placement):
             op_name = op.name
-            op_type = op.tpy
 
             compute_latency = profile_result[f"{op_name}_compute_latency"] / mach_info['compute'][op_machine]
             compute_latency_by_op.append(compute_latency)
+
             # TODO: Ensure this assumption is correct:
-            # I assume that compute_latency would increase when multiple user use same GPU. 
             if op.tpy == 'dnn':
-                # compute_latency = cluster_state.get_latency_after_placing(op_machine, op, compute_latency)
-                gpu_mem_usgs.append(query.dnn_gpu_usg[config['model']])
+                gpu_mem_usg_by_op.append(query.dnn_gpu_usg[config['model']])
+                tot_gpu_time += profile_result[f"{op_name}_compute_latency"] # tot_gpu_time processing by "profiled" machine 
             else:
-                gpu_mem_usgs.append(0)
+                gpu_mem_usg_by_op.append(0)
 
             transfer_latency = 0
             for machine_id in range(prev_op_machine, op_machine):
@@ -292,33 +91,28 @@ class Engine:
             
             tot_compute_latency += compute_latency
             tot_transfer_latency += transfer_latency
-            if op_type == 'dnn':
-                tot_gpu_time += profile_result[f"{op_name}_compute_latency"] 
 
         pipe_accuracy = profile_result["cummulative_accuracy"][self.num_profile_sample - 1]
         pipe_latency = tot_compute_latency + tot_transfer_latency
 
         utility = (0.5 * -1 * (pipe_accuracy - query.acc_thold) + 0.5 * (query.lat_thold - pipe_latency)) / tot_gpu_time
+        acc_index = -1 * (pipe_accuracy - query.acc_thold) / tot_gpu_time
 
-        # print(pipe_latency, tot_compute_latency, tot_transfer_latency)
-        # exit()
-        post_result = {
-            "utility": utility,
-            "gpu_time": tot_gpu_time * 1000,
-            "accuracy": pipe_accuracy,
-            "latency": pipe_latency, 
-            "compute_latency_by_op": compute_latency_by_op, 
-            "transfer_latency": tot_transfer_latency, 
-            "config": config, 
-            "placement": placement,
-            "gpu_mem_usgs": gpu_mem_usgs,
-            "tot_gpu_time": tot_gpu_time
-        }
-       
-        return post_result
-    
-    def gen_all_place_choices(self, query: Query, cluster_spec: List[TierSpec]):
+        setup_metric = SetupMetric(
+            accuracy=pipe_accuracy,
+            latency=pipe_latency,
+            utility=utility,
+            tot_transfer_latency=tot_transfer_latency,
+            tot_gpu_time=tot_gpu_time,
+            accuracy_index=acc_index,
+            compute_latency_by_op=compute_latency_by_op,
+            gpu_mem_usg_by_op=gpu_mem_usg_by_op
+        )
         
+       
+        return setup_metric
+    
+    def generate_placement_choices(self, query: Query, cluster_spec: List[TierSpec]) -> List[List[int]]:
         num_ops = len(query.op_list)
         num_tiers = len(cluster_spec)
 
@@ -364,39 +158,40 @@ class Engine:
         dfs({})
         return all_choices
 
-    def vulcan_search(self, query: Query, cluster_state: ClusterState, optimize: bool=False):
+    def search_by_utlity(self, query: Query, cluster_state: ClusterState, optimize: bool=False):
         """
-        Learn a BO  
+        Search a query_setup for a query using BO-utiltiy  
+            vulcan algorithm
         """
+
         self.cache = {}
         self.profile_lat = 0
-        feat_bounds = self.get_feat_bounds(query) 
-        placements: list[list] = self.gen_all_place_choices(query, cluster_state.spec)
+        feat_bounds = get_feat_bounds(query) 
+        placements = self.generate_placement_choices(query, cluster_state.spec)
 
-        foot_print = []
+        query_setups: List[QuerySetup] = []
         # total_profile_time = 0
         for placement in placements:
             bo = BayesianOptimization(feat_bounds=feat_bounds) 
             init_utils = [] # utility
 
-            # opt: 
+            # opt: using history by other placements
             init_samples: List[List[int]] = []
             init_utils: List[float] = []
-            
+
+            # BO Intialization 
             if optimize and len(self.cache) >= 3 :
                 for config_str, result in self.cache.items():
                     config = json.loads(config_str)
-                    post_result = self.postprocess_result(result, placement, config, query)
+                    setup_metric = self.postprocess_result(result, placement, config, query)
                     sample = config_to_sample(config, query.knob_list) 
                     #
                     init_samples.append(sample)
-                    init_utils.append(post_result['utility'])
+                    init_utils.append(setup_metric.utility)
                     # utilities.append((utility, appox_latency, result["accuracy"], config, placement, 'prev'))
 
                 bo.fit(X=np.array(init_samples), y=np.array(init_utils))
             else: 
-                
-                # init BO 
                 # 1. Random sample configs
                 init_samples = bo._get_random_raw_samples(num_samples=self.num_init_sample_configs)
                 init_utils = []
@@ -404,61 +199,112 @@ class Engine:
                 for sample in init_samples:
                     
                     config = sample_to_config(sample, query.knob_list)
-                    result = self.simulate_run_pipeline(config=config, query=query)  
+                    profile_result = self.simulate_pipeline(config=config, query=query)  
+                    setup_metric = self.postprocess_result(profile_result, placement, config, query)
 
-                    post_result = self.postprocess_result(result, placement, config, query)
-                     # extend
-                    # post_result['config'] = config
-                    # post_result['placement'] = placement
-                    post_result['type'] = 'random'
-
-                    init_utils.append(post_result['utility'])
-
-                    foot_print.append(post_result)
+                    init_utils.append(setup_metric.utility)
+                    query_setups.append(QuerySetup(query=query, placement=placement, config=config, setup_metric=setup_metric))
 
                 bo.fit(X=np.array(init_samples), y=np.array(init_utils))
 
-
+            # BO Searching
             prune_count, stop_count = 0, 0  
             max_util = max(init_utils)
-            # continue
             while True:
                 sample = bo.get_next_sample()
                 config = sample_to_config(sample, query.knob_list) 
+                profile_result = self.simulate_pipeline(config=config, query=query)
+                setup_metric = self.postprocess_result(profile_result, placement, config, query) 
 
-                result = self.simulate_run_pipeline(config=config, query=query)
-                post_result = self.postprocess_result(result, placement, config, query) 
-
-                # extend
-                # post_result['config'] = config
-                # post_result['placement'] = placement
-                post_result['type'] = 'search'
 
                 # Fit BO again
                 init_samples.append(sample)
-                init_utils.append(post_result['utility'])
+                init_utils.append(setup_metric.utility)
                 bo.fit(X=np.array(init_samples), y=np.array(init_utils))
 
-                foot_print.append(post_result)
+                query_setups.append(QuerySetup(query=query, placement=placement, config=config, setup_metric=setup_metric))
 
-                prune_count += 1 if post_result['utility'] < self.utility_thold else 0
-                stop_count += 1 if post_result["utility"] < max_util else 0
+                prune_count += 1 if setup_metric.utility < self.utility_thold else 0
+                stop_count += 1 if setup_metric.utility < max_util else 0
 
-                max_util = max(post_result["utility"], max_util)
+                max_util = max(setup_metric.utility, max_util)
 
                 if prune_count >= self.early_prune_count or stop_count > self.bo_stop_count:
                     break
-            # print(foot_print[len(foot_print) - 1])
-        #     print(placement, prune_count, stop_count)
-        # exit()
         
-        return foot_print 
+        return query_setups  
 
-    def constraint_bo(self):
+    def search_by_accuracy(self, query: Query, cluster_state: ClusterState):
+        feat_bounds = get_feat_bounds(query)
+        placements = self.generate_placement_choices(query, self.cluster_spec)
+        placement = placements[0]
+        bo = BayesianOptimization(feat_bounds=feat_bounds) 
+
+        # opt: 
+        init_samples: List[List[int]] = []
+        init_accs: List[float] = []
+        
+        query_setups: List[QuerySetup] = [] 
+        # init BO 
+        # 1. Random sample configs
+        init_raw_samples = bo._get_random_raw_samples(num_samples=self.num_init_sample_configs)
+        # for sample in init_samples:
+        #     print(sample)
+        # print(init_raw_samples)
+        init_samples = []
+        init_accs = []
+        # 2. Run those config to get ACC & Latency
+        for init_idx, sample in enumerate(init_raw_samples):
+            sample[2] = init_idx % 5
+            init_samples.append(sample) 
+
+            config = sample_to_config(sample, query.knob_list)
+            # print('init', config)
+            result = self.simulate_pipeline(config=config, query=query)  
+            setup_metric = self.postprocess_result(result, placement, config, query)
+            init_accs.append(setup_metric.accuracy_index)
+
+            query_setups.append(QuerySetup(query=query, placement=placement, config=config, setup_metric=setup_metric))
+
+
+        bo.fit(X=np.array(init_samples), y=np.array(init_accs))
+
+
+        prune_count, stop_count = 0, 0  
+        max_acc_index = max(init_accs)
+        # continue
+        while True:
+            sample = bo.get_next_sample()
+            config = sample_to_config(sample, query.knob_list) 
+            # print('search', config)
+
+            profile_result = self.simulate_pipeline(config=config, query=query)
+            setup_metric = self.postprocess_result(profile_result, placement, config, query) 
+
+            # Fit BO again
+            init_samples.append(sample)
+            init_accs.append(setup_metric.accuracy_index)
+            bo.fit(X=np.array(init_samples), y=np.array(init_accs))
+
+            query_setups.append(QuerySetup(query=query, placement=placement, config=config, setup_metric=setup_metric))
+
+            stop_count += 1 if setup_metric.accuracy_index < max_acc_index else 0
+
+            max_acc_index = max(setup_metric.accuracy_index, max_acc_index)
+
+            if  stop_count > self.bo_stop_count:
+                break
+        
+        return query_setups
+    
+    def search_by_cbo(self, query: Query, cluster_state: ClusterState):
+        """
+        Search by Constraint BO
+        """
         self.cache = {}
         self.profile_lat = 0
 
-        placements: list[list] = self.gen_all_place_choices()
+        placements: list[list] = generate_placement_choices()
         foot_print = []
         # total_profile_time = 0
         for placement in placements:
@@ -474,7 +320,7 @@ class Engine:
                 
                 # Convert BO sample back to config
                 config = sample_to_config(sample, self.knob_list)
-                result = self.simulate_run_pipeline(config=config)  
+                result = self.simulate_pipeline(config=config)  
 
                 post_result = self.postprocess_result(result, placement)
                 init_gpu_times.append(post_result['gpu_time'])
@@ -527,12 +373,12 @@ class Engine:
                 # print('init')
                 # print(init_samples)
                 # print(init_lats)
-
+     
                 # exit()
                 
                 # Simulate profilation 
                 config = sample_to_config(sample, self.knob_list) 
-                result = self.simulate_run_pipeline(config=config)
+                result = self.simulate_pipeline(config=config)
                 post_result = self.postprocess_result(result, placement) 
 
                 # Fit BO again
@@ -585,119 +431,304 @@ class Engine:
             return foot_print[0], self.profile_lat
         return f_foot_print[0], self.profile_lat
     
-    def eval_setups(self, subtask_id, query_setups_per_query):
+    def eval_setups(self, subtask_id, query_setups_per_query, score_key):
         first_query_setup = query_setups_per_query[0][subtask_id]    
         total_combinations = 1        
         for query_setups in query_setups_per_query[1:]:
             total_combinations *= len(query_setups) 
 
-        max_tot_util = -100000
-        optimal_combined_query_setup = None
-        optimal_cluster_state = ClusterState(self.cluster_spec)
+        best_combined_query_setup = None
+        best_setup_score = ClusterState.INIT_SCORE 
+        best_cluster_state = None
+
         st = time.time()
         for idx, partial_query_setup in enumerate(itertools.product(*query_setups_per_query[1:])):
             combined_query_setup = (first_query_setup,) + partial_query_setup
-            # print(len(combined_query_setup))
             cluster_state = ClusterState(self.cluster_spec)
+
             for query, query_setup in zip(self.queries, combined_query_setup):
                 cluster_state.push_query(query, query_setup['placement'], query_setup)
-            # print(cluster_state.tier_state)
-            if cluster_state.is_cluster_out_of_memory() == False and cluster_state.tot_util > max_tot_util:
-                max_tot_util = cluster_state.tot_util
-                optimal_combined_query_setup = combined_query_setup
-                optimal_cluster_state = cluster_state 
+            if (cluster_state.exceed_score(score_key, best_setup_score)):
+                best_combined_query_setup = combined_query_setup
+                best_cluster_state = cluster_state
+                best_setup_score = cluster_state.get_score(score_key)
+
             if idx % 200000 == 0:
-                print('subtask:', subtask_id, idx, "/", total_combinations, 'time', time.time() - st)
+                print('subtask:', subtask_id, idx, "/", total_combinations, 'time', time.time() - st, flush=True)
                 st = time.time()
-
-        return  {
-            'max_tot_util': max_tot_util, 
-            'optimal_combined_query_setup': optimal_combined_query_setup,
-            # 'optimal_cluster_state': optimal_cluster_state
-        }
-
-    def exhaustive_optimize(self):
+                pass
         
+
+        if best_cluster_state == None:
+            return None
+        else:
+            return  {
+                score_key: best_setup_score,
+                'best_tot_util': best_cluster_state.tot_util, 
+                'best_tot_gpu_time': best_cluster_state.tot_gpu_processing_time,
+                'optimal_combined_query_setup': best_combined_query_setup,
+            }
+
+    def explore_all_query_setups(self, optimize_goal='utility'):
         query_setups_per_query = [] 
-        with Pool(min(os.cpu_count(), len(self.queries))) as pool:
-            jobs = []
-            for query in self.queries:
-                job = pool.apply_async(self.vulcan_search, (query, ClusterState(self.cluster_spec)))
-                jobs.appen(job)
-            for job in jobs:
-                query_setups = job.get()
-                # valid_per_query_setups = []
-                # for per_query_setup in query_setups:
-                #     if per_query_setup['accuracy'] < query.acc_thold and per_query_setup['latency'] < query.lat_thold:
-                #         valid_per_query_setups.append(per_query_setup)    
-                query_setups_per_query.append(query_setups)
-
-        print(len(query_setups_per_query), [len(query_setups) for query_setups in query_setups_per_query])
-        
-        st = time.time()
-        num_process = 10
+        num_process = len(self.queries)
+        num_cpu = os.cpu_count()
+        if num_cpu != None:
+            num_process = min(num_process, num_cpu)
 
         with Pool(num_process) as pool:
             jobs = []
+            for query in self.queries:
+                if optimize_goal == 'utility':
+                    job = pool.apply_async(self.search_by_utlity, (query, ClusterState(self.cluster_spec)))
+                else:
+                    job = pool.apply_async(self.search_by_accuracy, (query, ClusterState(self.cluster_spec))) 
+                jobs.append(job)
+            for job in jobs:
+                query_setups = job.get()  
+                query_setups_per_query.append(query_setups)
+
+        # Filter low-accuracy setups
+        valid_query_setups_per_query = []
+        for idx, query_setups in enumerate(query_setups_per_query):
+            query = self.queries[idx]
+            valid_query_setups = []
+            for query_setup in query_setups: 
+                # print(query_setup)
+                if query_setup['accuracy'] < query.acc_thold:
+                    valid_query_setups.append(query_setup)
+            valid_query_setups_per_query.append(valid_query_setups)
+
+        print('Num searched query setups', [len(query_setups) for query_setups in query_setups_per_query])
+        print('Num valid query setups', [len(query_setups) for query_setups in valid_query_setups_per_query])
+
+        return valid_query_setups_per_query
+        
+    def exhaustive_setup_search(self):
+        query_setups_per_query = self.explore_all_query_setups()
+
+        num_process = len(self.queries)
+        num_cpu = os.cpu_count()
+        if num_cpu != None:
+            num_process = min(num_process, num_cpu)
+        
+        score_key = 'utility'
+         
+        st = time.time()
+        with Pool(num_process) as pool:
+            jobs = []
             for subtask_id in range(len(query_setups_per_query[0])):
-                job = pool.apply_async(self.eval_setups, (subtask_id, query_setups_per_query))
+                job = pool.apply_async(self.eval_setups, (subtask_id, query_setups_per_query, score_key))
                 jobs.append(job)
 
             # Wait for all jobs to finish
             results = []
             for job in jobs:
-                results.append(job.get())
-            sorted_result = sorted(results, key=lambda x: x['max_tot_util'], reverse=True)
+                result = job.get()
+                if result != None:
+                    results.append(result)
+            
+            sorted_result = sorted(results, key=lambda x: x[score_key], reverse=False)
 
+            print("=====Result=====")
             # print([r['max_tot_util'] for r in sorted_result])
             print(sorted_result[0]['optimal_combined_query_setup'])
             # print(sorted_result[0]['optimal_cluster_state'].tier_state)
-            print(sorted_result[0]['max_tot_util']) 
+            print('Total Utility', sorted_result[0]['best_tot_util']) 
+            print('Total GPU Time', sorted_result[0]['best_tot_gpu_time'])
         
         print('iterate time:', time.time()-st)                   
 
-    def single_optimize(self):
-        query_setups_per_query = [] 
-        with Pool(min(os.cpu_count(), len(self.queries))) as pool:
-            jobs = []
-            for query in self.queries:
-                job = pool.apply_async(self.vulcan_search, (query, ClusterState(self.cluster_spec)))
-                jobs.append(job)
-            for job in jobs:
-                query_setups = job.get()
-                query_setups_per_query.append(query_setups)
+    def greedy_setup_search(self):
+        query_setups_per_query = self.explore_all_query_setups()
+
+
+        score_key = 'utility'
+        
+        num_queries = len(self.queries)
+        for place_order in itertools.permutations([i for i in range(num_queries)], num_queries):
+            print("=====PLACE=====") 
+            cluster_state = ClusterState(self.cluster_spec)
+            best_query_setups = [] #list of best query setup
+            queries_meet_constraints = True
+            for idx in place_order:
+                query = self.queries[idx]
+                query_setups = query_setups_per_query[idx]
                 
+                print('Place a query')
+                best_query_setup = None 
+                best_setup_score = 0 
+                for query_setup in query_setups:
+                    query_id = cluster_state.push_query(query, query_setup['placement'], query_setup)
+                    if (cluster_state.exceed_score(score_key, best_setup_score)):
+                        best_query_setup = query_setup 
+                        best_setup_score = cluster_state.get_score(score_key) 
+                
+                    cluster_state.pop_query(query_id)
+
+                if best_query_setup == None:
+                    queries_meet_constraints = False
+                    break
+                best_query_setups.append(best_query_setup)
+                cluster_state.push_query(query, best_query_setup['placement'], best_query_setup)
+
+            print('======RESULT=====')
+            if queries_meet_constraints: 
+                # print(query_result)
+                for query_setup in best_query_setups:
+                    print(query_setup)
+                # print(cluster_state.tier_state)
+                print('Total Utiliy', cluster_state.tot_util)
+                print('Total GPU Time', cluster_state.tot_gpu_processing_time)
+            else:
+                print('Can not find valid setups for all queries ><') 
+
+    def beam_setup_search(self, num_beam=100):
+        query_setups_per_query = self.explore_all_query_setups()
+
         cluster_state = ClusterState(self.cluster_spec)
-        query_result = []
+        beams = [([], 0)] # (query_setup, tot_gpu_processing_time)
         for query, query_setups in zip(self.queries, query_setups_per_query):
+            new_beams = []
+            for query_setup_seq, _ in beams:
+                for query_setup in query_setups:
+                    new_query_setup_seq = query_setup_seq + [query_setup] 
+                    # evaluate
+                    cluster_state = ClusterState(self.cluster_spec) 
+                    query_ids = []
+                    for selected_query, selected_query_setup in zip(self.queries, new_query_setup_seq):
+                        query_id = cluster_state.push_query(selected_query, selected_query_setup['placement'], selected_query_setup)
+                        query_ids.append(query_id)
+                    tot_gpu_processing_time = cluster_state.tot_gpu_processing_time
+                    if (cluster_state.is_cluster_out_of_memory() == False
+                        and cluster_state.queries_meet_latencies()):
+                        new_beams.append((new_query_setup_seq, tot_gpu_processing_time))
             
-            #TODO: Remove this assumtion that there must be a placement that is qualify
-            # print(foot_print)
-            placable_footprint = []
-            best_query_setup = None 
-            best_tot_util = -10000
-            for query_setup in query_setups:
-                query_id = cluster_state.push_query(query, query_setup['placement'], query_setup)
-                if cluster_state.is_cluster_out_of_memory() == False:
-                    if cluster_state.tot_util > best_tot_util:
-                        best_query_setup = query_setup
-                        best_tot_util = cluster_state.tot_util
-                cluster_state.pop_query(query_id)
+            beams = sorted(new_beams, key=lambda x:x[1], reverse=False)[:min(len(beams), num_beam)]
+        print('=====RESULT=====')
+        if len(beams) == 0:
+            print('Cant not find ><')
+        else:
+            print(beams[0][0])
+            print('Total GPU Time', beams[0][1])
 
+    def shrink_setup_search(self):
+        self.num_init_sample_configs = 100 
+        
+        query_configs_by_query = self.explore_all_query_setups(optimize_goal='accuracy')
+        
+        print("=====Start Placing=====")
+        while True:
+             
+            # Find the job with minimum accuracy but available accuracy. 
+            # Find the low-latency placement for each job. 
+            
+            current_configs = []
+            for idx, configs in enumerate(query_configs_by_query):
+                current_configs.append(configs[0])
+             
 
-            query_result.append(best_query_setup)
-            cluster_state.push_query(query, best_query_setup['placement'], best_query_setup)
+            print('=====Remaining config=====', [len(cs) for cs in query_configs_by_query])
 
-        print('===========')
-        # print(query_result)
-        for qr in query_result:
-            print(qr)
-        print(cluster_state.tier_state)
-        print('tot_gpu_processing_time', cluster_state.tot_gpu_processing_time)
-        print('tot_util', cluster_state.tot_util)
+            current_config_diff_placements_result_by_query = []
+            for query_config, query in zip(current_configs, self.queries):
+                config = query_config['config']
+                placements = self.generate_placement_choices(query, self.cluster_spec )
+                post_results = []
+                for placement in placements:
+                    profile_result = self.simulate_pipeline(config, query)
+                    post_result = self.postprocess_result(profile_result, placement, config, query)
+                    post_results.append(post_result)
+                post_results.sort(key=lambda x: x['latency'])
+                
+                current_config_diff_placements_result_by_query.append(post_results) 
+            
+            best_queries_post_result = []
+            for idx, config_placement_post_results in enumerate(current_config_diff_placements_result_by_query):
+                best_queries_post_result.append(config_placement_post_results[0])
+                current_config_diff_placements_result_by_query[idx].pop(0)
+            # Step2 
+            good = False
+            while True:
+                cluster_state = ClusterState(self.cluster_spec)
+                query_ids = []
+                for query, config_post_result in zip(self.queries, best_queries_post_result): 
+                    query_id = cluster_state.push_query(query, config_post_result['placement'], config_post_result)
+                    query_ids.append(query_id)
 
-    def vulcan_search_multiple_query(self, subtask_id, num_subtask,  placement_by_query):
-        print('Subtask', subtask_id, '/', num_subtask, 'start ...')
+                some_query_violate_latency = False
+                current_latencies = []
+                current_accuracies = []
+                for query, query_id in zip(self.queries, query_ids):
+                    updated_post_result = cluster_state.get_query_profile(query_id)
+                    if updated_post_result['latency'] >= query.lat_thold + 0.1:
+                        some_query_violate_latency = True
+                    current_latencies.append(updated_post_result['latency']) 
+                    current_accuracies.append(updated_post_result['accuracy'])
+                print('Cur ACC:', current_accuracies, 'LAT:', current_latencies) 
+
+                if some_query_violate_latency or cluster_state.is_cluster_out_of_memory():
+                    # print('Remaining placements:', [len(cc) for cc in current_config_diff_placements_result_by_query])
+                    # print('OOM:',cluster_state.is_cluster_out_of_memory())
+                    # print('Lateny violation:', some_query_violate_latency)
+                    # find loose latency, than update. 
+                    loose_idx = -1
+                    loose = -100000000
+                    for idx, query  in enumerate(self.queries):
+                        if len(current_config_diff_placements_result_by_query[idx]) <= 0:
+                            continue
+                        query_loose = query.lat_thold - current_config_diff_placements_result_by_query[idx][0]['latency']  
+                        # print('query loose', query_loose)
+                        if query_loose > loose:
+                            loose = query_loose 
+                            loose_idx = idx
+
+                    print('Loose:', loose)
+                    if loose_idx == -1: 
+                        break
+                    else: 
+                        best_queries_post_result[loose_idx] = current_config_diff_placements_result_by_query[loose_idx][0]
+                        current_config_diff_placements_result_by_query[loose_idx].pop(0)
+                else: 
+                    good = True
+                    break
+             
+            if good == True:
+                print('=========RESULT================')
+                # print(best_queries_post_result)
+                cluster_state = ClusterState(self.cluster_spec)
+                query_ids = []
+                for query, best_query_post_result in zip(self.queries, best_queries_post_result):
+                    query_id = cluster_state.push_query(query, best_query_post_result['placement'], best_query_post_result)
+                    query_ids.append(query_id)
+                for query_id in query_ids:
+                    print(cluster_state.get_query_profile((query_id)))
+                print('tot_utils: ', cluster_state.tot_util)
+                print('tot_gpu_time', cluster_state.tot_gpu_processing_time)
+                print("remaining config", [len(c) for c in query_configs_by_query])
+                break
+            else:
+                #step 3
+                best_gpu_diff = 10000000
+                upgrade_config_idx = -1
+                for idx, query in enumerate(self.queries):
+                    if len(query_configs_by_query[idx]) <= 1:
+                        continue
+                    gpu_diff = query_configs_by_query[idx][1]['tot_gpu_time'] - current_configs[idx]['tot_gpu_time']
+                    if gpu_diff < best_gpu_diff:
+                        best_gpu_diff = gpu_diff
+                        upgrade_config_idx = idx
+                if upgrade_config_idx == -1:
+                    print("============GIVE UP=========")
+                    print("Cant not find")
+                    break
+                else:
+                    query_configs_by_query[upgrade_config_idx].pop(0)
+                                        
+                    # print('remaining configs:', [len(cs) for cs in query_configs_by_query])
+                   
+    def search_by_utility_multi_queries(self, subtask_id, num_subtask,  placement_by_query):
+        # print('Subtask', subtask_id, '/', num_subtask, 'start ...')
         st = time.time()
         def simulate_sample(sample: List[int]):
             sample_sid = 0
@@ -713,7 +744,7 @@ class Engine:
                 config_per_query = sample_to_config(sample_per_query, query.knob_list)
                 # print('sample 2 config', time.time() - st)
                 # st = time.time() 
-                result_per_query = self.simulate_run_pipeline(config_per_query, query)
+                result_per_query = self.simulate_pipeline(config_per_query, query)
                 # print('simulate', time.time() - st)
                 # st = time.time()
                 post_result_per_query = self.postprocess_result(result_per_query, placement, config_per_query, query)
@@ -769,7 +800,7 @@ class Engine:
             # print('sample', time.time() - st)
             # st = time.time()
         if num_exploded_cluster == self.num_init_sample_configs:
-            print('subtask', subtask_id, 'done', time.time() - st, flush=True)
+            print('subtask', subtask_id, '/', num_subtask, 'done', time.time() - st, flush=True)
             return best_tot_util, None
             
         bo.fit(X=np.array(init_samples), y=np.array(init_utils))
@@ -796,14 +827,13 @@ class Engine:
                 break
             # print(early_prune_cnt, bo_stop_cnt, max_tot_util)
 
-        print('subtask', subtask_id, 'done', time.time() - st, flush=True)
+        print('subtask', subtask_id, '/', num_subtask, 'done', time.time() - st, flush=True)
         return best_tot_util, best_global_query_setup
 
-    def joint_optimize(self):
         self.num_init_sample_configs = self.num_init_sample_configs ** len(self.queries)
         self.early_prune_count = self.num_init_sample_configs * len(self.queries)
         
-        plcs_by_query = [self.gen_all_place_choices(query, self.cluster_spec) for query in self.queries]        
+        plcs_by_query = [self.generate_placement_choices(query, self.cluster_spec) for query in self.queries]        
 
         total_combinations = 1
         for lst in plcs_by_query:
@@ -814,7 +844,7 @@ class Engine:
         with Pool(4) as pool:
             jobs = [] 
             for subtask_id, plcs in enumerate(itertools.product(*plcs_by_query)):
-                job = pool.apply_async(self.vulcan_search_multiple_query, (subtask_id, total_combinations, plcs))
+                job = pool.apply_async(self.search_by_utility_multi_queries, (subtask_id, total_combinations, plcs))
                 jobs.append(job)
             for job in jobs:
                 tot_util, global_query_setup = job.get()
@@ -830,36 +860,102 @@ class Engine:
 
         print(best_global_query_setup)
 
-    def print_result(self):
         pass
-   
+  
+    def joint_optimize(self):
+        self.num_init_sample_configs = self.num_init_sample_configs ** len(self.queries)
+        self.early_prune_count = self.num_init_sample_configs * len(self.queries)
+        
+        plcs_by_query = [gen_all_place_choices(query, self.cluster_spec) for query in self.queries]        
 
+        total_combinations = 1
+        for lst in plcs_by_query:
+            total_combinations *= len(lst)
+
+        best_global_query_setup = None
+        best_tot_util = -10000
+        with Pool(4) as pool:
+            jobs = [] 
+            for subtask_id, plcs in enumerate(itertools.product(*plcs_by_query)):
+                job = pool.apply_async(self.search_by_utility_multi_queries, (subtask_id, total_combinations, plcs))
+                jobs.append(job)
+            for job in jobs:
+                tot_util, global_query_setup = job.get()
+                if global_query_setup != None and tot_util > best_tot_util:
+                    best_tot_util = tot_util
+                    best_global_query_setup = global_query_setup
+
+        
+
+        print(best_global_query_setup)
+
+
+    
 if __name__ == "__main__":
+    # queries
+    queries = [
+        Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
+        Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+        Query(0.8, 0.1, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+        Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+        Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
+    ]
 
+    # Cluster Spec
+    mach_info = {
+        "compute": [0.1, 0.22, 1],
+        "bandwidth": [0.08, 0.05, 0] # bw=(t0->t1, t1->t2, t2->t3)
+    }
+    cluster_spec = [
+        TierSpec('edge', num_nodes=1, num_gpus=1, gpu_memory_size=1000, compute_speed=mach_info['compute'][0], bandwidth=mach_info['bandwidth'][0]),
+        TierSpec('on-perm', num_nodes=1, num_gpus=1, gpu_memory_size=2000, compute_speed=mach_info['compute'][1], bandwidth=mach_info['bandwidth'][1]),
+        TierSpec('cloud', num_nodes=1, num_gpus=1, gpu_memory_size=3000, compute_speed=mach_info['compute'][2], bandwidth=mach_info['bandwidth'][2]),
+    ]
+
+
+
+    # Search single query
+    engine = Engine(queries=[], cluster_spec=cluster_spec, num_profile_sample=5000)
+    query_setups = engine.search_by_utlity(queries[0], ClusterState(cluster_spec))
+    query_setups = sorted(query_setups, key = lambda x: x.setup_metric.utility, reverse=True);
+    print(query_setups[0])
+
+    exit()
+    ## Search multi-query
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--method', choices=['single', 'joint', 'exhaustive'], required=True)
+    parser.add_argument('-m', '--method', choices=['shrink', 'greedy', 'exhaustive', 'beam', 'joint'], required=True)
     parser.add_argument('-q', '--num_queries', required=True)
     args = parser.parse_args()
     
 
-    
-    queries = [
-        Query(0.35, 0.3, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg), 
-        Query(0.45, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-        Query(0.8, 0.05, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-        Query(0.5, 0.2, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-        Query(0.5, 0.4, "speech_recognition/profile_result_1.json", speech_recongnition_knobs, speech_recognition_ops, speech_recognition_dnn_usg),
-    ]
+
+
+    # Filter queries to conduct experiment on different #queries.
     queries = queries[:int(args.num_queries)] 
-    engine = Engine(queries, num_profile_sample=5000)
+    engine = Engine(queries, cluster_spec, num_profile_sample=5000)
+
     
+    """
+    Goal: Let every query satisfy "latency & accuracy" constraints while minimizing gpu processing time. 
+    
+    Method:
+        - Disaggregate Searching & Placing (...search)
+        - Combine Searching & Placing (...optimize)
+    """
+    start_time = time.process_time()
     st = time.time()
     if args.method == 'joint':
         engine.joint_optimize()
-    elif args.method == 'single':
-        engine.single_optimize()
+    elif args.method == 'greedy':
+        engine.greedy_setup_search()
     elif args.method == 'exhaustive':
-        engine.exhaustive_optimize()
-    # engine.single_optimize()
+        engine.exhaustive_setup_search()
+    elif args.method == 'beam':
+        engine.beam_setup_search()
+    elif args.method == 'shrink':
+        engine.shrink_setup_search()
+
+    print("======PROFILE=======")
     print('total time:', time.time() - st)
+    print('tota cpu processing time', time.process_time() - start_time)

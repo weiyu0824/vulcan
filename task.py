@@ -1,15 +1,4 @@
-from dataclasses import dataclass
-
-@dataclass
-class Operator:
-    name: str
-    tpy: str
-
-@dataclass
-class Knob: 
-    name: str
-    choice: list 
-
+from data import Knob, Operator
 
 video_analytics_knobs = [
     Knob("models", ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x']),
