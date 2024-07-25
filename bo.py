@@ -57,29 +57,22 @@ class BayesianOptimization:
 
     def get_next_sample(self):
         """Get a sample based on acqusition func"""
-        samples = self._get_random_raw_samples()
-        # best_acq_val = -10e100
+        samples = self._get_random_raw_samples(num_samples=3)
         arr = []
         for sample in samples:
             acq_val = self._get_acq_val(sample)   
             arr.append((acq_val, sample))
 
         arr.sort(key=lambda x: x[0], reverse=True)
-        # print('pred', arr[0][0])
         return arr[0][1]
 
     def get_sorted_samples(self):
-        samples = self._get_random_raw_samples()
-        # best_acq_val = -10e100
+        samples = self._get_random_raw_samples(num_samples=1000)
         arr = []
         for sample in samples:
             acq_val = self._get_acq_val(sample)   
             arr.append((acq_val, sample))
             acq_val = self._get_acq_val(sample)        
-            print(sample, acq_val)
-            if acq_val > best_acq_val:
-                best_sample = sample
-
         arr.sort(key=lambda x: x[0], reverse=True)
         return [x[1] for x in arr]
         # return random.choice(arr)[1]

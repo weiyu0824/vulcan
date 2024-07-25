@@ -42,7 +42,6 @@ class Engine:
                 self.profile_result_cache[query.profile_result_file] = profile_result   
              
 
-
     def simulate_pipeline(self, config: dict, query: Query) -> dict:
 
         config_str = json.dumps(config)
@@ -915,7 +914,7 @@ if __name__ == "__main__":
 
 
     # Search single query
-    engine = Engine(queries=[], cluster_spec=cluster_spec, num_profile_sample=5000)
+    engine = Engine(queries=queries, cluster_spec=cluster_spec, num_profile_sample=5000)
     query_setups = engine.search_by_utlity(queries[0], ClusterState(cluster_spec))
     query_setups = sorted(query_setups, key = lambda x: x.setup_metric.utility, reverse=True);
     print(query_setups[0])
