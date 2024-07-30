@@ -7,12 +7,18 @@ import random
 import tqdm
 import pandas as pd
 import numpy as np
+from datasets import load_dataset
 from op import AudioSampler, NoiseReduction, WaveToText, Decoder
+
+dataset_name = "voices"
+num_profile_sample_latency = 10
+num_profile_sample = 300
+min_audio_len = 20000
 
 
 knobs = [
-    ('audio_sample_rate', [8000, 10000, 12000, 14000, 16000]),
-    ('frequency_mask_width', [500, 1000, 2000, 3000, 4000]),
+    ('audio_sample_rate', [10000, 12000, 14000, 16000]),
+    ('frequency_mask_width', [1000, 2000, 4000]),
     ('model', ['wav2vec2-base', 'wav2vec2-large-10m', 'wav2vec2-large-960h', 'hubert-large', 'hubert-xlarge'])
 ]
 
@@ -26,7 +32,7 @@ def get_pipeline_args():
 
 ref_df = pd.read_csv('/data/wylin2/VOiCES_devkit/references/filename_transcripts')
 ref_df.set_index('file_name', inplace=True)
-def random_load_speech_data():
+def random_load_speech_data_voices():
     # randomly choose audio file for room, noise, specs
     room = random.choice(['rm1', 'rm2', 'rm3', 'rm4'])
     noise = random.choice(['babb', 'musi', 'none', 'tele'])
@@ -44,8 +50,38 @@ def random_load_speech_data():
 
     return audio, sr, transcript
 
+import random
+#libri
+libri_test_dataset = load_dataset("librispeech_asr", "clean", split="test")
+def random_load_speech_data_libri():
+    example = libri_test_dataset[random.randint(0, len(libri_test_dataset)-1)]
+    audio = torch.tensor(example['audio']['array'], dtype=torch.float)
+    sr = example['audio']['sampling_rate']
+    text = example['text']
+    if len(audio) < min_audio_len:
+        return random_load_speech_data_lium()
+    return audio, sr, text 
+
+lium_test_dataset = load_dataset("LIUM/tedlium", "release1", split="test")
+def random_load_speech_data_lium():
+    example = lium_test_dataset[random.randint(0, len(lium_test_dataset)-1)]
+    audio = torch.tensor(example['audio']['array'], dtype=torch.float)
+    sr = example['audio']['sampling_rate']
+    text = example['text']
+    if len(audio) < min_audio_len:
+        return random_load_speech_data_lium()
+    if text == "ignore_time_segment_in_scoring":
+        return random_load_speech_data_lium()
+    return audio, sr, text 
 
 def profile_pipeline():
+    if dataset_name == "libri":
+        random_load_speech_data = random_load_speech_data_libri
+    elif dataset_name == "lium":
+        random_load_speech_data = random_load_speech_data_lium
+    elif dataset_name == "voices":
+        random_load_speech_data = random_load_speech_data_voices
+
     pipe_args = get_pipeline_args()
     
     profile_result = {}
@@ -62,7 +98,7 @@ def profile_pipeline():
 
     print('profile latency & input size')
     # Profile args:
-    num_profile_sample_latency  = 10 #Can't be small because of warm-up
+    # num_profile_sample_latency  = 10 #Can't be small because of warm-up
     
     for _ in tqdm.tqdm(range(num_profile_sample_latency)):
         audio, sr, transcript = random_load_speech_data()
@@ -94,8 +130,8 @@ def profile_pipeline():
     
 
     print('profile accuracy')
-    num_profile_sample = 10 
-    batch_size = 1 # calculate cummulated accuracy every batch
+    # num_profile_sample = 100 
+    batch_size = 100 # calculate cummulated accuracy every batch
 
     cum_accuracy = []
     for i in tqdm.tqdm(range(num_profile_sample)):
@@ -111,14 +147,14 @@ def profile_pipeline():
         batch_data = wave_to_text.profile(batch_data)
         batch_data = decoder.profile(batch_data)
 
-        if i % batch_size == 0:
+        if (i + 1) % batch_size == 0:
             cum_accuracy.append(decoder.get_endpoint_accuracy())
 
 
     profile_result['accuracy'] = decoder.get_endpoint_accuracy()
     profile_result['cummulative_accuracy'] = cum_accuracy 
     profile_result['total_profile_time'] = time.time() - start_time
-
+    print(decoder.max_wer)
     return profile_result
 
 def start_exp(result_fname):
@@ -148,6 +184,15 @@ def start_exp(result_fname):
                     records = json.dump(records, fp)  
 
 if __name__ == "__main__":
+    # os.environ["audio_sample_rate"] = str(16000)
+    # os.environ["frequency_mask_width"] = str(4000)
+    # os.environ["model"] = str("hubert-large")
+    # torch.cuda.empty_cache()
+    
+    # result = profile_pipeline()
+    # print(result)
+    # exit() 
+    # exit(pppp)
     # addr, port = 'localhost', 12343
     # start_connect(addr, port)
 
@@ -156,4 +201,4 @@ if __name__ == "__main__":
     # start_exp('profile_result_3.json') 
     # start_exp('profile_result_4.json') 
     # start_exp('profile_result_5.json')  
-    start_exp('profile_result_tmp.json')
+    start_exp(f'profile_result_{dataset_name}.json')
