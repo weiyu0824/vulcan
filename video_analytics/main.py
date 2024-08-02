@@ -7,6 +7,7 @@ import time
 from torch.utils.data import DataLoader
 import argparse
 from pipeline import Pipeline, BatchData, MeanAveragePrecisionEvaluator
+
 # import torch
 
 def get_detector_args():

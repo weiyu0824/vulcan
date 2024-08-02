@@ -325,3 +325,4 @@ class Detector(ProcessOp):
         batch_accuracy = self.metric.compute()['map_50'].item()
         self.metric = MeanAveragePrecision()
         return batch_accuracy
+

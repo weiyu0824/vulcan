@@ -21,6 +21,11 @@ num_profile_sample_latency = 10
 num_profile_sample = 300
 min_audio_len = 20000
 
+dataset_name = "voices"
+num_profile_sample_latency = 10
+num_profile_sample = 300
+min_audio_len = 20000
+
 
 knobs = [
     ('audio_sample_rate', [10000, 12000, 14000, 16000]),
@@ -66,6 +71,7 @@ def random_load_speech_data_voices():
 
     return audio, sr, transcript
 
+
 def sample_speech_data(sampler: VOiCERandomSampler, method: str):
     filename = sampler.sample(method)  
     rm = filename.split('-')[3]
@@ -81,6 +87,8 @@ def sample_speech_data(sampler: VOiCERandomSampler, method: str):
     pruned_filename = filename.split('/')[-1]
     return audio, sr, transcript, pruned_filename
 
+
+#libri
 libri_test_dataset = load_dataset("librispeech_asr", "clean", split="test")
 def random_load_speech_data_libri():
     example = libri_test_dataset[random.randint(0, len(libri_test_dataset)-1)]
@@ -106,6 +114,7 @@ def random_load_speech_data_lium():
 def profile_pipeline():
     method = "random"
     sampler = VOiCERandomSampler(6400)
+
     if dataset_name == "libri":
         random_load_speech_data = random_load_speech_data_libri
     elif dataset_name == "lium":
@@ -116,12 +125,10 @@ def profile_pipeline():
     pipe_args = get_pipeline_args()
     profile_result = {}
     # torch.cuda.reset_peak_memory_stats() 
-    # torch.cuda.reset_peak_memory_stats() 
+
     audio_sampler = AudioSampler(pipe_args)
     noise_reduction = NoiseReduction(pipe_args)
     wave_to_text = WaveToText(pipe_args)
-    
-    
     decoder = Decoder(pipe_args)
 
 
@@ -131,7 +138,7 @@ def profile_pipeline():
     # Profile args:
     # num_profile_sample_latency  = 10 #Can't be small because of warm-up
     
-    
+
     for _ in tqdm.tqdm(range(num_profile_sample_latency)):
         audio, sr, transcript = random_load_speech_data()
         batch_data = {
@@ -145,14 +152,8 @@ def profile_pipeline():
         batch_data = wave_to_text.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
         # Reset peak memory stats
 
-        # Reset peak memory stats
 
         batch_data = decoder.profile(batch_data, profile_compute_latency=True, profile_input_size=True)
-    max_memory_allocated = torch.cuda.max_memory_allocated()
-    max_memory_reserved = torch.cuda.max_memory_reserved()
-    # print(f"Maximum memory allocated: {max_memory_allocated / 1024 ** 2} MB")
-    # print(f"Maximum memory reserved: {max_memory_reserved / 1024 ** 2} MB")
-    # exit(0)
     max_memory_allocated = torch.cuda.max_memory_allocated()
     max_memory_reserved = torch.cuda.max_memory_reserved()
     # print(f"Maximum memory allocated: {max_memory_allocated / 1024 ** 2} MB")
@@ -172,6 +173,7 @@ def profile_pipeline():
     num_profile_sample = 10 
     num_profile_sample = 10 
     batch_size = 1 # calculate cummulated accuracy every batch
+
 
     group_accuracy = [[] for i in range(16)]
     group_accuracy = [[] for i in range(16)]
@@ -275,7 +277,7 @@ def bootstrap_profile_pipeline():
     profile_result['accuracy'] = decoder.get_endpoint_accuracy()
     profile_result['cummulative_accuracy'] = cum_accuracy 
     profile_result['total_profile_time'] = time.time() - start_time
-
+    print(decoder.max_wer)
     return profile_result
    
 
@@ -538,4 +540,4 @@ if __name__ == "__main__":
         start_exp(f"./result/{method_f}_{date_time_str}.json", method, num)
         print(f"Save to {method_f}_{date_time_str}.json")
 
-    # start_prepare()
+    start_prepare()
