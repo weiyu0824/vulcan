@@ -1,0 +1,14 @@
+[
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "ground_truth": 0.5069032994482636
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "ground_truth": 0.8001876153446367
+    }
+]

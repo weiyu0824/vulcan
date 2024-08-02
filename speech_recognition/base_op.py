@@ -7,6 +7,9 @@ class ProcessOp():
         """Do some transformation"""
         NotImplementedError()
 
+    def process(self, batch_data):
+        raise NotImplementedError()
+    
     def get_compute_latency(self):
         if len(self.compute_latencies) == 0:
             return 0
@@ -14,6 +17,9 @@ class ProcessOp():
 
     def get_input_size(self):
         return self.input_size 
+
+    def get_result(self):
+        pass
 
 class SourceOp():
     def load_batch(self):
