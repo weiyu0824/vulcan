@@ -130,7 +130,6 @@ class WaveToText(ProcessOp):
         
         batch_data['audio'] = None
         batch_data['emission'] = emission[0]
-        
         if profile_compute_latency:
             self.compute_latencies.append(time.time()-start_compute_time) 
 
@@ -165,6 +164,7 @@ class Decoder(ProcessOp):
         self.decoder = GreedyCTCDecoder(labels=bundle.get_labels())
 
         self.accuracy = []
+        self.max_wer = 0
     
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
         if self.input_size == None and profile_input_size:
@@ -180,7 +180,19 @@ class Decoder(ProcessOp):
             self.compute_latencies.append(time.time()-start_compute_time) 
 
         # accuracy
+        ground_transcript = ground_transcript.lower()
+        pred_transcript = pred_transcript.lower()
         wer = jiwer.wer(ground_transcript, pred_transcript)
+        
+
+        # if wer > self.max_wer:
+        #     print('-----------------------------------------------------------')
+        #     print(ground_transcript)
+        #     print('---')
+        #     print(pred_transcript)
+        #     print('wer:', wer)
+        self.max_wer = max(self.max_wer, wer)
+        # exit()
         self.accuracy.append(wer)
         return 
     

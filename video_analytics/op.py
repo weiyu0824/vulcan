@@ -21,81 +21,71 @@ device = 'cpu'
 if torch.cuda.is_available():
     device = 'cuda:0'
 
+data_root = '/data/sets/nuimages/'
+data_version = 'v1.0-mini'
+
 class Loader(SourceOp):
-    def __init__(self, args: dict):
+    def __init__(self):
         # self.root = '/nuimages/'
-        self.root = '/proj/gaea-PG0/wylin2'
-        self.version = 'v1.0-val'
+        self.root = data_root 
+        self.version = data_version 
         
         self.nuim = NuImages(dataroot=self.root, version=self.version, verbose=False, lazy=True)
         self.num_samples = len(self.nuim.sample)
-        self.batch_size = args['batch_size']
-        self.resize_shape = args['resize_shape']
+        # print(self.num_samples)
+        # print(self.nuim.sample[0])
+        # exit()
+        # self.batch_size = 1 
+        # self.resize_shape = args['resize_shape']
 
-        self.cur_batch_idx = 0
+        # self.cur_batch_idx = 0
         self.nuim_category_to_id_dict = get_dict_nuimage_category_to_id()
 
         self.output_data_size = None
         self.compute_latencies = []
 
-        with open(f'{self.version}-idx.json', 'r') as fp:
-            self.index_data = json.load(fp)
+        # with open(f'{self.version}-idx.json', 'r') as fp:
+        #     self.index_data = json.load(fp)
 
     def save_index(self):
         with open(f'{self.version}-idx.json', 'w') as fp:
             json.dump(self.index_data, fp) 
 
-    def load_batch(self):
-        start_idx = self.cur_batch_idx * self.batch_size
+    def build_index(self):
+        # start_idx = 0
         batch_imgs = []
         batch_labels = []
         start_compute_time = time.time()
         org_image_shape = None
-        cur_idx = start_idx
-        while (cur_idx < min(self.num_samples, start_idx + self.batch_size)):
+
+
+        print(self.nuim.sample[0])
+
+        # cur_idx = start_idx
+        # while (cur_idx < min(self.num_samples, start_idx + self.batch_size)):
+        self.index_data = [] 
+        for cur_idx in tqdm.tqdm(range(0, self.num_samples)):
             sample = self.nuim.sample[cur_idx]
-            # img_fname = self.nuim.get('sample_data', sample['key_camera_token'])['filename']
-            img_fname = self.index_data[cur_idx]['img_fname']
+            img_fname = self.nuim.get('sample_data', sample['key_camera_token'])['filename']
+            # img_fname = self.index_data[cur_idx]['img_fname']
             
             img_source = cv2.imread(self.root + img_fname)
             org_image_shape = img_source.shape  
             
-            img_source = cv2.resize(img_source, (self.resize_shape, self.resize_shape)) # (900, 1600)
-            img_source: ndarray = img_source.astype(np.float32) / 255.0
+            # img_source = cv2.resize(img_source, (self.resize_shape, self.resize_shape)) # (900, 1600)
+            # img_source: ndarray = img_source.astype(np.float32) / 255.0
              
-            batch_imgs.append(img_source)
-            # true_boxes = self.get_ground_truth_box(sample).tolist()
-            true_boxes = self.index_data[cur_idx]["true_boxes"]
+            # batch_imgs.append(img_source/nuimages)
+            true_boxes = self.get_ground_truth_box(sample).tolist()
+            # true_boxes = self.index_data[cur_idx]["true_boxes"]
             batch_labels.append(true_boxes)
 
             # index
-            # self.index_data.append({
-            #     "img_fname": img_fname,
-            #     "true_boxes": true_boxes
-            # })
-
-            cur_idx += 1
-        
-        # Transformation 
-        batch_tensor = np.array(batch_imgs)
-        batch_tensor = np.transpose(batch_tensor, (0, 3, 1, 2))
-
-        batch_data = {
-            'images': batch_tensor,
-            'labels': batch_labels, 
-            'org_image_shape': org_image_shape
-        }
-        self.compute_latencies.append(time.time() - start_compute_time)
-
-
-        # Record the data_size
-        if (self.output_data_size == None):
-            self.output_data_size = len(pickle.dumps(batch_data))/self.batch_size
-
-        # Update batch_id
-        self.cur_batch_idx += 1
-
-        return batch_data
+            self.index_data.append({
+                "img_fname": img_fname,
+                "true_boxes": true_boxes
+            })
+        self.save_index()
 
     def get_ground_truth_box(self, sample):
         if not sample:
@@ -141,8 +131,8 @@ class Loader(SourceOp):
 
 class NuImageDataset(Dataset):
     def __init__(self):
-        self.version = 'v1.0-val'
-        self.root = '/proj/gaea-PG0/wylin2/' 
+        self.version = data_version 
+        self.root = data_root 
         with open(f'{self.version}-idx.json', 'r') as fp:
             self.index_data = json.load(fp)
         self.max_num_bbox = 0
@@ -166,10 +156,7 @@ class NuImageDataset(Dataset):
         
         padded_boxes = torch.tensor(padded_boxes)
 
-        # if (len(true_boxes) > self.max_num_bbox):
-        #     self.max_num_bbox = len(true_boxes)
-        #     print('gogogs', self.max_num_bbox)
-        return img_source, padded_boxes
+        return img_source, padded_boxes, img_fname
 
 class GroundRemoval(ProcessOp):
     def __init__(self):
@@ -180,7 +167,6 @@ class Voxelization(ProcessOp):
         super().__init__()
         w = int(args['resize_factor'] * org_image_shape[0])
         h = int(args['resize_factor'] * org_image_shape[1])
-        print(w, h)
         self.resize = Resize(size=(h, w))
 
     def profile(self, batch_data, profile_input_size=False, profile_compute_latency=False):
@@ -200,6 +186,8 @@ class Voxelization(ProcessOp):
         batch_data['images'] = images
         return batch_data
 
+    def process(self, batch_data):
+        return self.profile(self, batch_data, False, False)
         
 
 class Detector(ProcessOp):
@@ -306,8 +294,13 @@ class Detector(ProcessOp):
         # mean_APs.append(mean_AP.item()) 
 
         # self.batch_accuraies.append(sum(mean_APs)/len(mean_APs)) 
-        return 
-    
+        batch_data["preds"] = preds
+        batch_data['targets'] = targets
+        return batch_data
+
+    def process(self, batch_data):
+        return self.profile(self, batch_data, False, False)
+        
     def record_preds(self, results):
 
         pass
@@ -327,3 +320,8 @@ class Detector(ProcessOp):
     
     def get_batch_accuracy(self):
         return self.batch_accuraies
+
+    def get_last_accuracy(self):
+        batch_accuracy = self.metric.compute()['map_50'].item()
+        self.metric = MeanAveragePrecision()
+        return batch_accuracy

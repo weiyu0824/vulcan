@@ -1,4 +1,4 @@
-name: vulcan
+name: sr
 channels:
   - defaults
 dependencies:
