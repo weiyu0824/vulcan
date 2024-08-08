@@ -15,6 +15,12 @@ speech_recongnition_knobs = [
     Knob("model", ["wav2vec2-base", "wav2vec2-large-10m", "wav2vec2-large-960h", "hubert-large", "hubert-xlarge"])
 ]
 
+simple_speech_recongnition_knobs = [
+    Knob("audio_sr", [10000, 12000, 14000, 16000]),
+    Knob("freq_mask", [1000, 2000, 4000]),
+    Knob("model", ["wav2vec2-base", "wav2vec2-large-10m", "wav2vec2-large-960h", "hubert-large", "hubert-xlarge"])
+]
+
 speech_recognition_ops = [
     Operator("audio_sampler", "basic"), 
     Operator("noise_reduction", "basic"), 

@@ -41,7 +41,6 @@ class Engine:
                     profile_result = json.load(fp)        
                 self.profile_result_cache[query.profile_result_file] = profile_result   
              
-
     def simulate_pipeline(self, config: dict, query: Query) -> dict:
 
         config_str = json.dumps(config)
@@ -888,6 +887,9 @@ class Engine:
 
         print(best_global_query_setup)
 
+    def dp_setup_search(self):
+        pass
+
 
     
 if __name__ == "__main__":
@@ -917,7 +919,10 @@ if __name__ == "__main__":
     engine = Engine(queries=queries, cluster_spec=cluster_spec, num_profile_sample=5000)
     query_setups = engine.search_by_utlity(queries[0], ClusterState(cluster_spec))
     query_setups = sorted(query_setups, key = lambda x: x.setup_metric.utility, reverse=True);
-    print(query_setups[0])
+    print("Config")
+    print(query_setups[0].config)
+    print("Metric")
+    print(query_setups[0].setup_metric)
 
     exit()
     ## Search multi-query

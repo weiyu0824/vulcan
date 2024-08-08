@@ -41,6 +41,7 @@ class SetupMetric:
     accuracy: float 
     latency: float
     utility: float
+    cost: float
     tot_transfer_latency: float
     tot_gpu_time: float
     accuracy_index: float

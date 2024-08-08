@@ -1,0 +1,2752 @@
+[
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1423780,
+            "noise_reduction_input_size": 517152,
+            "wave_to_text_input_size": 516768,
+            "decoder_input_size": 47303,
+            "audio_sampler_compute_latency": 0.007650256156921387,
+            "noise_reduction_compute_latency": 0.010419106483459473,
+            "wave_to_text_compute_latency": 0.050919604301452634,
+            "decoder_compute_latency": 0.0790018081665039,
+            "accuracy": 0.9704098266460859,
+            "cummulative_accuracy": [
+                0.9682298424457735,
+                0.9696296413018778,
+                0.9704098266460859
+            ],
+            "total_profile_time": 22.15856409072876
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1452908,
+            "noise_reduction_input_size": 528052,
+            "wave_to_text_input_size": 527028,
+            "decoder_input_size": 48251,
+            "audio_sampler_compute_latency": 0.0038587093353271485,
+            "noise_reduction_compute_latency": 0.01257016658782959,
+            "wave_to_text_compute_latency": 0.021874547004699707,
+            "decoder_compute_latency": 0.040807366371154785,
+            "accuracy": 0.9806431089311636,
+            "cummulative_accuracy": [
+                0.983118573260307,
+                0.9825462686397584,
+                0.9806431089311636
+            ],
+            "total_profile_time": 29.298943281173706
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1402150,
+            "noise_reduction_input_size": 509450,
+            "wave_to_text_input_size": 508554,
+            "decoder_input_size": 46583,
+            "audio_sampler_compute_latency": 0.003363180160522461,
+            "noise_reduction_compute_latency": 0.011290645599365235,
+            "wave_to_text_compute_latency": 0.02026350498199463,
+            "decoder_compute_latency": 0.04322702884674072,
+            "accuracy": 0.9817880496201262,
+            "cummulative_accuracy": [
+                0.9829930420165792,
+                0.9836841120273172,
+                0.9817880496201262
+            ],
+            "total_profile_time": 29.13754391670227
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1425173,
+            "noise_reduction_input_size": 517859,
+            "wave_to_text_input_size": 516837,
+            "decoder_input_size": 47370,
+            "audio_sampler_compute_latency": 0.0030995607376098633,
+            "noise_reduction_compute_latency": 0.011666297912597656,
+            "wave_to_text_compute_latency": 0.0209552526473999,
+            "decoder_compute_latency": 0.048060369491577146,
+            "accuracy": 0.9748153153183228,
+            "cummulative_accuracy": [
+                0.976312483976339,
+                0.9748269454865212,
+                0.9748153153183228
+            ],
+            "total_profile_time": 30.79232621192932
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1360694,
+            "noise_reduction_input_size": 494730,
+            "wave_to_text_input_size": 493194,
+            "decoder_input_size": 45193,
+            "audio_sampler_compute_latency": 0.003432011604309082,
+            "noise_reduction_compute_latency": 0.011561822891235352,
+            "wave_to_text_compute_latency": 0.0408250093460083,
+            "decoder_compute_latency": 0.14244582653045654,
+            "accuracy": 0.9735649053462971,
+            "cummulative_accuracy": [
+                0.9773739881154736,
+                0.9730815955255634,
+                0.9735649053462971
+            ],
+            "total_profile_time": 68.08146929740906
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1489516,
+            "noise_reduction_input_size": 541500,
+            "wave_to_text_input_size": 540350,
+            "decoder_input_size": 49535,
+            "audio_sampler_compute_latency": 0.003070378303527832,
+            "noise_reduction_compute_latency": 0.010945773124694825,
+            "wave_to_text_compute_latency": 0.011153149604797363,
+            "decoder_compute_latency": 0.01800694465637207,
+            "accuracy": 0.9700574730671723,
+            "cummulative_accuracy": [
+                0.9664988455268666,
+                0.9694497431017753,
+                0.9700574730671723
+            ],
+            "total_profile_time": 17.562634229660034
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1420775,
+            "noise_reduction_input_size": 516595,
+            "wave_to_text_input_size": 515827,
+            "decoder_input_size": 47386,
+            "audio_sampler_compute_latency": 0.0031431913375854492,
+            "noise_reduction_compute_latency": 0.011314010620117188,
+            "wave_to_text_compute_latency": 0.014697670936584473,
+            "decoder_compute_latency": 0.0497251033782959,
+            "accuracy": 0.9792339998566331,
+            "cummulative_accuracy": [
+                0.9802250086941965,
+                0.9796523247729568,
+                0.9792339998566331
+            ],
+            "total_profile_time": 28.753969192504883
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1466597,
+            "noise_reduction_input_size": 533193,
+            "wave_to_text_input_size": 532169,
+            "decoder_input_size": 48736,
+            "audio_sampler_compute_latency": 0.0035076379776000977,
+            "noise_reduction_compute_latency": 0.012312173843383789,
+            "wave_to_text_compute_latency": 0.020142173767089842,
+            "decoder_compute_latency": 0.04382843971252441,
+            "accuracy": 0.9768184718549945,
+            "cummulative_accuracy": [
+                0.9772079455473982,
+                0.9763622685351783,
+                0.9768184718549945
+            ],
+            "total_profile_time": 29.811336278915405
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1418877,
+            "noise_reduction_input_size": 515821,
+            "wave_to_text_input_size": 514667,
+            "decoder_input_size": 47134,
+            "audio_sampler_compute_latency": 0.003596949577331543,
+            "noise_reduction_compute_latency": 0.012373518943786622,
+            "wave_to_text_compute_latency": 0.021050405502319337,
+            "decoder_compute_latency": 0.048159551620483396,
+            "accuracy": 0.9742333869920823,
+            "cummulative_accuracy": [
+                0.9753583955561627,
+                0.9733988452204004,
+                0.9742333869920823
+            ],
+            "total_profile_time": 31.228280305862427
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1390739,
+            "noise_reduction_input_size": 505667,
+            "wave_to_text_input_size": 504515,
+            "decoder_input_size": 46294,
+            "audio_sampler_compute_latency": 0.003714776039123535,
+            "noise_reduction_compute_latency": 0.010989189147949219,
+            "wave_to_text_compute_latency": 0.03937451839447022,
+            "decoder_compute_latency": 0.13407433032989502,
+            "accuracy": 0.9801929344063157,
+            "cummulative_accuracy": [
+                0.9924494805326346,
+                0.9842381396268499,
+                0.9801929344063157
+            ],
+            "total_profile_time": 67.91407203674316
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1510283,
+            "noise_reduction_input_size": 548579,
+            "wave_to_text_input_size": 547555,
+            "decoder_input_size": 50154,
+            "audio_sampler_compute_latency": 0.003148531913757324,
+            "noise_reduction_compute_latency": 0.010340142250061034,
+            "wave_to_text_compute_latency": 0.011036062240600586,
+            "decoder_compute_latency": 0.01726062297821045,
+            "accuracy": 0.9718621475998654,
+            "cummulative_accuracy": [
+                0.9729580222023894,
+                0.9728044656923851,
+                0.9718621475998654
+            ],
+            "total_profile_time": 17.31283664703369
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1303372,
+            "noise_reduction_input_size": 473616,
+            "wave_to_text_input_size": 472720,
+            "decoder_input_size": 43343,
+            "audio_sampler_compute_latency": 0.0030370235443115236,
+            "noise_reduction_compute_latency": 0.010878157615661622,
+            "wave_to_text_compute_latency": 0.019921398162841795,
+            "decoder_compute_latency": 0.03731820583343506,
+            "accuracy": 0.9818619156606978,
+            "cummulative_accuracy": [
+                0.9809835747557328,
+                0.9791288101909856,
+                0.9818619156606978
+            ],
+            "total_profile_time": 28.52470064163208
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1463904,
+            "noise_reduction_input_size": 531864,
+            "wave_to_text_input_size": 531096,
+            "decoder_input_size": 48687,
+            "audio_sampler_compute_latency": 0.0030370712280273437,
+            "noise_reduction_compute_latency": 0.01099846363067627,
+            "wave_to_text_compute_latency": 0.02059938907623291,
+            "decoder_compute_latency": 0.0382979154586792,
+            "accuracy": 0.9791039496541043,
+            "cummulative_accuracy": [
+                0.9834283671729697,
+                0.9795028619231626,
+                0.9791039496541043
+            ],
+            "total_profile_time": 29.179510593414307
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1493043,
+            "noise_reduction_input_size": 542779,
+            "wave_to_text_input_size": 541371,
+            "decoder_input_size": 49650,
+            "audio_sampler_compute_latency": 0.0036293506622314454,
+            "noise_reduction_compute_latency": 0.01181809902191162,
+            "wave_to_text_compute_latency": 0.020950627326965333,
+            "decoder_compute_latency": 0.04880232810974121,
+            "accuracy": 0.9760929188721194,
+            "cummulative_accuracy": [
+                0.9758130452181606,
+                0.9770474122531783,
+                0.9760929188721194
+            ],
+            "total_profile_time": 31.28581166267395
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1438746,
+            "noise_reduction_input_size": 522882,
+            "wave_to_text_input_size": 521858,
+            "decoder_input_size": 47737,
+            "audio_sampler_compute_latency": 0.0035290956497192384,
+            "noise_reduction_compute_latency": 0.01392207145690918,
+            "wave_to_text_compute_latency": 0.03892543315887451,
+            "decoder_compute_latency": 0.12649321556091309,
+            "accuracy": 0.9743205617724292,
+            "cummulative_accuracy": [
+                0.97331509161202,
+                0.9756126600476807,
+                0.9743205617724292
+            ],
+            "total_profile_time": 69.2891194820404
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1365935,
+            "noise_reduction_input_size": 496599,
+            "wave_to_text_input_size": 495191,
+            "decoder_input_size": 45374,
+            "audio_sampler_compute_latency": 0.0031157970428466798,
+            "noise_reduction_compute_latency": 0.011594343185424804,
+            "wave_to_text_compute_latency": 0.011020064353942871,
+            "decoder_compute_latency": 0.017431306838989257,
+            "accuracy": 0.9705584951676399,
+            "cummulative_accuracy": [
+                0.9691126889987407,
+                0.9690430109454187,
+                0.9705584951676399
+            ],
+            "total_profile_time": 17.143211364746094
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1414949,
+            "noise_reduction_input_size": 513941,
+            "wave_to_text_input_size": 513685,
+            "decoder_input_size": 47060,
+            "audio_sampler_compute_latency": 0.0030954360961914064,
+            "noise_reduction_compute_latency": 0.011308884620666504,
+            "wave_to_text_compute_latency": 0.023867535591125488,
+            "decoder_compute_latency": 0.041962051391601564,
+            "accuracy": 0.9784317695299073,
+            "cummulative_accuracy": [
+                0.9779473678478602,
+                0.9766613279010755,
+                0.9784317695299073
+            ],
+            "total_profile_time": 28.39357018470764
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1357197,
+            "noise_reduction_input_size": 493481,
+            "wave_to_text_input_size": 492201,
+            "decoder_input_size": 45108,
+            "audio_sampler_compute_latency": 0.0031749486923217775,
+            "noise_reduction_compute_latency": 0.011083674430847169,
+            "wave_to_text_compute_latency": 0.020435428619384764,
+            "decoder_compute_latency": 0.04043893814086914,
+            "accuracy": 0.9789930519446786,
+            "cummulative_accuracy": [
+                0.9859109798443428,
+                0.980091745834296,
+                0.9789930519446786
+            ],
+            "total_profile_time": 29.096927642822266
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 846009,
+            "noise_reduction_input_size": 307809,
+            "wave_to_text_input_size": 306787,
+            "decoder_input_size": 28215,
+            "audio_sampler_compute_latency": 0.0031264781951904296,
+            "noise_reduction_compute_latency": 0.01120607852935791,
+            "wave_to_text_compute_latency": 0.021064019203186034,
+            "decoder_compute_latency": 0.04837124347686768,
+            "accuracy": 0.9808673693937632,
+            "cummulative_accuracy": [
+                0.9869103531422478,
+                0.9792168642445088,
+                0.9808673693937632
+            ],
+            "total_profile_time": 30.617193460464478
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1486866,
+            "noise_reduction_input_size": 540214,
+            "wave_to_text_input_size": 539318,
+            "decoder_input_size": 49413,
+            "audio_sampler_compute_latency": 0.003397703170776367,
+            "noise_reduction_compute_latency": 0.011209058761596679,
+            "wave_to_text_compute_latency": 0.039031600952148436,
+            "decoder_compute_latency": 0.14375929832458495,
+            "accuracy": 0.9752969286268172,
+            "cummulative_accuracy": [
+                0.9746951368159354,
+                0.9761858073264547,
+                0.9752969286268172
+            ],
+            "total_profile_time": 67.17108035087585
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1238582,
+            "noise_reduction_input_size": 449974,
+            "wave_to_text_input_size": 449206,
+            "decoder_input_size": 41293,
+            "audio_sampler_compute_latency": 0.0029646635055541994,
+            "noise_reduction_compute_latency": 0.010262012481689453,
+            "wave_to_text_compute_latency": 0.010539412498474121,
+            "decoder_compute_latency": 0.01792142391204834,
+            "accuracy": 0.9697554046621244,
+            "cummulative_accuracy": [
+                0.9684328308307945,
+                0.9699380464728926,
+                0.9697554046621244
+            ],
+            "total_profile_time": 17.05392837524414
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1393810,
+            "noise_reduction_input_size": 506290,
+            "wave_to_text_input_size": 505522,
+            "decoder_input_size": 46393,
+            "audio_sampler_compute_latency": 0.0031404972076416017,
+            "noise_reduction_compute_latency": 0.010769486427307129,
+            "wave_to_text_compute_latency": 0.02009725570678711,
+            "decoder_compute_latency": 0.03797721862792969,
+            "accuracy": 0.9769402720391505,
+            "cummulative_accuracy": [
+                0.9750241193082083,
+                0.976059069655196,
+                0.9769402720391505
+            ],
+            "total_profile_time": 28.525547742843628
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1411900,
+            "noise_reduction_input_size": 513340,
+            "wave_to_text_input_size": 512700,
+            "decoder_input_size": 46983,
+            "audio_sampler_compute_latency": 0.003017711639404297,
+            "noise_reduction_compute_latency": 0.011382198333740235,
+            "wave_to_text_compute_latency": 0.019999241828918456,
+            "decoder_compute_latency": 0.041521120071411136,
+            "accuracy": 0.9835146977811816,
+            "cummulative_accuracy": [
+                0.9803479193201129,
+                0.9817289411746242,
+                0.9835146977811816
+            ],
+            "total_profile_time": 29.120076179504395
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1493499,
+            "noise_reduction_input_size": 542791,
+            "wave_to_text_input_size": 541383,
+            "decoder_input_size": 49662,
+            "audio_sampler_compute_latency": 0.003218865394592285,
+            "noise_reduction_compute_latency": 0.012151503562927246,
+            "wave_to_text_compute_latency": 0.021203827857971192,
+            "decoder_compute_latency": 0.05179896354675293,
+            "accuracy": 0.9823178089415696,
+            "cummulative_accuracy": [
+                0.9709969072093995,
+                0.9767506385591846,
+                0.9823178089415696
+            ],
+            "total_profile_time": 30.58745527267456
+        }
+    },
+    {
+        "audio_sr": 8000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1432661,
+            "noise_reduction_input_size": 520413,
+            "wave_to_text_input_size": 519903,
+            "decoder_input_size": 47712,
+            "audio_sampler_compute_latency": 0.0032355785369873047,
+            "noise_reduction_compute_latency": 0.012360525131225587,
+            "wave_to_text_compute_latency": 0.038834547996520995,
+            "decoder_compute_latency": 0.13507380485534667,
+            "accuracy": 0.9725876268622834,
+            "cummulative_accuracy": [
+                0.9738865031755888,
+                0.972317501772857,
+                0.9725876268622834
+            ],
+            "total_profile_time": 67.36636900901794
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1488211,
+            "noise_reduction_input_size": 675915,
+            "wave_to_text_input_size": 674507,
+            "decoder_input_size": 61730,
+            "audio_sampler_compute_latency": 0.008416032791137696,
+            "noise_reduction_compute_latency": 0.011177611351013184,
+            "wave_to_text_compute_latency": 0.025158953666687012,
+            "decoder_compute_latency": 0.01782851219177246,
+            "accuracy": 0.9260404563766813,
+            "cummulative_accuracy": [
+                0.9341812668888477,
+                0.9252975880408341,
+                0.9260404563766813
+            ],
+            "total_profile_time": 20.642792224884033
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1395117,
+            "noise_reduction_input_size": 633473,
+            "wave_to_text_input_size": 632481,
+            "decoder_input_size": 57860,
+            "audio_sampler_compute_latency": 0.0035811662673950195,
+            "noise_reduction_compute_latency": 0.011320090293884278,
+            "wave_to_text_compute_latency": 0.022500038146972656,
+            "decoder_compute_latency": 0.04657926559448242,
+            "accuracy": 0.9438056367416771,
+            "cummulative_accuracy": [
+                0.9455687035217073,
+                0.94415829866407,
+                0.9438056367416771
+            ],
+            "total_profile_time": 33.8434317111969
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1386329,
+            "noise_reduction_input_size": 629505,
+            "wave_to_text_input_size": 628417,
+            "decoder_input_size": 57544,
+            "audio_sampler_compute_latency": 0.0038277626037597655,
+            "noise_reduction_compute_latency": 0.01130826473236084,
+            "wave_to_text_compute_latency": 0.019765734672546387,
+            "decoder_compute_latency": 0.060413455963134764,
+            "accuracy": 0.8964365369114736,
+            "cummulative_accuracy": [
+                0.8795780514336553,
+                0.8889791114105633,
+                0.8964365369114736
+            ],
+            "total_profile_time": 34.29106783866882
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1252124,
+            "noise_reduction_input_size": 568564,
+            "wave_to_text_input_size": 567860,
+            "decoder_input_size": 51835,
+            "audio_sampler_compute_latency": 0.0031818389892578126,
+            "noise_reduction_compute_latency": 0.011519551277160645,
+            "wave_to_text_compute_latency": 0.020723414421081544,
+            "decoder_compute_latency": 0.06393282413482666,
+            "accuracy": 0.8476022281450918,
+            "cummulative_accuracy": [
+                0.8252760266021493,
+                0.8400672774710072,
+                0.8476022281450918
+            ],
+            "total_profile_time": 36.28120279312134
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1352338,
+            "noise_reduction_input_size": 614270,
+            "wave_to_text_input_size": 613022,
+            "decoder_input_size": 56117,
+            "audio_sampler_compute_latency": 0.0031920909881591798,
+            "noise_reduction_compute_latency": 0.011707353591918945,
+            "wave_to_text_compute_latency": 0.040408658981323245,
+            "decoder_compute_latency": 0.1693141222000122,
+            "accuracy": 0.8598892335113767,
+            "cummulative_accuracy": [
+                0.852428989545287,
+                0.8613462534159614,
+                0.8598892335113767
+            ],
+            "total_profile_time": 77.24780011177063
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 324169,
+            "noise_reduction_input_size": 147667,
+            "wave_to_text_input_size": 146899,
+            "decoder_input_size": 13695,
+            "audio_sampler_compute_latency": 0.00276947021484375,
+            "noise_reduction_compute_latency": 0.010139822959899902,
+            "wave_to_text_compute_latency": 0.011285519599914551,
+            "decoder_compute_latency": 0.020821094512939453,
+            "accuracy": 0.9282876660301969,
+            "cummulative_accuracy": [
+                0.9303919510345265,
+                0.9345895749193592,
+                0.9282876660301969
+            ],
+            "total_profile_time": 19.585944652557373
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1377504,
+            "noise_reduction_input_size": 625500,
+            "wave_to_text_input_size": 624316,
+            "decoder_input_size": 57075,
+            "audio_sampler_compute_latency": 0.003266644477844238,
+            "noise_reduction_compute_latency": 0.012351179122924804,
+            "wave_to_text_compute_latency": 0.01972196102142334,
+            "decoder_compute_latency": 0.05482158660888672,
+            "accuracy": 0.9391920904606296,
+            "cummulative_accuracy": [
+                0.9307745947454268,
+                0.9375681630348608,
+                0.9391920904606296
+            ],
+            "total_profile_time": 33.45533776283264
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1467895,
+            "noise_reduction_input_size": 666287,
+            "wave_to_text_input_size": 665263,
+            "decoder_input_size": 60774,
+            "audio_sampler_compute_latency": 0.0031787872314453123,
+            "noise_reduction_compute_latency": 0.011206507682800293,
+            "wave_to_text_compute_latency": 0.019902515411376952,
+            "decoder_compute_latency": 0.06207442283630371,
+            "accuracy": 0.8876617884293782,
+            "cummulative_accuracy": [
+                0.8752659739573234,
+                0.8871140153009571,
+                0.8876617884293782
+            ],
+            "total_profile_time": 34.32610893249512
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1425543,
+            "noise_reduction_input_size": 647071,
+            "wave_to_text_input_size": 646815,
+            "decoder_input_size": 59134,
+            "audio_sampler_compute_latency": 0.0032294750213623046,
+            "noise_reduction_compute_latency": 0.011932039260864257,
+            "wave_to_text_compute_latency": 0.02075667381286621,
+            "decoder_compute_latency": 0.06645994186401367,
+            "accuracy": 0.8666275496144391,
+            "cummulative_accuracy": [
+                0.9020660546932668,
+                0.8738852629323223,
+                0.8666275496144391
+            ],
+            "total_profile_time": 36.31173634529114
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1377504,
+            "noise_reduction_input_size": 625500,
+            "wave_to_text_input_size": 624316,
+            "decoder_input_size": 57075,
+            "audio_sampler_compute_latency": 0.0034980297088623045,
+            "noise_reduction_compute_latency": 0.011394309997558593,
+            "wave_to_text_compute_latency": 0.06480767726898193,
+            "decoder_compute_latency": 0.1487283229827881,
+            "accuracy": 0.8573667000824866,
+            "cummulative_accuracy": [
+                0.8307405928822061,
+                0.8518022289782677,
+                0.8573667000824866
+            ],
+            "total_profile_time": 76.53107118606567
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1481544,
+            "noise_reduction_input_size": 672664,
+            "wave_to_text_input_size": 671384,
+            "decoder_input_size": 61331,
+            "audio_sampler_compute_latency": 0.003299379348754883,
+            "noise_reduction_compute_latency": 0.012250900268554688,
+            "wave_to_text_compute_latency": 0.011162304878234863,
+            "decoder_compute_latency": 0.02470884323120117,
+            "accuracy": 0.9445847977065196,
+            "cummulative_accuracy": [
+                0.9492266987717977,
+                0.9456227786631337,
+                0.9445847977065196
+            ],
+            "total_profile_time": 19.675272464752197
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1395117,
+            "noise_reduction_input_size": 633473,
+            "wave_to_text_input_size": 632481,
+            "decoder_input_size": 57860,
+            "audio_sampler_compute_latency": 0.0031980276107788086,
+            "noise_reduction_compute_latency": 0.011823105812072753,
+            "wave_to_text_compute_latency": 0.01980299949645996,
+            "decoder_compute_latency": 0.05390899181365967,
+            "accuracy": 0.9377695927206591,
+            "cummulative_accuracy": [
+                0.9314995093879513,
+                0.9409105808868847,
+                0.9377695927206591
+            ],
+            "total_profile_time": 33.592397689819336
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1448919,
+            "noise_reduction_input_size": 658275,
+            "wave_to_text_input_size": 657059,
+            "decoder_input_size": 60066,
+            "audio_sampler_compute_latency": 0.003339529037475586,
+            "noise_reduction_compute_latency": 0.011273384094238281,
+            "wave_to_text_compute_latency": 0.019728684425354005,
+            "decoder_compute_latency": 0.059171009063720706,
+            "accuracy": 0.906629336317252,
+            "cummulative_accuracy": [
+                0.8919849073346147,
+                0.8990309529471313,
+                0.906629336317252
+            ],
+            "total_profile_time": 34.563594818115234
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1355869,
+            "noise_reduction_input_size": 615873,
+            "wave_to_text_input_size": 615073,
+            "decoder_input_size": 56236,
+            "audio_sampler_compute_latency": 0.0032243251800537108,
+            "noise_reduction_compute_latency": 0.012015843391418457,
+            "wave_to_text_compute_latency": 0.020802879333496095,
+            "decoder_compute_latency": 0.06311752796173095,
+            "accuracy": 0.8673943213870434,
+            "cummulative_accuracy": [
+                0.8640625249712433,
+                0.8706138430190495,
+                0.8673943213870434
+            ],
+            "total_profile_time": 36.34121227264404
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1333827,
+            "noise_reduction_input_size": 605483,
+            "wave_to_text_input_size": 604843,
+            "decoder_input_size": 55318,
+            "audio_sampler_compute_latency": 0.0032873153686523438,
+            "noise_reduction_compute_latency": 0.011717629432678223,
+            "wave_to_text_compute_latency": 0.03895866870880127,
+            "decoder_compute_latency": 0.16889214515686035,
+            "accuracy": 0.8420313055032064,
+            "cummulative_accuracy": [
+                0.8337901408822433,
+                0.8492575113792701,
+                0.8420313055032064
+            ],
+            "total_profile_time": 76.79063129425049
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1388093,
+            "noise_reduction_input_size": 630305,
+            "wave_to_text_input_size": 629441,
+            "decoder_input_size": 57544,
+            "audio_sampler_compute_latency": 0.0033215999603271483,
+            "noise_reduction_compute_latency": 0.012268614768981934,
+            "wave_to_text_compute_latency": 0.011530661582946777,
+            "decoder_compute_latency": 0.024399280548095703,
+            "accuracy": 0.9363034926311586,
+            "cummulative_accuracy": [
+                0.9306275618809136,
+                0.9362513895347482,
+                0.9363034926311586
+            ],
+            "total_profile_time": 19.70224905014038
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1438746,
+            "noise_reduction_input_size": 653442,
+            "wave_to_text_input_size": 651906,
+            "decoder_input_size": 59569,
+            "audio_sampler_compute_latency": 0.0034208059310913085,
+            "noise_reduction_compute_latency": 0.011709070205688477,
+            "wave_to_text_compute_latency": 0.019968438148498534,
+            "decoder_compute_latency": 0.05767221450805664,
+            "accuracy": 0.9367910922656388,
+            "cummulative_accuracy": [
+                0.940447310462515,
+                0.9408971916143846,
+                0.9367910922656388
+            ],
+            "total_profile_time": 33.559675455093384
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1408759,
+            "noise_reduction_input_size": 639843,
+            "wave_to_text_input_size": 638595,
+            "decoder_input_size": 58410,
+            "audio_sampler_compute_latency": 0.003250527381896973,
+            "noise_reduction_compute_latency": 0.012114143371582032,
+            "wave_to_text_compute_latency": 0.019870424270629884,
+            "decoder_compute_latency": 0.05779621601104736,
+            "accuracy": 0.9117131323357328,
+            "cummulative_accuracy": [
+                0.9044209107974333,
+                0.9069822858181582,
+                0.9117131323357328
+            ],
+            "total_profile_time": 34.39846873283386
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1402183,
+            "noise_reduction_input_size": 636683,
+            "wave_to_text_input_size": 635563,
+            "decoder_input_size": 58102,
+            "audio_sampler_compute_latency": 0.0038375139236450197,
+            "noise_reduction_compute_latency": 0.012533092498779297,
+            "wave_to_text_compute_latency": 0.020974183082580568,
+            "decoder_compute_latency": 0.06710875034332275,
+            "accuracy": 0.8421608802908369,
+            "cummulative_accuracy": [
+                0.8199925618968608,
+                0.8493279753844268,
+                0.8421608802908369
+            ],
+            "total_profile_time": 36.03777360916138
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1462583,
+            "noise_reduction_input_size": 663867,
+            "wave_to_text_input_size": 663195,
+            "decoder_input_size": 60638,
+            "audio_sampler_compute_latency": 0.0034035205841064452,
+            "noise_reduction_compute_latency": 0.011919498443603516,
+            "wave_to_text_compute_latency": 0.039131879806518555,
+            "decoder_compute_latency": 0.14374837875366211,
+            "accuracy": 0.8592505533389014,
+            "cummulative_accuracy": [
+                0.8736855678743691,
+                0.8613403909618605,
+                0.8592505533389014
+            ],
+            "total_profile_time": 76.51379728317261
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1437044,
+            "noise_reduction_input_size": 652704,
+            "wave_to_text_input_size": 651968,
+            "decoder_input_size": 59631,
+            "audio_sampler_compute_latency": 0.0032531261444091798,
+            "noise_reduction_compute_latency": 0.012062311172485352,
+            "wave_to_text_compute_latency": 0.011184430122375489,
+            "decoder_compute_latency": 0.02458512783050537,
+            "accuracy": 0.9347616136586155,
+            "cummulative_accuracy": [
+                0.9350291902410375,
+                0.939246203809923,
+                0.9347616136586155
+            ],
+            "total_profile_time": 19.76706290245056
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1482506,
+            "noise_reduction_input_size": 673546,
+            "wave_to_text_input_size": 672490,
+            "decoder_input_size": 61529,
+            "audio_sampler_compute_latency": 0.003174304962158203,
+            "noise_reduction_compute_latency": 0.012080144882202149,
+            "wave_to_text_compute_latency": 0.01973133087158203,
+            "decoder_compute_latency": 0.05453495979309082,
+            "accuracy": 0.9420752688811226,
+            "cummulative_accuracy": [
+                0.9316883235962248,
+                0.938261800324421,
+                0.9420752688811226
+            ],
+            "total_profile_time": 33.81128191947937
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1478477,
+            "noise_reduction_input_size": 671087,
+            "wave_to_text_input_size": 670383,
+            "decoder_input_size": 61238,
+            "audio_sampler_compute_latency": 0.003236532211303711,
+            "noise_reduction_compute_latency": 0.012052202224731445,
+            "wave_to_text_compute_latency": 0.020265913009643553,
+            "decoder_compute_latency": 0.05801172256469726,
+            "accuracy": 0.8850946112742872,
+            "cummulative_accuracy": [
+                0.8904938670626473,
+                0.8857220475251292,
+                0.8850946112742872
+            ],
+            "total_profile_time": 34.34888315200806
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1396493,
+            "noise_reduction_input_size": 634325,
+            "wave_to_text_input_size": 633557,
+            "decoder_input_size": 58028,
+            "audio_sampler_compute_latency": 0.0032182931900024414,
+            "noise_reduction_compute_latency": 0.011762905120849609,
+            "wave_to_text_compute_latency": 0.020805501937866212,
+            "decoder_compute_latency": 0.06657283306121826,
+            "accuracy": 0.8616223124447855,
+            "cummulative_accuracy": [
+                0.8468686676378964,
+                0.8675556093387224,
+                0.8616223124447855
+            ],
+            "total_profile_time": 36.0492844581604
+        }
+    },
+    {
+        "audio_sr": 10000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1423780,
+            "noise_reduction_input_size": 646272,
+            "wave_to_text_input_size": 645792,
+            "decoder_input_size": 59019,
+            "audio_sampler_compute_latency": 0.0034384965896606446,
+            "noise_reduction_compute_latency": 0.011956310272216797,
+            "wave_to_text_compute_latency": 0.0390876293182373,
+            "decoder_compute_latency": 0.15804569721221923,
+            "accuracy": 0.8374131701550621,
+            "cummulative_accuracy": [
+                0.8457180739618105,
+                0.8458193871199821,
+                0.8374131701550621
+            ],
+            "total_profile_time": 76.66236686706543
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1469624,
+            "noise_reduction_input_size": 800332,
+            "wave_to_text_input_size": 799372,
+            "decoder_input_size": 72928,
+            "audio_sampler_compute_latency": 0.0049144506454467775,
+            "noise_reduction_compute_latency": 0.012603259086608887,
+            "wave_to_text_compute_latency": 0.025142645835876463,
+            "decoder_compute_latency": 0.02367253303527832,
+            "accuracy": 0.7124760609347521,
+            "cummulative_accuracy": [
+                0.6858661982524672,
+                0.7048692593410056,
+                0.7124760609347521
+            ],
+            "total_profile_time": 23.076167583465576
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1412316,
+            "noise_reduction_input_size": 768992,
+            "wave_to_text_input_size": 768672,
+            "decoder_input_size": 70164,
+            "audio_sampler_compute_latency": 0.003020977973937988,
+            "noise_reduction_compute_latency": 0.013323426246643066,
+            "wave_to_text_compute_latency": 0.02738642692565918,
+            "decoder_compute_latency": 0.0648165225982666,
+            "accuracy": 0.8114912866326555,
+            "cummulative_accuracy": [
+                0.7950922684949461,
+                0.8086378098938536,
+                0.8114912866326555
+            ],
+            "total_profile_time": 38.40498375892639
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1455483,
+            "noise_reduction_input_size": 792623,
+            "wave_to_text_input_size": 792175,
+            "decoder_input_size": 72319,
+            "audio_sampler_compute_latency": 0.007339787483215332,
+            "noise_reduction_compute_latency": 0.01282644271850586,
+            "wave_to_text_compute_latency": 0.020379805564880372,
+            "decoder_compute_latency": 0.07791938781738281,
+            "accuracy": 0.6377091427182712,
+            "cummulative_accuracy": [
+                0.6573610827299116,
+                0.6435318275065735,
+                0.6377091427182712
+            ],
+            "total_profile_time": 38.79341745376587
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1357610,
+            "noise_reduction_input_size": 739218,
+            "wave_to_text_input_size": 738962,
+            "decoder_input_size": 67482,
+            "audio_sampler_compute_latency": 0.0028248071670532227,
+            "noise_reduction_compute_latency": 0.012306308746337891,
+            "wave_to_text_compute_latency": 0.021135616302490234,
+            "decoder_compute_latency": 0.07819278240203857,
+            "accuracy": 0.5174336031759242,
+            "cummulative_accuracy": [
+                0.5052953414540156,
+                0.5155628098000405,
+                0.5174336031759242
+            ],
+            "total_profile_time": 40.935444831848145
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1400428,
+            "noise_reduction_input_size": 762612,
+            "wave_to_text_input_size": 761524,
+            "decoder_input_size": 69604,
+            "audio_sampler_compute_latency": 0.0028283119201660155,
+            "noise_reduction_compute_latency": 0.012785768508911133,
+            "wave_to_text_compute_latency": 0.040183305740356445,
+            "decoder_compute_latency": 0.19645180702209472,
+            "accuracy": 0.5341823720183374,
+            "cummulative_accuracy": [
+                0.48892803055403533,
+                0.5343833990999267,
+                0.5341823720183374
+            ],
+            "total_profile_time": 87.89662551879883
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1451135,
+            "noise_reduction_input_size": 790123,
+            "wave_to_text_input_size": 789163,
+            "decoder_input_size": 72031,
+            "audio_sampler_compute_latency": 0.0028348207473754884,
+            "noise_reduction_compute_latency": 0.012981343269348144,
+            "wave_to_text_compute_latency": 0.011441564559936524,
+            "decoder_compute_latency": 0.03245117664337158,
+            "accuracy": 0.704195223067618,
+            "cummulative_accuracy": [
+                0.7294843163551865,
+                0.7265453344498005,
+                0.704195223067618
+            ],
+            "total_profile_time": 22.190902948379517
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1402578,
+            "noise_reduction_input_size": 763838,
+            "wave_to_text_input_size": 763518,
+            "decoder_input_size": 69666,
+            "audio_sampler_compute_latency": 0.002843904495239258,
+            "noise_reduction_compute_latency": 0.01223442554473877,
+            "wave_to_text_compute_latency": 0.020255732536315917,
+            "decoder_compute_latency": 0.06999382972717286,
+            "accuracy": 0.7943641727315119,
+            "cummulative_accuracy": [
+                0.7710407838531004,
+                0.7813198178717875,
+                0.7943641727315119
+            ],
+            "total_profile_time": 38.12466049194336
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1305124,
+            "noise_reduction_input_size": 710724,
+            "wave_to_text_input_size": 710276,
+            "decoder_input_size": 64907,
+            "audio_sampler_compute_latency": 0.0032674074172973633,
+            "noise_reduction_compute_latency": 0.012106561660766601,
+            "wave_to_text_compute_latency": 0.020409989356994628,
+            "decoder_compute_latency": 0.07323791980743408,
+            "accuracy": 0.6339530473775399,
+            "cummulative_accuracy": [
+                0.6957823640899775,
+                0.6356026295750051,
+                0.6339530473775399
+            ],
+            "total_profile_time": 38.46773600578308
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1403829,
+            "noise_reduction_input_size": 764405,
+            "wave_to_text_input_size": 763445,
+            "decoder_input_size": 69593,
+            "audio_sampler_compute_latency": 0.002846813201904297,
+            "noise_reduction_compute_latency": 0.012491345405578613,
+            "wave_to_text_compute_latency": 0.02121999263763428,
+            "decoder_compute_latency": 0.07740640640258789,
+            "accuracy": 0.48631547388233,
+            "cummulative_accuracy": [
+                0.49400109062007985,
+                0.513048333844328,
+                0.48631547388233
+            ],
+            "total_profile_time": 40.94598317146301
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1428205,
+            "noise_reduction_input_size": 777645,
+            "wave_to_text_input_size": 776877,
+            "decoder_input_size": 70989,
+            "audio_sampler_compute_latency": 0.002837729454040527,
+            "noise_reduction_compute_latency": 0.01359994411468506,
+            "wave_to_text_compute_latency": 0.06491005420684814,
+            "decoder_compute_latency": 0.16595404148101806,
+            "accuracy": 0.511572153215624,
+            "cummulative_accuracy": [
+                0.5352826692101607,
+                0.5312361369191851,
+                0.511572153215624
+            ],
+            "total_profile_time": 88.48094844818115
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1252124,
+            "noise_reduction_input_size": 681844,
+            "wave_to_text_input_size": 681524,
+            "decoder_input_size": 62161,
+            "audio_sampler_compute_latency": 0.0028924942016601562,
+            "noise_reduction_compute_latency": 0.012122607231140137,
+            "wave_to_text_compute_latency": 0.011366462707519532,
+            "decoder_compute_latency": 0.033048057556152345,
+            "accuracy": 0.7065264492527773,
+            "cummulative_accuracy": [
+                0.6977467470148052,
+                0.705229633340017,
+                0.7065264492527773
+            ],
+            "total_profile_time": 22.120371341705322
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1418875,
+            "noise_reduction_input_size": 772779,
+            "wave_to_text_input_size": 771691,
+            "decoder_input_size": 70459,
+            "audio_sampler_compute_latency": 0.002970719337463379,
+            "noise_reduction_compute_latency": 0.013484668731689454,
+            "wave_to_text_compute_latency": 0.020341014862060545,
+            "decoder_compute_latency": 0.06865627765655517,
+            "accuracy": 0.8098051099750063,
+            "cummulative_accuracy": [
+                0.8132122735406617,
+                0.8131806990349847,
+                0.8098051099750063
+            ],
+            "total_profile_time": 38.204684019088745
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1369986,
+            "noise_reduction_input_size": 745958,
+            "wave_to_text_input_size": 745126,
+            "decoder_input_size": 68082,
+            "audio_sampler_compute_latency": 0.0032787084579467773,
+            "noise_reduction_compute_latency": 0.012421870231628418,
+            "wave_to_text_compute_latency": 0.020283222198486328,
+            "decoder_compute_latency": 0.07213659286499023,
+            "accuracy": 0.6341540001812286,
+            "cummulative_accuracy": [
+                0.5771662410276384,
+                0.6237820910713494,
+                0.6341540001812286
+            ],
+            "total_profile_time": 38.73446083068848
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1391645,
+            "noise_reduction_input_size": 757849,
+            "wave_to_text_input_size": 757465,
+            "decoder_input_size": 69177,
+            "audio_sampler_compute_latency": 0.0028231143951416016,
+            "noise_reduction_compute_latency": 0.01223609447479248,
+            "wave_to_text_compute_latency": 0.02119908332824707,
+            "decoder_compute_latency": 0.07342751026153564,
+            "accuracy": 0.49719128383481415,
+            "cummulative_accuracy": [
+                0.49138092592727245,
+                0.4881045911490722,
+                0.49719128383481415
+            ],
+            "total_profile_time": 41.12961220741272
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1418042,
+            "noise_reduction_input_size": 772186,
+            "wave_to_text_input_size": 771738,
+            "decoder_input_size": 70506,
+            "audio_sampler_compute_latency": 0.002929210662841797,
+            "noise_reduction_compute_latency": 0.012768030166625977,
+            "wave_to_text_compute_latency": 0.03923773765563965,
+            "decoder_compute_latency": 0.19706623554229735,
+            "accuracy": 0.5321248464751901,
+            "cummulative_accuracy": [
+                0.5533223062507278,
+                0.5354705404645448,
+                0.5321248464751901
+            ],
+            "total_profile_time": 87.77188444137573
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1510283,
+            "noise_reduction_input_size": 822499,
+            "wave_to_text_input_size": 821987,
+            "decoder_input_size": 75103,
+            "audio_sampler_compute_latency": 0.002827882766723633,
+            "noise_reduction_compute_latency": 0.012419509887695312,
+            "wave_to_text_compute_latency": 0.011183524131774902,
+            "decoder_compute_latency": 0.03360717296600342,
+            "accuracy": 0.7436203278036239,
+            "cummulative_accuracy": [
+                0.7471234646933066,
+                0.7370294638674451,
+                0.7436203278036239
+            ],
+            "total_profile_time": 22.147146224975586
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1360694,
+            "noise_reduction_input_size": 741130,
+            "wave_to_text_input_size": 739978,
+            "decoder_input_size": 67590,
+            "audio_sampler_compute_latency": 0.0028359651565551757,
+            "noise_reduction_compute_latency": 0.012217831611633301,
+            "wave_to_text_compute_latency": 0.020435547828674315,
+            "decoder_compute_latency": 0.06913282871246337,
+            "accuracy": 0.7944514397225758,
+            "cummulative_accuracy": [
+                0.7942055396652694,
+                0.8010751341724907,
+                0.7944514397225758
+            ],
+            "total_profile_time": 38.2512903213501
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1426902,
+            "noise_reduction_input_size": 777026,
+            "wave_to_text_input_size": 775874,
+            "decoder_input_size": 70894,
+            "audio_sampler_compute_latency": 0.002789950370788574,
+            "noise_reduction_compute_latency": 0.012565922737121583,
+            "wave_to_text_compute_latency": 0.020250654220581053,
+            "decoder_compute_latency": 0.06756930351257324,
+            "accuracy": 0.6189143161617972,
+            "cummulative_accuracy": [
+                0.6715453056199749,
+                0.6324735956184095,
+                0.6189143161617972
+            ],
+            "total_profile_time": 39.20190072059631
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1333827,
+            "noise_reduction_input_size": 726443,
+            "wave_to_text_input_size": 725677,
+            "decoder_input_size": 66347,
+            "audio_sampler_compute_latency": 0.0028881549835205076,
+            "noise_reduction_compute_latency": 0.012730240821838379,
+            "wave_to_text_compute_latency": 0.0215451717376709,
+            "decoder_compute_latency": 0.08078982830047607,
+            "accuracy": 0.5299314317558496,
+            "cummulative_accuracy": [
+                0.5298393726867624,
+                0.5268019170123784,
+                0.5299314317558496
+            ],
+            "total_profile_time": 41.3391797542572
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1510206,
+            "noise_reduction_input_size": 822422,
+            "wave_to_text_input_size": 821910,
+            "decoder_input_size": 75026,
+            "audio_sampler_compute_latency": 0.0028603315353393556,
+            "noise_reduction_compute_latency": 0.012500143051147461,
+            "wave_to_text_compute_latency": 0.039290332794189455,
+            "decoder_compute_latency": 0.196305513381958,
+            "accuracy": 0.5764956301614873,
+            "cummulative_accuracy": [
+                0.5657899999403897,
+                0.5868644494646774,
+                0.5764956301614873
+            ],
+            "total_profile_time": 88.60740160942078
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1401294,
+            "noise_reduction_input_size": 763238,
+            "wave_to_text_input_size": 762534,
+            "decoder_input_size": 69590,
+            "audio_sampler_compute_latency": 0.002805638313293457,
+            "noise_reduction_compute_latency": 0.013455677032470702,
+            "wave_to_text_compute_latency": 0.009302067756652831,
+            "decoder_compute_latency": 0.033722758293151855,
+            "accuracy": 0.7150933799023748,
+            "cummulative_accuracy": [
+                0.7356805596408729,
+                0.7285248447116163,
+                0.7150933799023748
+            ],
+            "total_profile_time": 22.389029264450073
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1435698,
+            "noise_reduction_input_size": 781802,
+            "wave_to_text_input_size": 780970,
+            "decoder_input_size": 71334,
+            "audio_sampler_compute_latency": 0.002850842475891113,
+            "noise_reduction_compute_latency": 0.011836791038513183,
+            "wave_to_text_compute_latency": 0.020858216285705566,
+            "decoder_compute_latency": 0.06942911148071289,
+            "accuracy": 0.7859683227819735,
+            "cummulative_accuracy": [
+                0.7936371244415673,
+                0.7833221311346745,
+                0.7859683227819735
+            ],
+            "total_profile_time": 151.41269946098328
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1383261,
+            "noise_reduction_input_size": 753365,
+            "wave_to_text_input_size": 752341,
+            "decoder_input_size": 68709,
+            "audio_sampler_compute_latency": 0.002912569046020508,
+            "noise_reduction_compute_latency": 0.013756179809570312,
+            "wave_to_text_compute_latency": 0.02062489986419678,
+            "decoder_compute_latency": 0.07796249389648438,
+            "accuracy": 0.6251429520284234,
+            "cummulative_accuracy": [
+                0.5955497707019158,
+                0.616397692244112,
+                0.6251429520284234
+            ],
+            "total_profile_time": 39.16231298446655
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1462145,
+            "noise_reduction_input_size": 796189,
+            "wave_to_text_input_size": 795293,
+            "decoder_input_size": 72597,
+            "audio_sampler_compute_latency": 0.0027466535568237303,
+            "noise_reduction_compute_latency": 0.013355255126953125,
+            "wave_to_text_compute_latency": 0.021352243423461915,
+            "decoder_compute_latency": 0.07757761478424072,
+            "accuracy": 0.541769344381091,
+            "cummulative_accuracy": [
+                0.5574398777394902,
+                0.5390703799590187,
+                0.541769344381091
+            ],
+            "total_profile_time": 41.42501974105835
+        }
+    },
+    {
+        "audio_sr": 12000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1393810,
+            "noise_reduction_input_size": 759090,
+            "wave_to_text_input_size": 758450,
+            "decoder_input_size": 69254,
+            "audio_sampler_compute_latency": 0.0028774499893188476,
+            "noise_reduction_compute_latency": 0.013357710838317872,
+            "wave_to_text_compute_latency": 0.03938589096069336,
+            "decoder_compute_latency": 0.19777498245239258,
+            "accuracy": 0.5421976008069318,
+            "cummulative_accuracy": [
+                0.4894126931390379,
+                0.521957819552027,
+                0.5421976008069318
+            ],
+            "total_profile_time": 87.81634736061096
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1387166,
+            "noise_reduction_input_size": 881142,
+            "wave_to_text_input_size": 880280,
+            "decoder_input_size": 80246,
+            "audio_sampler_compute_latency": 0.005077576637268067,
+            "noise_reduction_compute_latency": 0.01354827880859375,
+            "wave_to_text_compute_latency": 0.02251605987548828,
+            "decoder_compute_latency": 0.029125165939331055,
+            "accuracy": 0.5374673591397762,
+            "cummulative_accuracy": [
+                0.4962447815357561,
+                0.5259240037972884,
+                0.5374673591397762
+            ],
+            "total_profile_time": 25.27616810798645
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1342214,
+            "noise_reduction_input_size": 852530,
+            "wave_to_text_input_size": 851634,
+            "decoder_input_size": 77722,
+            "audio_sampler_compute_latency": 0.0031839609146118164,
+            "noise_reduction_compute_latency": 0.012926340103149414,
+            "wave_to_text_compute_latency": 0.021962976455688475,
+            "decoder_compute_latency": 0.08610703945159912,
+            "accuracy": 0.692293193679734,
+            "cummulative_accuracy": [
+                0.6754645760025529,
+                0.6873970126987992,
+                0.692293193679734
+            ],
+            "total_profile_time": 44.53233098983765
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1423783,
+            "noise_reduction_input_size": 904355,
+            "wave_to_text_input_size": 903843,
+            "decoder_input_size": 82463,
+            "audio_sampler_compute_latency": 0.0030145883560180665,
+            "noise_reduction_compute_latency": 0.013606834411621093,
+            "wave_to_text_compute_latency": 0.020255613327026366,
+            "decoder_compute_latency": 0.087615966796875,
+            "accuracy": 0.4241635495075752,
+            "cummulative_accuracy": [
+                0.38748442835617974,
+                0.40968953380556195,
+                0.4241635495075752
+            ],
+            "total_profile_time": 44.79786205291748
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1400430,
+            "noise_reduction_input_size": 889492,
+            "wave_to_text_input_size": 888500,
+            "decoder_input_size": 81088,
+            "audio_sampler_compute_latency": 0.003053450584411621,
+            "noise_reduction_compute_latency": 0.01273205280303955,
+            "wave_to_text_compute_latency": 0.02130911350250244,
+            "decoder_compute_latency": 0.09158275127410889,
+            "accuracy": 0.36489924672642715,
+            "cummulative_accuracy": [
+                0.3708069103811542,
+                0.3779591740684064,
+                0.36489924672642715
+            ],
+            "total_profile_time": 47.427738666534424
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1421621,
+            "noise_reduction_input_size": 902957,
+            "wave_to_text_input_size": 902861,
+            "decoder_input_size": 82389,
+            "audio_sampler_compute_latency": 0.0027968168258666994,
+            "noise_reduction_compute_latency": 0.01297776699066162,
+            "wave_to_text_compute_latency": 0.04073553085327149,
+            "decoder_compute_latency": 0.27431674003601075,
+            "accuracy": 0.39261014131476346,
+            "cummulative_accuracy": [
+                0.36723694110832755,
+                0.35636406503554435,
+                0.39261014131476346
+            ],
+            "total_profile_time": 113.32188081741333
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1315229,
+            "noise_reduction_input_size": 835325,
+            "wave_to_text_input_size": 835165,
+            "decoder_input_size": 76129,
+            "audio_sampler_compute_latency": 0.0030068874359130858,
+            "noise_reduction_compute_latency": 0.012940478324890137,
+            "wave_to_text_compute_latency": 0.011512017250061036,
+            "decoder_compute_latency": 0.03676085472106934,
+            "accuracy": 0.5486383568835669,
+            "cummulative_accuracy": [
+                0.5938067168200367,
+                0.5485297099526686,
+                0.5486383568835669
+            ],
+            "total_profile_time": 24.452892780303955
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1407472,
+            "noise_reduction_input_size": 893960,
+            "wave_to_text_input_size": 893608,
+            "decoder_input_size": 81542,
+            "audio_sampler_compute_latency": 0.003007364273071289,
+            "noise_reduction_compute_latency": 0.01276094913482666,
+            "wave_to_text_compute_latency": 0.0205613374710083,
+            "decoder_compute_latency": 0.08634169101715088,
+            "accuracy": 0.6912162747613348,
+            "cummulative_accuracy": [
+                0.6794764344028146,
+                0.697858770104013,
+                0.6912162747613348
+            ],
+            "total_profile_time": 43.821847438812256
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1386329,
+            "noise_reduction_input_size": 880545,
+            "wave_to_text_input_size": 880321,
+            "decoder_input_size": 80289,
+            "audio_sampler_compute_latency": 0.0029394149780273436,
+            "noise_reduction_compute_latency": 0.013193845748901367,
+            "wave_to_text_compute_latency": 0.02142379283905029,
+            "decoder_compute_latency": 0.08863298892974854,
+            "accuracy": 0.4312635344182258,
+            "cummulative_accuracy": [
+                0.4672260589575238,
+                0.42856520307267787,
+                0.4312635344182258
+            ],
+            "total_profile_time": 44.68146991729736
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1393810,
+            "noise_reduction_input_size": 885330,
+            "wave_to_text_input_size": 884402,
+            "decoder_input_size": 80738,
+            "audio_sampler_compute_latency": 0.0027183055877685546,
+            "noise_reduction_compute_latency": 0.012850427627563476,
+            "wave_to_text_compute_latency": 0.021317410469055175,
+            "decoder_compute_latency": 0.0973428726196289,
+            "accuracy": 0.38377729182904186,
+            "cummulative_accuracy": [
+                0.4143125757083734,
+                0.387802907500504,
+                0.38377729182904186
+            ],
+            "total_profile_time": 47.56296968460083
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1352338,
+            "noise_reduction_input_size": 858910,
+            "wave_to_text_input_size": 858782,
+            "decoder_input_size": 78400,
+            "audio_sampler_compute_latency": 0.002659916877746582,
+            "noise_reduction_compute_latency": 0.013381719589233398,
+            "wave_to_text_compute_latency": 0.03945901393890381,
+            "decoder_compute_latency": 0.27761962413787844,
+            "accuracy": 0.3775702756834986,
+            "cummulative_accuracy": [
+                0.4044641533835618,
+                0.36380747112402834,
+                0.3775702756834986
+            ],
+            "total_profile_time": 113.36197662353516
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1385849,
+            "noise_reduction_input_size": 880185,
+            "wave_to_text_input_size": 879257,
+            "decoder_input_size": 80249,
+            "audio_sampler_compute_latency": 0.0029558897018432616,
+            "noise_reduction_compute_latency": 0.013297796249389648,
+            "wave_to_text_compute_latency": 0.011253905296325684,
+            "decoder_compute_latency": 0.037447214126586914,
+            "accuracy": 0.5068829249323386,
+            "cummulative_accuracy": [
+                0.5232770447071418,
+                0.5024996703232681,
+                0.5068829249323386
+            ],
+            "total_profile_time": 24.298455238342285
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1375320,
+            "noise_reduction_input_size": 873520,
+            "wave_to_text_input_size": 873168,
+            "decoder_input_size": 79724,
+            "audio_sampler_compute_latency": 0.0031965494155883787,
+            "noise_reduction_compute_latency": 0.012531709671020509,
+            "wave_to_text_compute_latency": 0.02037968635559082,
+            "decoder_compute_latency": 0.08262844085693359,
+            "accuracy": 0.709822477373451,
+            "cummulative_accuracy": [
+                0.7174964136634565,
+                0.7133926370282939,
+                0.709822477373451
+            ],
+            "total_profile_time": 43.69471073150635
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1333827,
+            "noise_reduction_input_size": 847243,
+            "wave_to_text_input_size": 846507,
+            "decoder_input_size": 77251,
+            "audio_sampler_compute_latency": 0.0030941009521484376,
+            "noise_reduction_compute_latency": 0.012487339973449706,
+            "wave_to_text_compute_latency": 0.02040994167327881,
+            "decoder_compute_latency": 0.08311192989349366,
+            "accuracy": 0.4531893456422787,
+            "cummulative_accuracy": [
+                0.4735022337458132,
+                0.46619323659740985,
+                0.4531893456422787
+            ],
+            "total_profile_time": 45.0029878616333
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1469624,
+            "noise_reduction_input_size": 933452,
+            "wave_to_text_input_size": 932492,
+            "decoder_input_size": 84992,
+            "audio_sampler_compute_latency": 0.0025432348251342774,
+            "noise_reduction_compute_latency": 0.012050724029541016,
+            "wave_to_text_compute_latency": 0.021187376976013184,
+            "decoder_compute_latency": 0.09115238189697265,
+            "accuracy": 0.38311295430363684,
+            "cummulative_accuracy": [
+                0.3978008654773737,
+                0.3880854423286701,
+                0.38311295430363684
+            ],
+            "total_profile_time": 47.612345695495605
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1450701,
+            "noise_reduction_input_size": 921493,
+            "wave_to_text_input_size": 921269,
+            "decoder_input_size": 83989,
+            "audio_sampler_compute_latency": 0.0030137777328491213,
+            "noise_reduction_compute_latency": 0.013100504875183105,
+            "wave_to_text_compute_latency": 0.03937256336212158,
+            "decoder_compute_latency": 0.2773775100708008,
+            "accuracy": 0.40949057996243277,
+            "cummulative_accuracy": [
+                0.3936857898453133,
+                0.39441613105373813,
+                0.40949057996243277
+            ],
+            "total_profile_time": 114.13180232048035
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1333827,
+            "noise_reduction_input_size": 847243,
+            "wave_to_text_input_size": 846507,
+            "decoder_input_size": 77251,
+            "audio_sampler_compute_latency": 0.002592015266418457,
+            "noise_reduction_compute_latency": 0.013015246391296387,
+            "wave_to_text_compute_latency": 0.011611223220825195,
+            "decoder_compute_latency": 0.03653626441955567,
+            "accuracy": 0.5266309225079717,
+            "cummulative_accuracy": [
+                0.5303066323365541,
+                0.5310392240488788,
+                0.5266309225079717
+            ],
+            "total_profile_time": 24.725595474243164
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1421981,
+            "noise_reduction_input_size": 903197,
+            "wave_to_text_input_size": 902781,
+            "decoder_input_size": 82309,
+            "audio_sampler_compute_latency": 0.002604031562805176,
+            "noise_reduction_compute_latency": 0.0125413179397583,
+            "wave_to_text_compute_latency": 0.020369720458984376,
+            "decoder_compute_latency": 0.08737971782684326,
+            "accuracy": 0.7036037685918842,
+            "cummulative_accuracy": [
+                0.6981016620979221,
+                0.7013479616088021,
+                0.7036037685918842
+            ],
+            "total_profile_time": 44.74111461639404
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1462145,
+            "noise_reduction_input_size": 928669,
+            "wave_to_text_input_size": 928413,
+            "decoder_input_size": 84661,
+            "audio_sampler_compute_latency": 0.004578280448913574,
+            "noise_reduction_compute_latency": 0.01239774227142334,
+            "wave_to_text_compute_latency": 0.020282721519470213,
+            "decoder_compute_latency": 0.08826570510864258,
+            "accuracy": 0.4592488633276415,
+            "cummulative_accuracy": [
+                0.492668026598805,
+                0.4872998325121992,
+                0.4592488633276415
+            ],
+            "total_profile_time": 44.62358570098877
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1289279,
+            "noise_reduction_input_size": 818915,
+            "wave_to_text_input_size": 817827,
+            "decoder_input_size": 74691,
+            "audio_sampler_compute_latency": 0.0027775287628173826,
+            "noise_reduction_compute_latency": 0.01248774528503418,
+            "wave_to_text_compute_latency": 0.021382355690002443,
+            "decoder_compute_latency": 0.09186351299285889,
+            "accuracy": 0.3638690581171669,
+            "cummulative_accuracy": [
+                0.32547481857881166,
+                0.3683009919966785,
+                0.3638690581171669
+            ],
+            "total_profile_time": 48.08177614212036
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1238582,
+            "noise_reduction_input_size": 786774,
+            "wave_to_text_input_size": 786102,
+            "decoder_input_size": 71810,
+            "audio_sampler_compute_latency": 0.0028421640396118163,
+            "noise_reduction_compute_latency": 0.013216304779052734,
+            "wave_to_text_compute_latency": 0.03935298919677734,
+            "decoder_compute_latency": 0.26868338584899903,
+            "accuracy": 0.3808503524818956,
+            "cummulative_accuracy": [
+                0.4191442166101914,
+                0.3785502995051121,
+                0.3808503524818956
+            ],
+            "total_profile_time": 113.05740809440613
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1362452,
+            "noise_reduction_input_size": 865444,
+            "wave_to_text_input_size": 864900,
+            "decoder_input_size": 78836,
+            "audio_sampler_compute_latency": 0.002572298049926758,
+            "noise_reduction_compute_latency": 0.013315081596374512,
+            "wave_to_text_compute_latency": 0.011395668983459473,
+            "decoder_compute_latency": 0.03277478218078613,
+            "accuracy": 0.5505846734487732,
+            "cummulative_accuracy": [
+                0.5587659192968137,
+                0.5638107896319394,
+                0.5505846734487732
+            ],
+            "total_profile_time": 24.21361017227173
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1351024,
+            "noise_reduction_input_size": 858122,
+            "wave_to_text_input_size": 857768,
+            "decoder_input_size": 78292,
+            "audio_sampler_compute_latency": 0.0029057741165161135,
+            "noise_reduction_compute_latency": 0.01248605251312256,
+            "wave_to_text_compute_latency": 0.020417213439941406,
+            "decoder_compute_latency": 0.08502821922302246,
+            "accuracy": 0.7065957235024006,
+            "cummulative_accuracy": [
+                0.705469326748332,
+                0.6995511761394072,
+                0.7065957235024006
+            ],
+            "total_profile_time": 44.098989725112915
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1482506,
+            "noise_reduction_input_size": 941706,
+            "wave_to_text_input_size": 940778,
+            "decoder_input_size": 85898,
+            "audio_sampler_compute_latency": 0.002893877029418945,
+            "noise_reduction_compute_latency": 0.012654709815979003,
+            "wave_to_text_compute_latency": 0.020366621017456055,
+            "decoder_compute_latency": 0.08953616619110108,
+            "accuracy": 0.42969712380779984,
+            "cummulative_accuracy": [
+                0.4087721722316961,
+                0.424119979456279,
+                0.42969712380779984
+            ],
+            "total_profile_time": 44.810786485672
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1411900,
+            "noise_reduction_input_size": 896860,
+            "wave_to_text_input_size": 896700,
+            "decoder_input_size": 81794,
+            "audio_sampler_compute_latency": 0.0036540985107421874,
+            "noise_reduction_compute_latency": 0.012928986549377441,
+            "wave_to_text_compute_latency": 0.021775221824645995,
+            "decoder_compute_latency": 0.09708251953125,
+            "accuracy": 0.3880016186426023,
+            "cummulative_accuracy": [
+                0.3802303366956812,
+                0.39266708348582785,
+                0.3880016186426023
+            ],
+            "total_profile_time": 48.02723407745361
+        }
+    },
+    {
+        "audio_sr": 14000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1432661,
+            "noise_reduction_input_size": 910013,
+            "wave_to_text_input_size": 909021,
+            "decoder_input_size": 82987,
+            "audio_sampler_compute_latency": 0.0037001371383666992,
+            "noise_reduction_compute_latency": 0.013017368316650391,
+            "wave_to_text_compute_latency": 0.03940896987915039,
+            "decoder_compute_latency": 0.27878670692443847,
+            "accuracy": 0.35741572199115684,
+            "cummulative_accuracy": [
+                0.356163590867191,
+                0.36364102422714184,
+                0.35741572199115684
+            ],
+            "total_profile_time": 113.23426055908203
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1481609,
+            "noise_reduction_input_size": 1075929,
+            "wave_to_text_input_size": 1074905,
+            "decoder_input_size": 97945,
+            "audio_sampler_compute_latency": 0.007981133460998536,
+            "noise_reduction_compute_latency": 0.013679075241088866,
+            "wave_to_text_compute_latency": 0.0196230411529541,
+            "decoder_compute_latency": 0.03742690086364746,
+            "accuracy": 0.5222450618116966,
+            "cummulative_accuracy": [
+                0.47584816384133033,
+                0.5221072638660134,
+                0.5222450618116966
+            ],
+            "total_profile_time": 26.89600920677185
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1493043,
+            "noise_reduction_input_size": 1084859,
+            "wave_to_text_input_size": 1083069,
+            "decoder_input_size": 98727,
+            "audio_sampler_compute_latency": 0.0037902116775512694,
+            "noise_reduction_compute_latency": 0.013359427452087402,
+            "wave_to_text_compute_latency": 0.022404813766479494,
+            "decoder_compute_latency": 0.08522908687591553,
+            "accuracy": 0.7162991878217019,
+            "cummulative_accuracy": [
+                0.7151572234427386,
+                0.7035058730223247,
+                0.7162991878217019
+            ],
+            "total_profile_time": 45.41324853897095
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1436527,
+            "noise_reduction_input_size": 1043831,
+            "wave_to_text_input_size": 1042039,
+            "decoder_input_size": 94947,
+            "audio_sampler_compute_latency": 0.003143930435180664,
+            "noise_reduction_compute_latency": 0.012903523445129395,
+            "wave_to_text_compute_latency": 0.0198314905166626,
+            "decoder_compute_latency": 0.09303703308105468,
+            "accuracy": 0.43776913714217636,
+            "cummulative_accuracy": [
+                0.4209183846090273,
+                0.41496154574057903,
+                0.43776913714217636
+            ],
+            "total_profile_time": 46.00283980369568
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1418877,
+            "noise_reduction_input_size": 1031019,
+            "wave_to_text_input_size": 1029739,
+            "decoder_input_size": 93775,
+            "audio_sampler_compute_latency": 0.0031455039978027345,
+            "noise_reduction_compute_latency": 0.013014984130859376,
+            "wave_to_text_compute_latency": 0.020773100852966308,
+            "decoder_compute_latency": 0.10253720283508301,
+            "accuracy": 0.3477965211398913,
+            "cummulative_accuracy": [
+                0.3442124381547141,
+                0.3541116310991993,
+                0.3477965211398913
+            ],
+            "total_profile_time": 49.878267765045166
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 500,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 324171,
+            "noise_reduction_input_size": 235987,
+            "wave_to_text_input_size": 234965,
+            "decoder_input_size": 21585,
+            "audio_sampler_compute_latency": 0.003479266166687012,
+            "noise_reduction_compute_latency": 0.01277780532836914,
+            "wave_to_text_compute_latency": 0.04070899486541748,
+            "decoder_compute_latency": 0.2946253061294556,
+            "accuracy": 0.4219057961546937,
+            "cummulative_accuracy": [
+                0.4241650673217607,
+                0.4370706927479824,
+                0.4219057961546937
+            ],
+            "total_profile_time": 122.81368970870972
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 617530,
+            "noise_reduction_input_size": 448572,
+            "wave_to_text_input_size": 448058,
+            "decoder_input_size": 41053,
+            "audio_sampler_compute_latency": 0.0031236886978149416,
+            "noise_reduction_compute_latency": 0.012793707847595214,
+            "wave_to_text_compute_latency": 0.011426997184753419,
+            "decoder_compute_latency": 0.03795900344848633,
+            "accuracy": 0.5509423435840476,
+            "cummulative_accuracy": [
+                0.5662895137086599,
+                0.5524383668617658,
+                0.5509423435840476
+            ],
+            "total_profile_time": 25.94598388671875
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1412338,
+            "noise_reduction_input_size": 1025974,
+            "wave_to_text_input_size": 1024694,
+            "decoder_input_size": 93386,
+            "audio_sampler_compute_latency": 0.003364086151123047,
+            "noise_reduction_compute_latency": 0.013182830810546876,
+            "wave_to_text_compute_latency": 0.019759821891784667,
+            "decoder_compute_latency": 0.08932480812072754,
+            "accuracy": 0.7101124306420035,
+            "cummulative_accuracy": [
+                0.7488262273190706,
+                0.7254589896052942,
+                0.7101124306420035
+            ],
+            "total_profile_time": 45.293986320495605
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1414513,
+            "noise_reduction_input_size": 1027223,
+            "wave_to_text_input_size": 1025687,
+            "decoder_input_size": 93471,
+            "audio_sampler_compute_latency": 0.0035057544708251955,
+            "noise_reduction_compute_latency": 0.01330549716949463,
+            "wave_to_text_compute_latency": 0.019663572311401367,
+            "decoder_compute_latency": 0.09311895370483399,
+            "accuracy": 0.4464567685710219,
+            "cummulative_accuracy": [
+                0.4327418585907388,
+                0.4589832323155005,
+                0.4464567685710219
+            ],
+            "total_profile_time": 45.82797193527222
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1456467,
+            "noise_reduction_input_size": 1058003,
+            "wave_to_text_input_size": 1056467,
+            "decoder_input_size": 96315,
+            "audio_sampler_compute_latency": 0.0031912565231323243,
+            "noise_reduction_compute_latency": 0.012940073013305664,
+            "wave_to_text_compute_latency": 0.02109842300415039,
+            "decoder_compute_latency": 0.10356929302215576,
+            "accuracy": 0.32595300964325435,
+            "cummulative_accuracy": [
+                0.34596110272659236,
+                0.33091700949034497,
+                0.32595300964325435
+            ],
+            "total_profile_time": 49.577171325683594
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 1000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1377489,
+            "noise_reduction_input_size": 1000365,
+            "wave_to_text_input_size": 999085,
+            "decoder_input_size": 91057,
+            "audio_sampler_compute_latency": 0.0033089399337768556,
+            "noise_reduction_compute_latency": 0.012803912162780762,
+            "wave_to_text_compute_latency": 0.04002346992492676,
+            "decoder_compute_latency": 0.3037947416305542,
+            "accuracy": 0.4018579665245432,
+            "cummulative_accuracy": [
+                0.4383060791347749,
+                0.39628373332633515,
+                0.4018579665245432
+            ],
+            "total_profile_time": 123.09610199928284
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1390739,
+            "noise_reduction_input_size": 1010627,
+            "wave_to_text_input_size": 1009347,
+            "decoder_input_size": 92007,
+            "audio_sampler_compute_latency": 0.003296518325805664,
+            "noise_reduction_compute_latency": 0.012935376167297364,
+            "wave_to_text_compute_latency": 0.011435294151306152,
+            "decoder_compute_latency": 0.041067314147949216,
+            "accuracy": 0.5074485310667625,
+            "cummulative_accuracy": [
+                0.4689611923799866,
+                0.4756727425130394,
+                0.5074485310667625
+            ],
+            "total_profile_time": 26.15106439590454
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1347920,
+            "noise_reduction_input_size": 978584,
+            "wave_to_text_input_size": 977560,
+            "decoder_input_size": 89064,
+            "audio_sampler_compute_latency": 0.0032239437103271486,
+            "noise_reduction_compute_latency": 0.012900114059448242,
+            "wave_to_text_compute_latency": 0.02015395164489746,
+            "decoder_compute_latency": 0.09000129699707031,
+            "accuracy": 0.6974954106971993,
+            "cummulative_accuracy": [
+                0.6710086814135989,
+                0.6998749710920441,
+                0.6974954106971993
+            ],
+            "total_profile_time": 44.92412447929382
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1395548,
+            "noise_reduction_input_size": 1013144,
+            "wave_to_text_input_size": 1012376,
+            "decoder_input_size": 92312,
+            "audio_sampler_compute_latency": 0.0031490087509155273,
+            "noise_reduction_compute_latency": 0.013107037544250489,
+            "wave_to_text_compute_latency": 0.019788646697998048,
+            "decoder_compute_latency": 0.09171648025512695,
+            "accuracy": 0.4625219445968512,
+            "cummulative_accuracy": [
+                0.5061802907711975,
+                0.471171171507062,
+                0.4625219445968512
+            ],
+            "total_profile_time": 46.39940428733826
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1395548,
+            "noise_reduction_input_size": 1013144,
+            "wave_to_text_input_size": 1012376,
+            "decoder_input_size": 92312,
+            "audio_sampler_compute_latency": 0.0038248300552368164,
+            "noise_reduction_compute_latency": 0.013303065299987793,
+            "wave_to_text_compute_latency": 0.020750904083251955,
+            "decoder_compute_latency": 0.1002617597579956,
+            "accuracy": 0.3313464318267915,
+            "cummulative_accuracy": [
+                0.33078763045769216,
+                0.30286972404556817,
+                0.3313464318267915
+            ],
+            "total_profile_time": 49.900105714797974
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 2000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1383194,
+            "noise_reduction_input_size": 1004178,
+            "wave_to_text_input_size": 1003154,
+            "decoder_input_size": 91380,
+            "audio_sampler_compute_latency": 0.003399157524108887,
+            "noise_reduction_compute_latency": 0.014242291450500488,
+            "wave_to_text_compute_latency": 0.03986508846282959,
+            "decoder_compute_latency": 0.29588234424591064,
+            "accuracy": 0.3536423125828801,
+            "cummulative_accuracy": [
+                0.3379143512841867,
+                0.34365981066665174,
+                0.3536423125828801
+            ],
+            "total_profile_time": 122.32662105560303
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1423780,
+            "noise_reduction_input_size": 1033632,
+            "wave_to_text_input_size": 1032864,
+            "decoder_input_size": 94176,
+            "audio_sampler_compute_latency": 0.003153824806213379,
+            "noise_reduction_compute_latency": 0.013447785377502441,
+            "wave_to_text_compute_latency": 0.011493062973022461,
+            "decoder_compute_latency": 0.041204643249511716,
+            "accuracy": 0.5288957389737469,
+            "cummulative_accuracy": [
+                0.4721578722616963,
+                0.5163285181789035,
+                0.5288957389737469
+            ],
+            "total_profile_time": 25.872270822525024
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1342214,
+            "noise_reduction_input_size": 974770,
+            "wave_to_text_input_size": 973490,
+            "decoder_input_size": 88742,
+            "audio_sampler_compute_latency": 0.0031988859176635743,
+            "noise_reduction_compute_latency": 0.013303065299987793,
+            "wave_to_text_compute_latency": 0.0199373722076416,
+            "decoder_compute_latency": 0.09012179374694824,
+            "accuracy": 0.6860280377258237,
+            "cummulative_accuracy": [
+                0.6710696951493642,
+                0.6756590901846737,
+                0.6860280377258237
+            ],
+            "total_profile_time": 46.19980049133301
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 1350107,
+            "noise_reduction_input_size": 981127,
+            "wave_to_text_input_size": 979591,
+            "decoder_input_size": 89279,
+            "audio_sampler_compute_latency": 0.0031576156616210938,
+            "noise_reduction_compute_latency": 0.012897825241088868,
+            "wave_to_text_compute_latency": 0.01982576847076416,
+            "decoder_compute_latency": 0.09267315864562989,
+            "accuracy": 0.45552853599644144,
+            "cummulative_accuracy": [
+                0.5127992102680674,
+                0.4655253484693484,
+                0.45552853599644144
+            ],
+            "total_profile_time": 46.45879864692688
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1416767,
+            "noise_reduction_input_size": 1028555,
+            "wave_to_text_input_size": 1027787,
+            "decoder_input_size": 93755,
+            "audio_sampler_compute_latency": 0.0031369924545288086,
+            "noise_reduction_compute_latency": 0.013159632682800293,
+            "wave_to_text_compute_latency": 0.02072618007659912,
+            "decoder_compute_latency": 0.0983494758605957,
+            "accuracy": 0.32738440649348083,
+            "cummulative_accuracy": [
+                0.32618943920893306,
+                0.3421166849520497,
+                0.32738440649348083
+            ],
+            "total_profile_time": 49.66772127151489
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 3000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1388015,
+            "noise_reduction_input_size": 1007987,
+            "wave_to_text_input_size": 1007219,
+            "decoder_input_size": 91811,
+            "audio_sampler_compute_latency": 0.0033855199813842773,
+            "noise_reduction_compute_latency": 0.013431930541992187,
+            "wave_to_text_compute_latency": 0.04071195125579834,
+            "decoder_compute_latency": 0.296136474609375,
+            "accuracy": 0.41892542799587673,
+            "cummulative_accuracy": [
+                0.4361297279692617,
+                0.43099242935020965,
+                0.41892542799587673
+            ],
+            "total_profile_time": 123.31586647033691
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-base",
+        "result": {
+            "audio_sampler_input_size": 1400450,
+            "noise_reduction_input_size": 1017034,
+            "wave_to_text_input_size": 1015498,
+            "decoder_input_size": 92594,
+            "audio_sampler_compute_latency": 0.003177380561828613,
+            "noise_reduction_compute_latency": 0.012937235832214355,
+            "wave_to_text_compute_latency": 0.011834979057312012,
+            "decoder_compute_latency": 0.041639399528503415,
+            "accuracy": 0.5669720415443735,
+            "cummulative_accuracy": [
+                0.5563364804834631,
+                0.5540729047590527,
+                0.5669720415443735
+            ],
+            "total_profile_time": 26.072425365447998
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-10m",
+        "result": {
+            "audio_sampler_input_size": 1370018,
+            "noise_reduction_input_size": 995270,
+            "wave_to_text_input_size": 993990,
+            "decoder_input_size": 90618,
+            "audio_sampler_compute_latency": 0.0032100677490234375,
+            "noise_reduction_compute_latency": 0.013458704948425293,
+            "wave_to_text_compute_latency": 0.020046019554138185,
+            "decoder_compute_latency": 0.08912720680236816,
+            "accuracy": 0.6752057795122216,
+            "cummulative_accuracy": [
+                0.6866024244598294,
+                0.6825724545045395,
+                0.6752057795122216
+            ],
+            "total_profile_time": 45.32545757293701
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "wav2vec2-large-960h",
+        "result": {
+            "audio_sampler_input_size": 441946,
+            "noise_reduction_input_size": 321782,
+            "wave_to_text_input_size": 319990,
+            "decoder_input_size": 29384,
+            "audio_sampler_compute_latency": 0.003298640251159668,
+            "noise_reduction_compute_latency": 0.013366985321044921,
+            "wave_to_text_compute_latency": 0.020188307762145995,
+            "decoder_compute_latency": 0.09236743450164794,
+            "accuracy": 0.45485944391227384,
+            "cummulative_accuracy": [
+                0.4577910290986288,
+                0.4449972127381031,
+                0.45485944391227384
+            ],
+            "total_profile_time": 45.983766317367554
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "hubert-large",
+        "result": {
+            "audio_sampler_input_size": 1489516,
+            "noise_reduction_input_size": 1082300,
+            "wave_to_text_input_size": 1081020,
+            "decoder_input_size": 98496,
+            "audio_sampler_compute_latency": 0.0033202886581420897,
+            "noise_reduction_compute_latency": 0.012021613121032716,
+            "wave_to_text_compute_latency": 0.020714783668518068,
+            "decoder_compute_latency": 0.10227234363555908,
+            "accuracy": 0.35192599986186535,
+            "cummulative_accuracy": [
+                0.3050114728914697,
+                0.3362875958862065,
+                0.35192599986186535
+            ],
+            "total_profile_time": 49.7296986579895
+        }
+    },
+    {
+        "audio_sr": 16000,
+        "freq_mask": 4000,
+        "model": "hubert-xlarge",
+        "result": {
+            "audio_sampler_input_size": 1369986,
+            "noise_reduction_input_size": 995238,
+            "wave_to_text_input_size": 993958,
+            "decoder_input_size": 90586,
+            "audio_sampler_compute_latency": 0.0031844615936279298,
+            "noise_reduction_compute_latency": 0.01342151165008545,
+            "wave_to_text_compute_latency": 0.03954625129699707,
+            "decoder_compute_latency": 0.3013166427612305,
+            "accuracy": 0.3612499836731299,
+            "cummulative_accuracy": [
+                0.33089253245408673,
+                0.3517037174017892,
+                0.3612499836731299
+            ],
+            "total_profile_time": 123.43764424324036
+        }
+    }
+]

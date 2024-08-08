@@ -25,11 +25,16 @@ class BayesianOptimization:
         kernel = Matern(nu=2.5)
         self.gp = GaussianProcessRegressor(kernel=kernel)
     
-    def get_preds(self):
-        for i in range(5):
-            for j in range(5):
-                mean, std = self.gp.predict([[i, j]], return_std=True)
-                print(f'[{i}, {j}]: ', mean, std)
+    # def get_preds(self):
+    #     for i in range(5):
+    #         for j in range(5):
+    #             mean, std = self.gp.predict([[i, j]], return_std=True)
+    #             print(f'[{i}, {j}]: ', mean, std)
+    def get_pred(self, x):
+        x = np.array(x)
+        x = x.reshape(1, -1)
+        mean, std = self.gp.predict(x, return_std=True)
+        return mean, std
 
     def _get_acq_val(self, x, keppa=2):
         x = np.array(x)
